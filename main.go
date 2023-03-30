@@ -43,6 +43,7 @@ func ReadInput(allowedValues ...string) string {
 }
 
 func executeCmd(command string, startMsg string, returnMsg string) {
+
     fmt.Println(startMsg)
     fmt.Println()
     cmd := exec.Command("cmd", "/C", command)
@@ -128,21 +129,21 @@ func downloadYunzai() {
         userChoice := ReadInput("y", "n")
         if userChoice == "y" {
             //删除文件夹
-            err = os.RemoveAll("./Yunzai-bot")
+            os.RemoveAll("./Yunzai-bot")
         }
         if userChoice == "n" {
             return
         }
     }
     b := checkCommand("npm -v")
-    if b == false {
+    if !b {
         fmt.Print("无法使用npm命令，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
     }
     executeCmd("git clone --depth 1 -b main https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git", "开始下载云崽...", "下载云崽成功！")
     //进入Yunzai-Bot文件夹
     os.Chdir("./Yunzai-Bot")
     b2 := checkCommand("pnpm -v")
-    if b2 == false {
+    if !b2 {
         executeCmd("npm install pnpm -g --registry=https://registry.npmmirror.com", "开始安装 pnpm ...", "安装 pnpm 成功！")
     }
     executeCmd("pnpm config set registry https://registry.npmmirror.com", "", "")
@@ -152,7 +153,6 @@ func downloadYunzai() {
 }
 func startRedis() *exec.Cmd {
     fmt.Println("正在启动 Redis ...")
-    fmt.Println()
 
     // 进入 redis-windows-7.0.4 目录
     if err := os.Chdir("./redis-windows-7.0.4"); err != nil {
@@ -235,15 +235,23 @@ func customCommand() {
     os.Chdir("..")
 }
 
+func closeYunzai() {
+    exec.Command("taskkill", "/FI", "WINDOWTITLE eq Yunzai-bot", "/T", "/F").Run()
+    executeCmd("taskkill /f /im node.exe", "正在关闭云崽...", "云崽关闭成功！")
+}
+
+func changeAccount() {
+}
+
 func manageYunzai() {
-    dir, _ := os.Getwd()
-    fmt.Println(dir)
+
     for {
         fmt.Println("===云崽管理===")
         fmt.Println("1. 启动云崽")
-        fmt.Println("2. 切换账号")
-        fmt.Println("3. 重装依赖")
-        fmt.Println("4. 自定义终端命令")
+        fmt.Println("2. 强制关闭云崽")
+        fmt.Println("3. 切换账号")
+        fmt.Println("4. 重装依赖")
+        fmt.Println("5. 自定义终端命令")
         fmt.Println("0. 返回上一级")
         fmt.Print("请选择操作：")
         var choice int
@@ -258,29 +266,32 @@ func manageYunzai() {
             fmt.Println("退出程序")
             return
         case 1:
-            fmt.Println("您选择了启动云崽")
-            fmt.Println()
+            clearLog()
             startYunzai()
         case 2:
-            fmt.Println("您选择了切换账号")
-            fmt.Println()
+            clearLog()
+            closeYunzai()
         case 3:
-            fmt.Println("您选择了重装依赖")
-            fmt.Println()
-            reInstallDep()
+            clearLog()
+            changeAccount()
         case 4:
-            fmt.Println("您选择了自定义终端命令")
-            fmt.Println()
+            clearLog()
+            reInstallDep()
+        case 5:
+            clearLog()
             customCommand()
         default:
             fmt.Println("选择不正确，请重新选择")
+            fmt.Println("")
         }
     }
 }
 
+func clearLog() {
+    fmt.Print("\033[H\033[2J")
+}
+
 func menu() {
-    dir, _ := os.Getwd()
-    fmt.Println(dir)
     for {
         fmt.Println("===主菜单===")
         fmt.Println("1. 安装云崽")
@@ -301,19 +312,18 @@ func menu() {
             fmt.Println("退出程序")
             return
         case 1:
-            fmt.Println("您选择了安装云崽")
-            fmt.Println()
+            clearLog()
             downloadYunzai()
         case 2:
-            fmt.Println("您选择了云崽管理")
-            fmt.Println()
+            clearLog()
             manageYunzai()
         case 3:
-            fmt.Println("您选择了BUG修复")
-            fmt.Println()
+            clearLog()
+
             // TODO: 执行BUG修复的相关代码
         default:
             fmt.Println("选择不正确，请重新选择")
+            fmt.Println("")
         }
     }
 }
