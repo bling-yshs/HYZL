@@ -1,4 +1,4 @@
-// 编译： go build -o 云崽启动器.exe main.go
+// 编译： go build -o 云崽启动器 ./...
 package main
 
 import (
@@ -220,8 +220,9 @@ func startRedis() *exec.Cmd {
     printWithEmptyLine("正在启动 Redis ...")
     os.Chdir("./redis-windows-7.0.4")
     dir, _ := os.Getwd()
-    dir += "/redis-server.exe"
-    cmd := exec.Command("cmd", "/c", "start", dir)
+    dir += "\\redis-server.exe"
+    printWithEmptyLine(dir)
+    cmd := exec.Command("cmd", "/c", "start", "", dir)
     err := cmd.Start()
     fmt.Println(err)
     println("Redis 启动成功！")
@@ -255,7 +256,7 @@ func startYunzai() {
     printWithEmptyLine("正在启动云崽...")
     dir, _ := os.Getwd()
     cmd := exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node app")
-    cmd.Run()
+    cmd.Start()
     printWithEmptyLine("云崽启动成功！")
     os.Chdir("..")
 }
