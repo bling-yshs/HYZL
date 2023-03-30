@@ -105,6 +105,11 @@ func checkEnv() bool {
         fmt.Println("检测到未安装 Node.js ，请安装后继续")
         return false
     }
+
+    b3 := checkCommand("npm -v")
+    if !b3 {
+        fmt.Print("检测到未安装 npm ，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
+    }
     return true
 }
 
@@ -153,22 +158,14 @@ func downloadYunzai() {
 
 func startRedis() *exec.Cmd {
     fmt.Println("正在启动 Redis ...")
-
-    // 进入 redis-windows-7.0.4 目录
-    if err := os.Chdir("./redis-windows-7.0.4"); err != nil {
-        panic(err)
-    }
-
-    comm, _ := os.Getwd()
-    comm += "./redis-server.exe"
-    // 启动 Redis 服务器
-    cmd := exec.Command(comm)
-    if err := cmd.Start(); err != nil {
-        panic(err)
-    }
+    os.Chdir("./redis-windows-7.0.4")
+    dir, _ := os.Getwd()
+    fmt.Println(dir)
+    cmd := exec.Command("cmd", "/c", "start", "D:/AllCodeWorkspace/golang/YzLauncher-windows/redis-windows-7.0.4/redis-server.exe")
+    err := cmd.Start()
+    fmt.Println(err)
     println("Redis 启动成功！")
     os.Chdir("..")
-
     return cmd
 }
 
@@ -243,6 +240,13 @@ func closeYunzai() {
 func changeAccount() {
 }
 
+func clearLog() {
+    //执行clear指令清除控制台
+    cmd := exec.Command("cmd", "/c", "cls")
+    cmd.Stdout = os.Stdout
+    cmd.Run()
+}
+
 func manageYunzai() {
 
     for {
@@ -263,7 +267,7 @@ func manageYunzai() {
 
         switch choice {
         case 0:
-            fmt.Println("退出程序")
+            clearLog()
             return
         case 1:
             clearLog()
@@ -285,10 +289,6 @@ func manageYunzai() {
             fmt.Println("")
         }
     }
-}
-
-func clearLog() {
-    fmt.Print("\033[H\033[2J")
 }
 
 func menu() {
