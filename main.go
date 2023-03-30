@@ -90,19 +90,35 @@ func checkFirstRun() {
     }
 }
 
-func checkEnv() {
+func checkEnv() bool {
 
-    _, err := exec.LookPath("git")
-    if err != nil {
+    // _, err := exec.LookPath("git")
+    // if err != nil {
+    //     fmt.Println("检测到未安装 Git ，请安装后继续")
+    //     return false
+    // }
+
+    // _, err = exec.LookPath("node")
+    // if err != nil {
+    //     fmt.Println("检测到未安装 Node.js ，请安装后继续")
+    //     return false
+    // }
+    b := checkCommand("git -v")
+    if !b {
         fmt.Println("检测到未安装 Git ，请安装后继续")
-        return
+        return false
     }
-
-    _, err = exec.LookPath("node")
-    if err != nil {
+    b2 := checkCommand("node -v")
+    if !b2 {
         fmt.Println("检测到未安装 Node.js ，请安装后继续")
-        return
+        return false
     }
+    b3 := checkCommand("npm -v")
+    if !b3 {
+        fmt.Println("检测到未安装 npm ，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
+        return false
+    }
+    return true
 }
 
 func checkRedis() {
@@ -330,7 +346,12 @@ func menu() {
 
 func main() {
     checkFirstRun()
-    checkEnv()
+    if !checkEnv() {
+        //按任意键退出
+        fmt.Println("按回车键退出...")
+        fmt.Scanln()
+        return
+    }
     checkRedis()
     menu()
 }
