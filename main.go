@@ -13,7 +13,16 @@ type Config struct {
     NodeJSInstalled bool `json:"nodejs_installed"`
 }
 
-//工具函数
+//↓工具函数
+func checkCommand(command string) bool {
+    cmd := exec.Command("cmd", "/c", command)
+    err := cmd.Run()
+    if err == nil {
+        return true
+    } else {
+        return false
+    }
+}
 func ReadInput(allowedValues ...string) string {
     allowedSet := make(map[string]bool)
     for _, val := range allowedValues {
@@ -31,45 +40,30 @@ func ReadInput(allowedValues ...string) string {
     }
 }
 
-func RunCommand(commandStr string) error {
-    cmd := exec.Command("cmd", "/C", commandStr)
-    stdout, err := cmd.StdoutPipe()
+func executeCmd(command string, startMsg string, returnMsg string) {
+    println(startMsg)
+    cmd := exec.Command("cmd", "/C", command)
+    cmd.Stdout = os.Stdout // 直接将命令标准输出连接到标准输出流
+    cmd.Stderr = os.Stderr // 将错误输出连接到标准错误流
+    cmd.Stdin = os.Stdin   // 将标准输入连接到命令的标准输入
+
+    err := cmd.Start()
     if err != nil {
-        return err
+        printErr(err)
     }
-    stderr, err := cmd.StderrPipe()
+
+    err = cmd.Wait()
     if err != nil {
-        return err
+        printErr(err)
     }
-
-    if err := cmd.Start(); err != nil {
-        return err
-    }
-
-    scannerOut := bufio.NewScanner(stdout)
-    scannerErr := bufio.NewScanner(stderr)
-
-    go func() {
-        for scannerOut.Scan() {
-            fmt.Println(scannerOut.Text())
-        }
-    }()
-    go func() {
-        for scannerErr.Scan() {
-            fmt.Println(scannerErr.Text())
-        }
-    }()
-
-    if err := cmd.Wait(); err != nil {
-        return err
-    }
-
-    return nil
+    fmt.Println(returnMsg)
 }
 
 func printErr(err error) {
     fmt.Println("发生错误，请截图并反馈给作者:", err)
 }
+
+//↑工具函数
 
 func checkFirstRun() {
     //检查当前目录下是否存在config文件夹
@@ -89,7 +83,6 @@ func checkFirstRun() {
         }
         defer file.Close()
     }
-
 }
 
 func checkEnv() {
@@ -116,23 +109,41 @@ func checkRedis() {
     //读取用户输入y或者n
     userChoice := ReadInput("y", "n")
     if userChoice == "y" {
-        cmd := exec.Command("git", "clone", "--depth", "1", "https://gitee.com/bling_yshs/redis-windows-7.0.4")
-        cmd.Stdout = os.Stdout
-        cmd.Stderr = os.Stderr
-        err := cmd.Run()
-        if err != nil {
-            fmt.Println("下载 Redis 失败:", err)
-            return
-        }
-        fmt.Println("下载 Redis 成功！")
+        executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/redis-windows-7.0.4", "开始下载 Redis ...", "下载 Redis 成功！")
     }
     if userChoice == "n" {
         fmt.Println("退出程序")
+        os.Exit(0)
     }
 
 }
 func downloadYunzai() {
-
+    _, err := os.Stat("./Yunzai-bot")
+    if err == nil {
+        fmt.Println("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
+        userChoice := ReadInput("y", "n")
+        if userChoice == "y" {
+            //删除文件夹
+            err = os.RemoveAll("./Yunzai-bot")
+        }
+        if userChoice == "n" {
+            return
+        }
+    }
+    b := checkCommand("npm -v")
+    if b == false {
+        fmt.Print("无法使用npm命令，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
+    }
+    executeCmd("git clone --depth 1 -b main https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git", "开始下载云崽...", "下载云崽成功！")
+    //进入Yunzai-Bot文件夹
+    os.Chdir("./Yunzai-Bot")
+    b2 := checkCommand("pnpm -v")
+    if b2 == false {
+        executeCmd("npm install pnpm -g --registry=https://registry.npmmirror.com", "开始安装 pnpm ...", "安装 pnpm 成功！")
+    }
+    executeCmd("pnpm config set registry https://registry.npmmirror.com", "", "")
+    executeCmd("pnpm config set puppeteer_download_host=https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
+    executeCmd("pnpm install -P", "开始安装云崽依赖", "安装云崽依赖成功！")
 }
 
 func menu() {
@@ -146,7 +157,7 @@ func menu() {
         var choice int
         _, err := fmt.Scanln(&choice)
         if err != nil {
-            fmt.Println("输入错误，请重新选择。")
+            fmt.Println("输入错误，请重新选择")
             continue
         }
 
@@ -155,16 +166,18 @@ func menu() {
             fmt.Println("退出程序")
             return
         case 1:
-            fmt.Println("您选择了安装云崽。")
+            fmt.Println("您选择了安装云崽")
             // TODO: 执行安装云崽的相关代码
+            downloadYunzai()
+
         case 2:
-            fmt.Println("您选择了云崽管理。")
+            fmt.Println("您选择了云崽管理")
             // TODO: 执行云崽管理的相关代码
         case 3:
-            fmt.Println("您选择了BUG修复。")
+            fmt.Println("您选择了BUG修复")
             // TODO: 执行BUG修复的相关代码
         default:
-            fmt.Println("选择不正确，请重新选择。")
+            fmt.Println("选择不正确，请重新选择")
         }
     }
 }
