@@ -6,8 +6,8 @@ import (
     "fmt"
     "os"
     "os/exec"
-    "runtime"
     "strings"
+    "time"
 )
 
 type Config struct {
@@ -46,8 +46,7 @@ func executeCmd(stringArgs ...string) {
 
     cmd := exec.Command("cmd", "/C", stringArgs[0])
     if len(stringArgs) >= 2 {
-        fmt.Println(stringArgs[1])
-        fmt.Println()
+        printWithEmptyLine(stringArgs[1])
     }
     cmd.Stdout = os.Stdout // 直接将命令标准输出连接到标准输出流
     cmd.Stderr = os.Stderr // 将错误输出连接到标准错误流
@@ -63,13 +62,18 @@ func executeCmd(stringArgs ...string) {
         printErr(err)
     }
     if len(stringArgs) >= 3 {
-        fmt.Println(stringArgs[2])
-        fmt.Println()
+        printWithEmptyLine(stringArgs[2])
     }
 }
 
 func printErr(err error) {
     fmt.Println("发生错误，请截图并反馈给作者:", err)
+}
+
+func printWithEmptyLine(str string) {
+    fmt.Println()
+    fmt.Println(str)
+    fmt.Println()
 }
 
 //↑工具函数
@@ -97,12 +101,12 @@ func checkFirstRun() {
 func checkEnv() bool {
     b := checkCommand("git -v")
     if !b {
-        fmt.Println("检测到未安装 Git ，请安装后继续")
+        printWithEmptyLine("检测到未安装 Git ，请安装后继续")
         return false
     }
     b2 := checkCommand("node -v")
     if !b2 {
-        fmt.Println("检测到未安装 Node.js ，请安装后继续")
+        printWithEmptyLine("检测到未安装 Node.js ，请安装后继续")
         return false
     }
 
@@ -118,14 +122,14 @@ func checkRedis() {
     if err == nil {
         return
     }
-    fmt.Println("检测到当前目录下不存在 redis-windows-7.0.4 ，请问是否需要自动下载 Redis ？(是:y 退出程序:n)")
+    printWithEmptyLine("检测到当前目录下不存在 redis-windows-7.0.4 ，请问是否需要自动下载 Redis ？(是:y 退出程序:n)")
     //读取用户输入y或者n
     userChoice := ReadInput("y", "n")
     if userChoice == "y" {
         executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/redis-windows-7.0.4", "开始下载 Redis ...", "下载 Redis 成功！")
     }
     if userChoice == "n" {
-        fmt.Println("退出程序")
+        printWithEmptyLine("退出程序")
         os.Exit(0)
     }
 }
@@ -133,7 +137,7 @@ func checkRedis() {
 func downloadYunzai() {
     _, err := os.Stat("./Yunzai-bot")
     if err == nil {
-        fmt.Println("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
+        printWithEmptyLine("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
         userChoice := ReadInput("y", "n")
         if userChoice == "y" {
             //删除文件夹
@@ -150,18 +154,18 @@ func downloadYunzai() {
     if !b2 {
         executeCmd("npm install pnpm -g --registry=https://registry.npmmirror.com", "开始安装 pnpm ...", "安装 pnpm 成功！")
     }
-    executeCmd("pnpm config set registry https://registry.npmmirror.com", "", "")
+    executeCmd("pnpm config set registry https://registry.npmmirror.com")
     executeCmd("pnpm config set puppeteer_download_host=https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
     executeCmd("pnpm install -P", "开始安装云崽依赖", "安装云崽依赖成功！")
     os.Chdir("..")
 }
 
 func startRedis() *exec.Cmd {
-    fmt.Println("正在启动 Redis ...")
+    printWithEmptyLine("正在启动 Redis ...")
     os.Chdir("./redis-windows-7.0.4")
     dir, _ := os.Getwd()
-    fmt.Println(dir)
-    cmd := exec.Command("cmd", "/c", "start", "D:/AllCodeWorkspace/golang/YzLauncher-windows/redis-windows-7.0.4/redis-server.exe")
+    dir += "/redis-server.exe"
+    cmd := exec.Command("cmd", "/c", "start", dir)
     err := cmd.Start()
     fmt.Println(err)
     println("Redis 启动成功！")
@@ -188,16 +192,15 @@ func isRedisRunning() bool {
 func startYunzai() {
     if !isRedisRunning() {
         startRedis()
+        //等待3秒
+        time.Sleep(3 * time.Second)
     }
     os.Chdir("./Yunzai-Bot")
-    fmt.Println("正在启动云崽...")
+    printWithEmptyLine("正在启动云崽...")
     dir, _ := os.Getwd()
-    var cmd *exec.Cmd
-    if runtime.GOOS == "windows" {
-        cmd = exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node app")
-    }
+    cmd := exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node app")
     cmd.Run()
-    fmt.Println("云崽启动成功！")
+    printWithEmptyLine("云崽启动成功！")
     os.Chdir("..")
 }
 
@@ -208,7 +211,7 @@ func reInstallDep() {
         fmt.Println("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
         userChoice := ReadInput("y", "n")
         if userChoice == "y" {
-            executeCmd("pnpm update", "开始安装云崽依赖...", "")
+            executeCmd("pnpm update", "开始安装云崽依赖...")
             executeCmd("pnpm install -P", "", "安装云崽依赖成功！")
         }
         if userChoice == "n" {
@@ -261,7 +264,7 @@ func manageYunzai() {
         var choice int
         _, err := fmt.Scanln(&choice)
         if err != nil {
-            fmt.Println("输入错误，请重新选择")
+            printWithEmptyLine("输入错误，请重新选择")
             continue
         }
 
@@ -285,8 +288,7 @@ func manageYunzai() {
             clearLog()
             customCommand()
         default:
-            fmt.Println("选择不正确，请重新选择")
-            fmt.Println("")
+            printWithEmptyLine("选择不正确，请重新选择")
         }
     }
 }
@@ -303,13 +305,13 @@ func menu() {
         var choice int
         _, err := fmt.Scanln(&choice)
         if err != nil {
-            fmt.Println("输入错误，请重新选择")
+            printWithEmptyLine("输入错误，请重新选择")
             continue
         }
 
         switch choice {
         case 0:
-            fmt.Println("退出程序")
+            printWithEmptyLine("退出程序")
             return
         case 1:
             clearLog()
@@ -322,8 +324,7 @@ func menu() {
 
             // TODO: 执行BUG修复的相关代码
         default:
-            fmt.Println("选择不正确，请重新选择")
-            fmt.Println("")
+            printWithEmptyLine("选择不正确，请重新选择")
         }
     }
 }
