@@ -1,3 +1,4 @@
+// 编译： go build -o 云崽启动器.exe main.go
 package main
 
 import (
@@ -41,7 +42,8 @@ func ReadInput(allowedValues ...string) string {
 }
 
 func executeCmd(command string, startMsg string, returnMsg string) {
-    println(startMsg)
+    fmt.Println(startMsg)
+    fmt.Println()
     cmd := exec.Command("cmd", "/C", command)
     cmd.Stdout = os.Stdout // 直接将命令标准输出连接到标准输出流
     cmd.Stderr = os.Stderr // 将错误输出连接到标准错误流
@@ -57,6 +59,7 @@ func executeCmd(command string, startMsg string, returnMsg string) {
         printErr(err)
     }
     fmt.Println(returnMsg)
+    fmt.Println()
 }
 
 func printErr(err error) {
@@ -144,15 +147,149 @@ func downloadYunzai() {
     executeCmd("pnpm config set registry https://registry.npmmirror.com", "", "")
     executeCmd("pnpm config set puppeteer_download_host=https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
     executeCmd("pnpm install -P", "开始安装云崽依赖", "安装云崽依赖成功！")
+    os.Chdir("..")
+}
+func startRedis() *exec.Cmd {
+    fmt.Println("正在启动 Redis ...")
+    fmt.Println()
+
+    // 进入 redis-windows-7.0.4 目录
+    if err := os.Chdir("./redis-windows-7.0.4"); err != nil {
+        panic(err)
+    }
+
+    comm, _ := os.Getwd()
+    comm += "./redis-server.exe"
+    // 启动 Redis 服务器
+    cmd := exec.Command(comm)
+    if err := cmd.Start(); err != nil {
+        panic(err)
+    }
+    println("Redis 启动成功！")
+    os.Chdir("..")
+
+    return cmd
+}
+
+func isRedisRunning() bool {
+    // 执行 tasklist 命令并获取输出结果
+    cmd := exec.Command("tasklist")
+    output, err := cmd.Output()
+    if err != nil {
+        panic(err)
+    }
+
+    // 检查输出结果中是否包含 redis-server.exe 进程
+    if strings.Contains(string(output), "redis-server.exe") {
+        return true
+    } else {
+        return false
+    }
+}
+
+func startYunzai() {
+    if !isRedisRunning() {
+        startRedis()
+    }
+    os.Chdir("./Yunzai-Bot")
+    fmt.Println("正在启动云崽...")
+    dir, _ := os.Getwd()
+    cmd := exec.Command("cmd.exe", "/c", "start /d", dir, "node app")
+
+    fmt.Println(dir)
+    if err := cmd.Start(); err != nil {
+        panic(err)
+    }
+    fmt.Println("云崽启动成功！")
+    os.Chdir("..")
+}
+
+func reInstallDep() {
+    os.Chdir("./Yunzai-Bot")
+    executeCmd("pnpm config set puppeteer_download_host=https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
+    if _, err := os.Stat("./node_modules"); err == nil {
+        fmt.Println("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
+        userChoice := ReadInput("y", "n")
+        if userChoice == "y" {
+            executeCmd("pnpm update", "", "")
+            executeCmd("pnpm install -P", "", "安装云崽依赖成功！")
+        }
+        if userChoice == "n" {
+            return
+        }
+    } else {
+        executeCmd("pnpm install -P", "", "安装云崽依赖成功！")
+    }
+    os.Chdir("..")
+}
+
+func customCommand() {
+    //读取用户输入的一串字符串
+    fmt.Print("请输入命令：")
+    var command string
+    _, err := fmt.Scanln(&command)
+    if err != nil {
+        fmt.Println("请输入字符串")
+        return
+    }
+    os.Chdir("./Yunzai-Bot")
+    executeCmd(command, "", "")
+    os.Chdir("..")
+}
+
+func manageYunzai() {
+    dir, _ := os.Getwd()
+    fmt.Println(dir)
+    for {
+        fmt.Println("===云崽管理===")
+        fmt.Println("1. 启动云崽")
+        fmt.Println("2. 切换账号")
+        fmt.Println("3. 重装依赖")
+        fmt.Println("4. 输入命令")
+        fmt.Println("0. 返回上一级")
+        fmt.Print("请选择操作：")
+        var choice int
+        _, err := fmt.Scanln(&choice)
+        if err != nil {
+            fmt.Println("输入错误，请重新选择")
+            continue
+        }
+
+        switch choice {
+        case 0:
+            fmt.Println("退出程序")
+            return
+        case 1:
+            fmt.Println("您选择了启动云崽")
+            fmt.Println()
+            startYunzai()
+        case 2:
+            fmt.Println("您选择了切换账号")
+            fmt.Println()
+        case 3:
+            fmt.Println("您选择了重装依赖")
+            fmt.Println()
+            reInstallDep()
+        case 4:
+            fmt.Println("您选择了输入命令")
+            fmt.Println()
+            customCommand()
+        default:
+            fmt.Println("选择不正确，请重新选择")
+        }
+    }
 }
 
 func menu() {
+    dir, _ := os.Getwd()
+    fmt.Println(dir)
     for {
-        fmt.Println("请选择操作：")
+        fmt.Println("===主菜单===")
         fmt.Println("1. 安装云崽")
         fmt.Println("2. 云崽管理")
         fmt.Println("3. BUG修复")
         fmt.Println("0. 退出程序")
+        fmt.Print("请选择操作：")
 
         var choice int
         _, err := fmt.Scanln(&choice)
@@ -167,14 +304,15 @@ func menu() {
             return
         case 1:
             fmt.Println("您选择了安装云崽")
-            // TODO: 执行安装云崽的相关代码
+            fmt.Println()
             downloadYunzai()
-
         case 2:
             fmt.Println("您选择了云崽管理")
-            // TODO: 执行云崽管理的相关代码
+            fmt.Println()
+            manageYunzai()
         case 3:
             fmt.Println("您选择了BUG修复")
+            fmt.Println()
             // TODO: 执行BUG修复的相关代码
         default:
             fmt.Println("选择不正确，请重新选择")
