@@ -251,8 +251,8 @@ func isRedisRunning() bool {
 func startYunzai() {
     if !isRedisRunning() {
         startRedis()
-        //等待3秒
-        time.Sleep(3 * time.Second)
+        //等待1秒
+        time.Sleep(1 * time.Second)
     }
     os.Chdir("./Yunzai-Bot")
     printWithEmptyLine("正在启动云崽...")
