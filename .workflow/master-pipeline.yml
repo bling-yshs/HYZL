@@ -29,4 +29,5 @@ stages:
         displayName: 上传制品
         dependArtifact: BUILD_ARTIFACT
         artifactName: output
+        strategy: {}
         dependsOn: build_golang
