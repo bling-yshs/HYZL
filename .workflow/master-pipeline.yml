@@ -3,10 +3,10 @@ name: master-pipeline
 displayName: MasterPipeline
 triggers:
   trigger: auto
-  push:
+  pr:
     branches:
-      include:
-        - master
+      prefix:
+        - ''
 stages:
   - name: compile
     displayName: 编译
