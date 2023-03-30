@@ -6,6 +6,7 @@ import (
     "fmt"
     "os"
     "os/exec"
+    "runtime"
     "strings"
 )
 
@@ -194,12 +195,11 @@ func startYunzai() {
     os.Chdir("./Yunzai-Bot")
     fmt.Println("正在启动云崽...")
     dir, _ := os.Getwd()
-    cmd := exec.Command("cmd.exe", "/c", "start /d", dir, "node app")
-
-    fmt.Println(dir)
-    if err := cmd.Start(); err != nil {
-        panic(err)
+    var cmd *exec.Cmd
+    if runtime.GOOS == "windows" {
+        cmd = exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node app")
     }
+    cmd.Run()
     fmt.Println("云崽启动成功！")
     os.Chdir("..")
 }
@@ -224,14 +224,12 @@ func reInstallDep() {
 }
 
 func customCommand() {
-    //读取用户输入的一串字符串
+    // 读取用户输入的一串字符串
     fmt.Print("请输入命令：")
-    var command string
-    _, err := fmt.Scanln(&command)
-    if err != nil {
-        fmt.Println("请输入字符串")
-        return
-    }
+    reader := bufio.NewReader(os.Stdin)
+    command, _ := reader.ReadString('\n')
+    command = strings.TrimSuffix(command, "\n")
+
     os.Chdir("./Yunzai-Bot")
     executeCmd(command, "", "")
     os.Chdir("..")
@@ -245,7 +243,7 @@ func manageYunzai() {
         fmt.Println("1. 启动云崽")
         fmt.Println("2. 切换账号")
         fmt.Println("3. 重装依赖")
-        fmt.Println("4. 输入命令")
+        fmt.Println("4. 自定义终端命令")
         fmt.Println("0. 返回上一级")
         fmt.Print("请选择操作：")
         var choice int
@@ -271,7 +269,7 @@ func manageYunzai() {
             fmt.Println()
             reInstallDep()
         case 4:
-            fmt.Println("您选择了输入命令")
+            fmt.Println("您选择了自定义终端命令")
             fmt.Println()
             customCommand()
         default:
