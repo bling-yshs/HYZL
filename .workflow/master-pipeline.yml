@@ -40,7 +40,7 @@ stages:
   - name: release
     displayName: 发布
     strategy: naturally
-    trigger: auto
+    trigger: manual
     steps:
       - step: publish@release_artifacts
         name: publish_release_artifacts
