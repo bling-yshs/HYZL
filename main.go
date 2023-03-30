@@ -3,7 +3,9 @@ package main
 
 import (
     "bufio"
+    "encoding/json"
     "fmt"
+    "io/fs"
     "os"
     "os/exec"
     "strings"
@@ -13,6 +15,7 @@ import (
 type Config struct {
     GitInstalled    bool `json:"git_installed"`
     NodeJSInstalled bool `json:"nodejs_installed"`
+    NpmInstalled    bool `json:"npm_installed"`
 }
 
 //↓工具函数
@@ -46,7 +49,9 @@ func executeCmd(stringArgs ...string) {
 
     cmd := exec.Command("cmd", "/C", stringArgs[0])
     if len(stringArgs) >= 2 {
-        printWithEmptyLine(stringArgs[1])
+        if len(stringArgs[1]) > 0 {
+            printWithEmptyLine(stringArgs[1])
+        }
     }
     cmd.Stdout = os.Stdout // 直接将命令标准输出连接到标准输出流
     cmd.Stderr = os.Stderr // 将错误输出连接到标准错误流
@@ -95,24 +100,75 @@ func checkFirstRun() {
             return
         }
         defer file.Close()
+        var config Config
+        config.GitInstalled = false
+        config.NodeJSInstalled = false
+        config.NpmInstalled = false
+        //写入文件
+        data, err := json.MarshalIndent(config, "", "    ")
+        if err != nil {
+            printErr(err)
+            return
+        }
+        _, err = file.Write(data)
+        if err != nil {
+            printErr(err)
+            return
+        }
     }
 }
 
 func checkEnv() bool {
-    b := checkCommand("git -v")
-    if !b {
-        printWithEmptyLine("检测到未安装 Git ，请安装后继续")
-        return false
+    var willWrite = false
+    var config Config
+    file, err := os.Open("./config/config.json")
+    if err == nil {
+        defer file.Close()
+        decoder := json.NewDecoder(file)
+        err = decoder.Decode(&config)
+        if err != nil {
+            printErr(err)
+        }
     }
-    b2 := checkCommand("node -v")
-    if !b2 {
-        printWithEmptyLine("检测到未安装 Node.js ，请安装后继续")
-        return false
+    if !config.GitInstalled {
+        if !checkCommand("git -v") {
+            printWithEmptyLine("检测到未安装 Git ，请安装后继续")
+            return false
+        } else {
+            config.GitInstalled = true
+            willWrite = true
+        }
     }
+    if !config.NodeJSInstalled {
+        if !checkCommand("node -v") {
+            printWithEmptyLine("检测到未安装 Node.js ，请安装后继续")
+            return false
+        } else {
+            config.NodeJSInstalled = true
+            willWrite = true
 
-    b3 := checkCommand("npm -v")
-    if !b3 {
-        fmt.Print("检测到未安装 npm ，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
+        }
+    }
+    if !config.NpmInstalled {
+        if !checkCommand("npm -v") {
+            fmt.Print("检测到未安装 npm ，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
+        } else {
+            config.NpmInstalled = true
+            willWrite = true
+        }
+    }
+    if willWrite {
+        //写入到文件
+        data, err := json.MarshalIndent(config, "", "    ")
+        if err != nil {
+            printErr(err)
+            return false
+        }
+        err = os.WriteFile("./config/config.json", data, 0777)
+        if err != nil {
+            printErr(err)
+            return false
+        }
     }
     return true
 }
@@ -241,6 +297,47 @@ func closeYunzai() {
 }
 
 func changeAccount() {
+    // 读取文件内容
+    content, err := os.ReadFile("./Yunzai-Bot/config/config/qq.yaml")
+    if err != nil {
+        panic(err)
+    }
+
+    // 将文件内容转换为字符串
+    strContent := string(content)
+
+    // 读取用户输入的 qq、pwd 和 platform
+    scanner := bufio.NewScanner(os.Stdin)
+    fmt.Print("请输入 QQ 账号：")
+    scanner.Scan()
+    qq := scanner.Text()
+    fmt.Print("请输入密码：")
+    scanner.Scan()
+    pwd := scanner.Text()
+    fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad）：")
+    scanner.Scan()
+    platform := scanner.Text()
+
+    // 替换文件中的 qq、pwd 和 platform 字段
+    lines := strings.Split(strContent, "\n")
+    for i, line := range lines {
+        if strings.HasPrefix(line, "qq:") {
+            lines[i] = fmt.Sprintf("qq: %s", qq)
+        } else if strings.HasPrefix(line, "pwd:") {
+            lines[i] = fmt.Sprintf("pwd: '%s'", pwd)
+        } else if strings.HasPrefix(line, "platform:") {
+            lines[i] = fmt.Sprintf("platform: %s", platform)
+        }
+    }
+    newContent := strings.Join(lines, "\n")
+
+    // 将更新后的配置写回文件
+    err = os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(newContent), fs.FileMode(0777))
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Println("云崽账号更新成功！")
 }
 
 func clearLog() {
@@ -248,6 +345,10 @@ func clearLog() {
     cmd := exec.Command("cmd", "/c", "cls")
     cmd.Stdout = os.Stdout
     cmd.Run()
+}
+
+func bugsFix() {
+    printWithEmptyLine("还没写！")
 }
 
 func manageYunzai() {
@@ -321,8 +422,7 @@ func menu() {
             manageYunzai()
         case 3:
             clearLog()
-
-            // TODO: 执行BUG修复的相关代码
+            bugsFix()
         default:
             printWithEmptyLine("选择不正确，请重新选择")
         }
