@@ -430,7 +430,21 @@ func menu() {
     }
 }
 
+func checkUpdate() {
+    cmd := exec.Command("git", "fetch")
+    output, err := cmd.Output()
+    if err != nil {
+        fmt.Println(err)
+    }
+    if strings.Contains(string(output), "up to date") {
+        fmt.Println("没有更新")
+    } else {
+        fmt.Println("有更新")
+    }
+}
 func main() {
+    checkUpdate()
+    return
     checkFirstRun()
     if !checkEnv() {
         //按任意键退出
