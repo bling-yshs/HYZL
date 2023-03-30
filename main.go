@@ -42,11 +42,13 @@ func ReadInput(allowedValues ...string) string {
     }
 }
 
-func executeCmd(command string, startMsg string, returnMsg string) {
+func executeCmd(stringArgs ...string) {
 
-    fmt.Println(startMsg)
-    fmt.Println()
-    cmd := exec.Command("cmd", "/C", command)
+    cmd := exec.Command("cmd", "/C", stringArgs[0])
+    if len(stringArgs) >= 2 {
+        fmt.Println(stringArgs[1])
+        fmt.Println()
+    }
     cmd.Stdout = os.Stdout // 直接将命令标准输出连接到标准输出流
     cmd.Stderr = os.Stderr // 将错误输出连接到标准错误流
     cmd.Stdin = os.Stdin   // 将标准输入连接到命令的标准输入
@@ -60,8 +62,10 @@ func executeCmd(command string, startMsg string, returnMsg string) {
     if err != nil {
         printErr(err)
     }
-    fmt.Println(returnMsg)
-    fmt.Println()
+    if len(stringArgs) >= 3 {
+        fmt.Println(stringArgs[2])
+        fmt.Println()
+    }
 }
 
 func printErr(err error) {
@@ -92,17 +96,6 @@ func checkFirstRun() {
 
 func checkEnv() bool {
 
-    // _, err := exec.LookPath("git")
-    // if err != nil {
-    //     fmt.Println("检测到未安装 Git ，请安装后继续")
-    //     return false
-    // }
-
-    // _, err = exec.LookPath("node")
-    // if err != nil {
-    //     fmt.Println("检测到未安装 Node.js ，请安装后继续")
-    //     return false
-    // }
     b := checkCommand("git -v")
     if !b {
         fmt.Println("检测到未安装 Git ，请安装后继续")
@@ -136,8 +129,8 @@ func checkRedis() {
         fmt.Println("退出程序")
         os.Exit(0)
     }
-
 }
+
 func downloadYunzai() {
     _, err := os.Stat("./Yunzai-bot")
     if err == nil {
@@ -167,6 +160,7 @@ func downloadYunzai() {
     executeCmd("pnpm install -P", "开始安装云崽依赖", "安装云崽依赖成功！")
     os.Chdir("..")
 }
+
 func startRedis() *exec.Cmd {
     fmt.Println("正在启动 Redis ...")
 
@@ -227,7 +221,7 @@ func reInstallDep() {
         fmt.Println("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
         userChoice := ReadInput("y", "n")
         if userChoice == "y" {
-            executeCmd("pnpm update", "", "")
+            executeCmd("pnpm update", "开始安装云崽依赖...", "")
             executeCmd("pnpm install -P", "", "安装云崽依赖成功！")
         }
         if userChoice == "n" {
@@ -247,7 +241,7 @@ func customCommand() {
     command = strings.TrimSuffix(command, "\n")
 
     os.Chdir("./Yunzai-Bot")
-    executeCmd(command, "", "")
+    executeCmd(command)
     os.Chdir("..")
 }
 
