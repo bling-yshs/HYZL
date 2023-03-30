@@ -95,7 +95,6 @@ func checkFirstRun() {
 }
 
 func checkEnv() bool {
-
     b := checkCommand("git -v")
     if !b {
         fmt.Println("检测到未安装 Git ，请安装后继续")
@@ -104,11 +103,6 @@ func checkEnv() bool {
     b2 := checkCommand("node -v")
     if !b2 {
         fmt.Println("检测到未安装 Node.js ，请安装后继续")
-        return false
-    }
-    b3 := checkCommand("npm -v")
-    if !b3 {
-        fmt.Println("检测到未安装 npm ，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
         return false
     }
     return true
@@ -143,10 +137,6 @@ func downloadYunzai() {
         if userChoice == "n" {
             return
         }
-    }
-    b := checkCommand("npm -v")
-    if !b {
-        fmt.Print("无法使用npm命令，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
     }
     executeCmd("git clone --depth 1 -b main https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git", "开始下载云崽...", "下载云崽成功！")
     //进入Yunzai-Bot文件夹
