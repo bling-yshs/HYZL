@@ -1,4 +1,4 @@
-// 编译： go build -o 云崽启动器 ./...
+// 编译： go build
 package main
 
 import (
@@ -17,6 +17,8 @@ type Config struct {
     NodeJSInstalled bool `json:"nodejs_installed"`
     NpmInstalled    bool `json:"npm_installed"`
 }
+
+// const version = "0.0.3"
 
 //↓工具函数
 func checkCommand(command string) bool {
@@ -430,21 +432,28 @@ func menu() {
     }
 }
 
-func checkUpdate() {
-    cmd := exec.Command("git", "fetch")
-    output, err := cmd.Output()
+/*
+func checkUpdate() error {
+    selfupdate.EnableLog()
+    previous := semver.MustParse(version)
+    latest, err := selfupdate.UpdateSelf(previous, "bling-yshs/YzLauncher-Windows-Releases")
     if err != nil {
-        fmt.Println(err)
+        return err
     }
-    if strings.Contains(string(output), "up to date") {
-        fmt.Println("没有更新")
+    if previous.Equals(latest.Version) {
+        fmt.Println("当前已是最新版本", version)
     } else {
-        fmt.Println("有更新")
+        fmt.Println("成功升级到最新版本", latest.Version)
+        fmt.Println("更新日志:\n", latest.ReleaseNotes)
     }
+    return nil
 }
+*/
 func main() {
-    checkUpdate()
-    return
+    // err := checkUpdate()
+    // if err != nil {
+    //     printErr(err)
+    // }
     checkFirstRun()
     if !checkEnv() {
         //按任意键退出
