@@ -521,8 +521,8 @@ func checkUpdate() {
     }
     _, latestVersion := getLatestVerion()
     if compareVersion(version, latestVersion) {
-        fmt.Println("发现新版本：", latestVersion, "，5 秒后开始更新...")
-        time.Sleep(5 * time.Second)
+        fmt.Println("发现新版本：", latestVersion, "，3 秒后开始更新...")
+        time.Sleep(3 * time.Second)
         batPath := filepath.Join(programRunPath, "update.bat")
         downloadLink := `https://gitee.com/bling_yshs/YzLauncher-windows/releases/download/` + latestVersion + `/YzLauncher-windows.exe`
         printWithEmptyLine(downloadLink)
