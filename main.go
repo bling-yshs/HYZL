@@ -128,9 +128,7 @@ if exist "%filename%" (
     start "" ".\%filename%"
 ) else (
     echo Failed to download %filename%
-)
-
-pause`
+)`
 
     err := ioutil.WriteFile("update.bat", []byte(batchContent), 0777)
     if err != nil {
@@ -546,7 +544,7 @@ func getAppInfo(args ...*string) {
     //
 }
 
-const version = "v0.0.3"
+const version = "v0.0.4"
 
 var programRunPath = ""
 
