@@ -112,6 +112,12 @@ func printWithEmptyLine(str string) {
     fmt.Println()
 }
 
+func shutdownApp() {
+    fmt.Println("按回车键退出...")
+    fmt.Scanln()
+    os.Exit(0)
+}
+
 //↑工具函数
 
 func createUpdateBat(latestUrl string, batPath string) {
@@ -528,8 +534,7 @@ func checkUpdate() {
         printWithEmptyLine(downloadLink)
         createUpdateBat(downloadLink, batPath)
         update()
-        fmt.Println("按回车键退出...")
-        fmt.Scanln()
+        shutdownApp()
     }
 }
 
@@ -553,10 +558,7 @@ func main() {
     checkUpdate()
     checkFirstRun()
     if !checkEnv() {
-        //按任意键退出
-        fmt.Println("按回车键退出...")
-        fmt.Scanln()
-        return
+        shutdownApp()
     }
     checkRedis()
     menu()
