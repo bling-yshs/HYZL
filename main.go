@@ -404,7 +404,7 @@ func changeAccount() {
     fmt.Print("请输入密码：")
     scanner.Scan()
     pwd := scanner.Text()
-    fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad）：")
+    fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad）2023年3月31日：推荐使用MacOS登录：")
     scanner.Scan()
     platform := scanner.Text()
 
