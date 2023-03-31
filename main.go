@@ -6,10 +6,16 @@ import (
     "encoding/json"
     "fmt"
     "io/fs"
+    "net/http"
     "os"
     "os/exec"
+    "path/filepath"
+    "strconv"
     "strings"
     "time"
+
+    "golang.org/x/text/encoding/simplifiedchinese"
+    "golang.org/x/text/transform"
 )
 
 type Config struct {
@@ -18,9 +24,34 @@ type Config struct {
     NpmInstalled    bool `json:"npm_installed"`
 }
 
-// const version = "0.0.3"
-
 //↓工具函数
+
+func compareVersion(version string, latestVersion string) bool {
+    version = version[1:]                   // 去除前面的v
+    v1 := strings.Split(version, ".")       // 将版本号按 "." 分割成数组
+    v2 := strings.Split(latestVersion, ".") // 同上
+
+    for i := 0; i < len(v1) || i < len(v2); i++ {
+        n1, n2 := 0, 0 // 初始化数字变量
+
+        // 如果第一个版本号没有到头，就将其转换为数字
+        if i < len(v1) {
+            n1, _ = strconv.Atoi(v1[i])
+        }
+
+        // 如果第二个版本号没有到头，就将其转换为数字
+        if i < len(v2) {
+            n2, _ = strconv.Atoi(v2[i])
+        }
+
+        // 比较数字大小，输出结果
+        if n2 > n1 {
+            return true
+        }
+    }
+    return false
+}
+
 func checkCommand(command string) bool {
     cmd := exec.Command("cmd", "/c", command)
     err := cmd.Run()
@@ -84,6 +115,74 @@ func printWithEmptyLine(str string) {
 }
 
 //↑工具函数
+
+func createUpdateBat(latestUrl string, batPath string) {
+    batchContent := `@echo off
+setlocal enabledelayedexpansion
+
+set "url=` + latestUrl + `"
+set "filename=YzLauncher-windows.exe"
+
+curl -L -o "%filename%" "%url%"
+
+if exist "%filename%" (
+    move /y "%filename%" ".\%filename%"
+    echo 下载新版本成功！正在启动...
+    start "" ".\%filename%"
+) else (
+    echo Failed to download %filename%
+)
+
+pause`
+
+    // 将bat脚本内容写入文件
+    file, err := os.Create("update.bat")
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+    defer file.Close()
+
+    // 设置文件句柄为GBK编码
+    file.WriteString("\xEF\xBB\xBF")
+    writer := transform.NewWriter(file, simplifiedchinese.GBK.NewEncoder())
+
+    // 将batch内容写入文件
+    _, err = writer.WriteString(batchContent)
+    if err != nil {
+        fmt.Println(err)
+        return
+    }
+}
+
+func update() {
+    batPath := filepath.Join(programRunPath, "update.bat")
+    cmd := exec.Command("cmd", "/c", "start", "", batPath)
+    cmd.Start()
+    time.Sleep(1 * time.Second)
+    os.Exit(0)
+}
+
+func getLatestVerion() (string, string) {
+    url := "https://gitee.com/bling_yshs/YzLauncher-windows/releases/latest"
+
+    client := &http.Client{
+        CheckRedirect: func(req *http.Request, via []*http.Request) error {
+            // Disable automatic redirect following
+            return http.ErrUseLastResponse
+        },
+    }
+    resp, err := client.Get(url)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+    newLink := resp.Header.Get("Location")
+    segments := strings.Split(newLink, "/")
+
+    // Get the last segment
+    return newLink, segments[len(segments)-1]
+}
 
 func checkFirstRun() {
     //检查当前目录下是否存在config文件夹
@@ -432,28 +531,38 @@ func menu() {
     }
 }
 
-/*
-func checkUpdate() error {
-    selfupdate.EnableLog()
-    previous := semver.MustParse(version)
-    latest, err := selfupdate.UpdateSelf(previous, "bling-yshs/YzLauncher-Windows-Releases")
-    if err != nil {
-        return err
+func checkUpdate() {
+    _, latestVersion := getLatestVerion()
+    if compareVersion(version, latestVersion) {
+        fmt.Println("发现新版本：", latestVersion, " 正在更新...")
+        batPath := filepath.Join(programRunPath, "update.bat")
+        downloadLink := `https://gitee.com/bling_yshs/YzLauncher-windows/releases/download/` + latestVersion + `/YzLauncher-windows.exe`
+        printWithEmptyLine(downloadLink)
+        createUpdateBat(downloadLink, batPath)
+        update()
+        fmt.Println("按回车键退出...")
+        fmt.Scanln()
     }
-    if previous.Equals(latest.Version) {
-        fmt.Println("当前已是最新版本", version)
-    } else {
-        fmt.Println("成功升级到最新版本", latest.Version)
-        fmt.Println("更新日志:\n", latest.ReleaseNotes)
-    }
-    return nil
 }
-*/
+
+func getAppInfo(args ...*string) {
+    //获取程序运行路径
+    execPath, err := os.Executable()
+    if err != nil {
+        printErr(err)
+    }
+    currentDir := filepath.Dir(execPath)
+    *args[0] = currentDir
+    //
+}
+
+const version = "v0.0.2"
+
+var programRunPath = ""
+
 func main() {
-    // err := checkUpdate()
-    // if err != nil {
-    //     printErr(err)
-    // }
+    getAppInfo(&programRunPath)
+    checkUpdate()
     checkFirstRun()
     if !checkEnv() {
         //按任意键退出
