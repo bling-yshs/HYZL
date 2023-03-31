@@ -6,6 +6,7 @@ import (
     "encoding/json"
     "fmt"
     "io/fs"
+    "io/ioutil"
     "net/http"
     "os"
     "os/exec"
@@ -13,9 +14,6 @@ import (
     "strconv"
     "strings"
     "time"
-
-    "golang.org/x/text/encoding/simplifiedchinese"
-    "golang.org/x/text/transform"
 )
 
 type Config struct {
@@ -127,7 +125,6 @@ curl -L -o "%filename%" "%url%"
 
 if exist "%filename%" (
     move /y "%filename%" ".\%filename%"
-    echo 下载新版本成功！正在启动...
     start "" ".\%filename%"
 ) else (
     echo Failed to download %filename%
@@ -135,20 +132,7 @@ if exist "%filename%" (
 
 pause`
 
-    // 将bat脚本内容写入文件
-    file, err := os.Create("update.bat")
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
-    defer file.Close()
-
-    // 设置文件句柄为GBK编码
-    file.WriteString("\xEF\xBB\xBF")
-    writer := transform.NewWriter(file, simplifiedchinese.GBK.NewEncoder())
-
-    // 将batch内容写入文件
-    _, err = writer.WriteString(batchContent)
+    err := ioutil.WriteFile("update.bat", []byte(batchContent), 0777)
     if err != nil {
         fmt.Println(err)
         return
@@ -532,9 +516,15 @@ func menu() {
 }
 
 func checkUpdate() {
+    _, err := os.Stat("./update.bat")
+    if err == nil {
+        //删除update.bat
+        os.Remove("./update.bat")
+    }
     _, latestVersion := getLatestVerion()
     if compareVersion(version, latestVersion) {
-        fmt.Println("发现新版本：", latestVersion, " 正在更新...")
+        fmt.Println("发现新版本：", latestVersion, "，5 秒后开始更新...")
+        time.Sleep(5 * time.Second)
         batPath := filepath.Join(programRunPath, "update.bat")
         downloadLink := `https://gitee.com/bling_yshs/YzLauncher-windows/releases/download/` + latestVersion + `/YzLauncher-windows.exe`
         printWithEmptyLine(downloadLink)
@@ -556,7 +546,7 @@ func getAppInfo(args ...*string) {
     //
 }
 
-const version = "v0.0.2"
+const version = "v0.0.3"
 
 var programRunPath = ""
 
