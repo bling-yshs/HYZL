@@ -6,7 +6,6 @@ import (
     "encoding/json"
     "fmt"
     "io/fs"
-    "io/ioutil"
     "net/http"
     "os"
     "os/exec"
@@ -136,7 +135,7 @@ if exist "%filename%" (
     echo Failed to download %filename%
 )`
 
-    err := ioutil.WriteFile("update.bat", []byte(batchContent), 0777)
+    err := os.WriteFile("update.bat", []byte(batchContent), 0777)
     if err != nil {
         fmt.Println(err)
         return
@@ -436,11 +435,17 @@ func clearLog() {
     cmd.Stdout = os.Stdout
     cmd.Run()
 }
+func pupFix() {
+    os.Chdir("./Yunzai-Bot")
+    executeCmd("pnpm install puppeteer@19.7.3 -w", "正在修复 puppeteer...")
+    executeCmd("node ./node_modules/puppeteer/install.js", "正在下载 Chromium...")
+}
 
 func bugsFix() {
     for {
         fmt.Println("===BUG修复===")
         fmt.Println("1. 重装依赖")
+        fmt.Println("2. 修复 puppeteer Chromium 问题")
         fmt.Println("0. 返回上一级")
         fmt.Print("请选择操作：")
         var choice int
@@ -457,6 +462,9 @@ func bugsFix() {
         case 1:
             clearLog()
             reInstallDep()
+        case 2:
+            clearLog()
+            pupFix()
         default:
             printWithEmptyLine("选择不正确，请重新选择")
         }
