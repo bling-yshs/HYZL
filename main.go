@@ -472,9 +472,14 @@ func bugsFix() {
     }
 }
 
-func installGuoba() {
+func installGuobaPlugin() {
     executeCmd("git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/")
     executeCmd("pnpm install --no-lockfile --filter=guoba-plugin -w")
+}
+
+func installMiaoPlugin() {
+    executeCmd("git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/")
+    executeCmd("pnpm add image-size -w")
 }
 
 func installPlugins() {
@@ -482,6 +487,7 @@ func installPlugins() {
     for {
         fmt.Println("===安装插件===")
         fmt.Println("1. 锅巴插件")
+        fmt.Println("2. 喵喵插件")
         fmt.Println("0. 返回上一级")
         fmt.Print("\n请选择操作：")
         var choice int
@@ -497,7 +503,10 @@ func installPlugins() {
             os.Chdir("..")
             return
         case 1:
-            installGuoba()
+            installGuobaPlugin()
+            return
+        case 2:
+            installMiaoPlugin()
             return
         default:
             printWithEmptyLine("选择不正确，请重新选择")
