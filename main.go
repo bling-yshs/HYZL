@@ -473,13 +473,58 @@ func bugsFix() {
 }
 
 func installGuobaPlugin() {
+    _, err := os.Stat("./plugins/Guoba-Plugin")
+    if err == nil {
+        fmt.Println("当前已安装锅巴插件，请问是否需要重新安装？(是:y 返回菜单:n)")
+        userChoice := ReadInput("y", "n")
+        if userChoice == "n" {
+            return
+        }
+    }
     executeCmd("git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/")
     executeCmd("pnpm install --no-lockfile --filter=guoba-plugin -w")
 }
 
 func installMiaoPlugin() {
+    _, err := os.Stat("./plugins/miao-plugin")
+    if err == nil {
+        fmt.Println("当前已安装喵喵插件，请问是否需要重新安装？(是:y 返回菜单:n)")
+        userChoice := ReadInput("y", "n")
+        if userChoice == "n" {
+            return
+        }
+    }
     executeCmd("git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/")
     executeCmd("pnpm add image-size -w")
+}
+
+func installXiaoyaoPlugin() {
+    _, err := os.Stat("./plugins/xiaoyao-cvs-plugin")
+    if err == nil {
+        fmt.Println("当前已安装逍遥插件，请问是否需要重新安装？(是:y 返回菜单:n)")
+        userChoice := ReadInput("y", "n")
+        if userChoice == "n" {
+            return
+        }
+    }
+    executeCmd("git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/")
+    executeCmd("pnpm add promise-retry -w")
+    executeCmd("pnpm add superagent -w")
+}
+
+func installPluginsTemplate(pluginName string, dirName string, command []string) {
+    pluginDir := "./plugins/" + dirName
+    _, err := os.Stat(pluginDir)
+    if err == nil {
+        fmt.Println("当前已安装", pluginName, "请问是否需要重新安装？(是:y 返回菜单:n)")
+        userChoice := ReadInput("y", "n")
+        if userChoice == "n" {
+            return
+        }
+    }
+    for _, cmd := range command {
+        executeCmd(cmd)
+    }
 }
 
 func installPlugins() {
@@ -488,6 +533,7 @@ func installPlugins() {
         fmt.Println("===安装插件===")
         fmt.Println("1. 锅巴插件")
         fmt.Println("2. 喵喵插件")
+        fmt.Println("3. 逍遥插件")
         fmt.Println("0. 返回上一级")
         fmt.Print("\n请选择操作：")
         var choice int
@@ -504,10 +550,10 @@ func installPlugins() {
             return
         case 1:
             installGuobaPlugin()
-            return
         case 2:
             installMiaoPlugin()
-            return
+        case 3:
+            installXiaoyaoPlugin()
         default:
             printWithEmptyLine("选择不正确，请重新选择")
         }
