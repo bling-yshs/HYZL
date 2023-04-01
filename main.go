@@ -473,50 +473,22 @@ func bugsFix() {
 }
 
 func installGuobaPlugin() {
-    _, err := os.Stat("./plugins/Guoba-Plugin")
-    if err == nil {
-        fmt.Println("当前已安装锅巴插件，请问是否需要重新安装？(是:y 返回菜单:n)")
-        userChoice := ReadInput("y", "n")
-        if userChoice == "n" {
-            return
-        }
-    }
-    executeCmd("git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/")
-    executeCmd("pnpm install --no-lockfile --filter=guoba-plugin -w")
+    installPluginsTemplate("锅巴插件", "Guoba-Plugin", "git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/", "pnpm install --no-lockfile --filter=guoba-plugin -w")
 }
 
 func installMiaoPlugin() {
-    _, err := os.Stat("./plugins/miao-plugin")
-    if err == nil {
-        fmt.Println("当前已安装喵喵插件，请问是否需要重新安装？(是:y 返回菜单:n)")
-        userChoice := ReadInput("y", "n")
-        if userChoice == "n" {
-            return
-        }
-    }
-    executeCmd("git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/")
-    executeCmd("pnpm add image-size -w")
+    installPluginsTemplate("喵喵插件", "miao-plugin", "git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/", "pnpm add image-size -w")
 }
 
 func installXiaoyaoPlugin() {
-    _, err := os.Stat("./plugins/xiaoyao-cvs-plugin")
-    if err == nil {
-        fmt.Println("当前已安装逍遥插件，请问是否需要重新安装？(是:y 返回菜单:n)")
-        userChoice := ReadInput("y", "n")
-        if userChoice == "n" {
-            return
-        }
-    }
-    executeCmd("git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/")
-    executeCmd("pnpm add promise-retry -w")
-    executeCmd("pnpm add superagent -w")
+    installPluginsTemplate("逍遥插件", "miao-plugin", "git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/ ./plugins/miao-plugin/", "pnpm add promise-retry -w", "pnpm add superagent -w")
 }
 
-func installPluginsTemplate(pluginName string, dirName string, command []string) {
+func installPluginsTemplate(pluginChineseName string, dirName string, command ...string) {
     pluginDir := "./plugins/" + dirName
     _, err := os.Stat(pluginDir)
     if err == nil {
-        fmt.Println("当前已安装", pluginName, "请问是否需要重新安装？(是:y 返回菜单:n)")
+        fmt.Println("当前已安装 ", pluginChineseName, "，请问是否需要重新安装？(是:y 返回菜单:n)")
         userChoice := ReadInput("y", "n")
         if userChoice == "n" {
             return
@@ -549,10 +521,13 @@ func installPlugins() {
             os.Chdir("..")
             return
         case 1:
+            clearLog()
             installGuobaPlugin()
         case 2:
+            clearLog()
             installMiaoPlugin()
         case 3:
+            clearLog()
             installXiaoyaoPlugin()
         default:
             printWithEmptyLine("选择不正确，请重新选择")
