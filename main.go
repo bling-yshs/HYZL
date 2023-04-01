@@ -471,6 +471,38 @@ func bugsFix() {
     }
 }
 
+func installGuoba() {
+    executeCmd("git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/")
+    executeCmd("pnpm install --no-lockfile --filter=guoba-plugin -w")
+}
+
+func installPlugins() {
+    for {
+        fmt.Println("===安装插件===")
+        fmt.Println("1. 锅巴插件")
+        fmt.Println("0. 返回上一级")
+        fmt.Print("请选择操作：")
+        var choice int
+        _, err := fmt.Scanln(&choice)
+        if err != nil {
+            printWithEmptyLine("输入错误，请重新选择")
+            continue
+        }
+
+        switch choice {
+        case 0:
+            clearLog()
+            return
+        case 1:
+            installGuoba()
+            startYunzai()
+
+        default:
+            printWithEmptyLine("选择不正确，请重新选择")
+        }
+    }
+}
+
 func manageYunzai() {
 
     for {
@@ -478,7 +510,7 @@ func manageYunzai() {
         fmt.Println("1. 启动云崽")
         fmt.Println("2. 强制关闭云崽")
         fmt.Println("3. 切换账号")
-        fmt.Println("4. 重装依赖")
+        fmt.Println("4. 安装插件")
         fmt.Println("5. 自定义终端命令")
         fmt.Println("0. 返回上一级")
         fmt.Print("请选择操作：")
@@ -504,7 +536,7 @@ func manageYunzai() {
             changeAccount()
         case 4:
             clearLog()
-            reInstallDep()
+            installGuoba()
         case 5:
             clearLog()
             customCommand()
