@@ -23,6 +23,23 @@ type Config struct {
 
 //↓工具函数
 
+func getAppInfo(args ...*string) {
+    //获取程序运行路径
+    execPath, err := os.Executable()
+    if err != nil {
+        printErr(err)
+    }
+    currentDir := filepath.Dir(execPath)
+    *args[0] = currentDir
+}
+
+func clearLog() {
+    //执行clear指令清除控制台
+    cmd := exec.Command("cmd", "/c", "cls")
+    cmd.Stdout = os.Stdout
+    cmd.Run()
+}
+
 func compareVersion(version string, latestVersion string) bool {
     version = version[1:]                   // 去除前面的v
     v1 := strings.Split(version, ".")       // 将版本号按 "." 分割成数组
@@ -58,6 +75,7 @@ func checkCommand(command string) bool {
         return false
     }
 }
+
 func ReadInput(allowedValues ...string) string {
     allowedSet := make(map[string]bool)
     for _, val := range allowedValues {
@@ -429,12 +447,6 @@ func changeAccount() {
     fmt.Println("云崽账号更新成功！")
 }
 
-func clearLog() {
-    //执行clear指令清除控制台
-    cmd := exec.Command("cmd", "/c", "cls")
-    cmd.Stdout = os.Stdout
-    cmd.Run()
-}
 func pupFix() {
     os.Chdir("./Yunzai-Bot")
     executeCmd("pnpm install puppeteer@19.7.3 -w", "正在修复 puppeteer...")
@@ -442,7 +454,7 @@ func pupFix() {
     os.Chdir("..")
 }
 
-func bugsFix() {
+func bugsFixMenu() {
     for {
         fmt.Println("===BUG修复===")
         fmt.Println("1. 重装依赖")
@@ -499,7 +511,7 @@ func installPluginsTemplate(pluginChineseName string, dirName string, command ..
     }
 }
 
-func installPlugins() {
+func installPluginsMenu() {
     os.Chdir("./Yunzai-Bot")
     for {
         fmt.Println("===安装插件===")
@@ -535,7 +547,7 @@ func installPlugins() {
     }
 }
 
-func manageYunzai() {
+func manageYunzaiMenu() {
 
     for {
         fmt.Println("===云崽管理===")
@@ -568,7 +580,7 @@ func manageYunzai() {
             changeAccount()
         case 4:
             clearLog()
-            installPlugins()
+            installPluginsMenu()
         case 5:
             clearLog()
             customCommand()
@@ -578,7 +590,7 @@ func manageYunzai() {
     }
 }
 
-func menu() {
+func mainMenu() {
     for {
         fmt.Println("===主菜单===")
         fmt.Println("1. 安装云崽")
@@ -603,10 +615,10 @@ func menu() {
             downloadYunzai()
         case 2:
             clearLog()
-            manageYunzai()
+            manageYunzaiMenu()
         case 3:
             clearLog()
-            bugsFix()
+            bugsFixMenu()
         default:
             printWithEmptyLine("选择不正确，请重新选择")
         }
@@ -632,17 +644,6 @@ func checkUpdate() {
     }
 }
 
-func getAppInfo(args ...*string) {
-    //获取程序运行路径
-    execPath, err := os.Executable()
-    if err != nil {
-        printErr(err)
-    }
-    currentDir := filepath.Dir(execPath)
-    *args[0] = currentDir
-    //
-}
-
 const version = "v0.0.4"
 
 var programRunPath = ""
@@ -655,5 +656,5 @@ func main() {
         shutdownApp()
     }
     checkRedis()
-    menu()
+    mainMenu()
 }
