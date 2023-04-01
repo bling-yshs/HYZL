@@ -438,7 +438,29 @@ func clearLog() {
 }
 
 func bugsFix() {
-    printWithEmptyLine("还没写！")
+    for {
+        fmt.Println("===BUG修复===")
+        fmt.Println("1. 重装依赖")
+        fmt.Println("0. 返回上一级")
+        fmt.Print("请选择操作：")
+        var choice int
+        _, err := fmt.Scanln(&choice)
+        if err != nil {
+            printWithEmptyLine("输入错误，请重新选择")
+            continue
+        }
+
+        switch choice {
+        case 0:
+            clearLog()
+            return
+        case 1:
+            clearLog()
+            reInstallDep()
+        default:
+            printWithEmptyLine("选择不正确，请重新选择")
+        }
+    }
 }
 
 func manageYunzai() {
