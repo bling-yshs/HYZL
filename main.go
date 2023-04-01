@@ -439,6 +439,7 @@ func pupFix() {
     os.Chdir("./Yunzai-Bot")
     executeCmd("pnpm install puppeteer@19.7.3 -w", "正在修复 puppeteer...")
     executeCmd("node ./node_modules/puppeteer/install.js", "正在下载 Chromium...")
+    os.Chdir("..")
 }
 
 func bugsFix() {
@@ -447,7 +448,7 @@ func bugsFix() {
         fmt.Println("1. 重装依赖")
         fmt.Println("2. 修复 puppeteer Chromium 问题")
         fmt.Println("0. 返回上一级")
-        fmt.Print("请选择操作：")
+        fmt.Print("\n请选择操作：")
         var choice int
         _, err := fmt.Scanln(&choice)
         if err != nil {
@@ -477,11 +478,12 @@ func installGuoba() {
 }
 
 func installPlugins() {
+    os.Chdir("./Yunzai-Bot")
     for {
         fmt.Println("===安装插件===")
         fmt.Println("1. 锅巴插件")
         fmt.Println("0. 返回上一级")
-        fmt.Print("请选择操作：")
+        fmt.Print("\n请选择操作：")
         var choice int
         _, err := fmt.Scanln(&choice)
         if err != nil {
@@ -492,11 +494,11 @@ func installPlugins() {
         switch choice {
         case 0:
             clearLog()
+            os.Chdir("..")
             return
         case 1:
             installGuoba()
-            startYunzai()
-
+            return
         default:
             printWithEmptyLine("选择不正确，请重新选择")
         }
@@ -513,7 +515,7 @@ func manageYunzai() {
         fmt.Println("4. 安装插件")
         fmt.Println("5. 自定义终端命令")
         fmt.Println("0. 返回上一级")
-        fmt.Print("请选择操作：")
+        fmt.Print("\n请选择操作：")
         var choice int
         _, err := fmt.Scanln(&choice)
         if err != nil {
@@ -536,7 +538,7 @@ func manageYunzai() {
             changeAccount()
         case 4:
             clearLog()
-            installGuoba()
+            installPlugins()
         case 5:
             clearLog()
             customCommand()
@@ -553,7 +555,7 @@ func menu() {
         fmt.Println("2. 云崽管理")
         fmt.Println("3. BUG修复")
         fmt.Println("0. 退出程序")
-        fmt.Print("请选择操作：")
+        fmt.Print("\n请选择操作：")
 
         var choice int
         _, err := fmt.Scanln(&choice)
