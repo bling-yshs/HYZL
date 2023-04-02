@@ -5,8 +5,10 @@ import (
     "bufio"
     "encoding/json"
     "fmt"
+    "io"
     "io/fs"
     "net/http"
+    "net/url"
     "os"
     "os/exec"
     "path/filepath"
@@ -22,6 +24,29 @@ type Config struct {
 }
 
 //↓工具函数
+
+func downloadFile(dir, fileUrl string) {
+    resp, err := http.Get(fileUrl)
+    if err != nil {
+        printErr(err)
+    }
+    defer resp.Body.Close()
+
+    fileName, _ := url.PathUnescape(filepath.Base(fileUrl))
+    filePath := filepath.Join(dir, fileName)
+
+    out, err := os.Create(filePath)
+    if err != nil {
+        printErr(err)
+    }
+    defer out.Close()
+
+    _, err = io.Copy(out, resp.Body)
+    if err != nil {
+        printErr(err)
+    }
+
+}
 
 func getAppInfo(args ...*string) {
     //获取程序运行路径
@@ -76,7 +101,7 @@ func checkCommand(command string) bool {
     }
 }
 
-func ReadInput(allowedValues ...string) string {
+func ReadChoice(allowedValues ...string) string {
     allowedSet := make(map[string]bool)
     for _, val := range allowedValues {
         allowedSet[val] = true
@@ -286,7 +311,7 @@ func checkRedis() {
     }
     printWithEmptyLine("检测到当前目录下不存在 redis-windows-7.0.4 ，请问是否需要自动下载 Redis ？(是:y 退出程序:n)")
     //读取用户输入y或者n
-    userChoice := ReadInput("y", "n")
+    userChoice := ReadChoice("y", "n")
     if userChoice == "y" {
         executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/redis-windows-7.0.4", "开始下载 Redis ...", "下载 Redis 成功！")
     }
@@ -300,7 +325,7 @@ func downloadYunzai() {
     _, err := os.Stat("./Yunzai-bot")
     if err == nil {
         printWithEmptyLine("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
-        userChoice := ReadInput("y", "n")
+        userChoice := ReadChoice("y", "n")
         if userChoice == "y" {
             //删除文件夹
             os.RemoveAll("./Yunzai-bot")
@@ -372,7 +397,7 @@ func reInstallDep() {
     executeCmd("pnpm config set puppeteer_download_host=https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
     if _, err := os.Stat("./node_modules"); err == nil {
         fmt.Println("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
-        userChoice := ReadInput("y", "n")
+        userChoice := ReadChoice("y", "n")
         if userChoice == "y" {
             executeCmd("pnpm update", "开始安装云崽依赖...")
             executeCmd("pnpm install -P", "", "安装云崽依赖成功！")
@@ -454,6 +479,92 @@ func pupFix() {
     os.Chdir("..")
 }
 
+//↓插件安装函数
+
+func installGuobaPlugin() {
+    installPluginsTemplate("锅巴插件", "Guoba-Plugin", "git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/", "pnpm install --no-lockfile --filter=guoba-plugin -w")
+}
+
+func installMiaoPlugin() {
+    installPluginsTemplate("喵喵插件", "miao-plugin", "git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/", "pnpm add image-size -w")
+}
+
+func installXiaoyaoPlugin() {
+    installPluginsTemplate("逍遥插件", "miao-plugin", "git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/ ./plugins/miao-plugin/", "pnpm add promise-retry -w", "pnpm add superagent -w")
+}
+
+func installFengyePlugin() {
+    installPluginsTemplate("枫叶插件", "hs-qiqi-plugin", "git clone --depth=1  https://gitee.com/kesally/hs-qiqi-cv-plugin.git  ./plugins/hs-qiqi-plugin")
+}
+
+func installPluginsTemplate(pluginChineseName string, dirName string, command ...string) {
+    pluginDir := "./plugins/" + dirName
+    _, err := os.Stat(pluginDir)
+    if err == nil {
+        fmt.Println("当前已安装 ", pluginChineseName, "，请问是否需要重新安装？(是:y 返回菜单:n)")
+        userChoice := ReadChoice("y", "n")
+        if userChoice == "n" {
+            return
+        }
+    }
+    for _, cmd := range command {
+        executeCmd(cmd)
+    }
+}
+func installJsPlugin() {
+    jsPluginDir := programRunPath + "/Yunzai-bot/plugins/example"
+    //输入js插件的地址，例如https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
+    fmt.Print("请输入js插件的地址：")
+    scanner := bufio.NewScanner(os.Stdin)
+    scanner.Scan()
+    jsPluginUrl := scanner.Text()
+    //检查url是否为https://开头，并且以js结尾
+    if !strings.HasPrefix(jsPluginUrl, "https://") || !strings.HasSuffix(jsPluginUrl, ".js") {
+        fmt.Println("输入的js插件地址不正确，请重新输入")
+        return
+    }
+    //如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
+    jsPluginUrl = strings.Replace(jsPluginUrl, "blob", "raw", 1)
+    //下载js插件，保存到jsPluginDir
+    downloadFile(jsPluginDir, jsPluginUrl)
+}
+
+//↓菜单函数
+func mainMenu() {
+    for {
+        fmt.Println("===主菜单===")
+        fmt.Println("1. 安装云崽")
+        fmt.Println("2. 云崽管理")
+        fmt.Println("3. BUG修复")
+        fmt.Println("0. 退出程序")
+        fmt.Print("\n请选择操作：")
+
+        var choice int
+        _, err := fmt.Scanln(&choice)
+        if err != nil {
+            printWithEmptyLine("输入错误，请重新选择")
+            continue
+        }
+
+        switch choice {
+        case 0:
+            printWithEmptyLine("退出程序")
+            return
+        case 1:
+            clearLog()
+            downloadYunzai()
+        case 2:
+            clearLog()
+            manageYunzaiMenu()
+        case 3:
+            clearLog()
+            bugsFixMenu()
+        default:
+            printWithEmptyLine("选择不正确，请重新选择")
+        }
+    }
+}
+
 func bugsFixMenu() {
     for {
         fmt.Println("===BUG修复===")
@@ -484,33 +595,6 @@ func bugsFixMenu() {
     }
 }
 
-func installGuobaPlugin() {
-    installPluginsTemplate("锅巴插件", "Guoba-Plugin", "git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/", "pnpm install --no-lockfile --filter=guoba-plugin -w")
-}
-
-func installMiaoPlugin() {
-    installPluginsTemplate("喵喵插件", "miao-plugin", "git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/", "pnpm add image-size -w")
-}
-
-func installXiaoyaoPlugin() {
-    installPluginsTemplate("逍遥插件", "miao-plugin", "git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/ ./plugins/miao-plugin/", "pnpm add promise-retry -w", "pnpm add superagent -w")
-}
-
-func installPluginsTemplate(pluginChineseName string, dirName string, command ...string) {
-    pluginDir := "./plugins/" + dirName
-    _, err := os.Stat(pluginDir)
-    if err == nil {
-        fmt.Println("当前已安装 ", pluginChineseName, "，请问是否需要重新安装？(是:y 返回菜单:n)")
-        userChoice := ReadInput("y", "n")
-        if userChoice == "n" {
-            return
-        }
-    }
-    for _, cmd := range command {
-        executeCmd(cmd)
-    }
-}
-
 func installPluginsMenu() {
     os.Chdir("./Yunzai-Bot")
     for {
@@ -518,6 +602,7 @@ func installPluginsMenu() {
         fmt.Println("1. 锅巴插件")
         fmt.Println("2. 喵喵插件")
         fmt.Println("3. 逍遥插件")
+        fmt.Println("4. 枫叶插件")
         fmt.Println("0. 返回上一级")
         fmt.Print("\n请选择操作：")
         var choice int
@@ -541,6 +626,9 @@ func installPluginsMenu() {
         case 3:
             clearLog()
             installXiaoyaoPlugin()
+        case 4:
+            clearLog()
+            installFengyePlugin()
         default:
             printWithEmptyLine("选择不正确，请重新选择")
         }
@@ -555,7 +643,8 @@ func manageYunzaiMenu() {
         fmt.Println("2. 强制关闭云崽")
         fmt.Println("3. 切换账号")
         fmt.Println("4. 安装插件")
-        fmt.Println("5. 自定义终端命令")
+        fmt.Println("5. 安装js插件")
+        fmt.Println("6. 自定义终端命令")
         fmt.Println("0. 返回上一级")
         fmt.Print("\n请选择操作：")
         var choice int
@@ -583,42 +672,10 @@ func manageYunzaiMenu() {
             installPluginsMenu()
         case 5:
             clearLog()
+            installJsPlugin()
+        case 6:
+            clearLog()
             customCommand()
-        default:
-            printWithEmptyLine("选择不正确，请重新选择")
-        }
-    }
-}
-
-func mainMenu() {
-    for {
-        fmt.Println("===主菜单===")
-        fmt.Println("1. 安装云崽")
-        fmt.Println("2. 云崽管理")
-        fmt.Println("3. BUG修复")
-        fmt.Println("0. 退出程序")
-        fmt.Print("\n请选择操作：")
-
-        var choice int
-        _, err := fmt.Scanln(&choice)
-        if err != nil {
-            printWithEmptyLine("输入错误，请重新选择")
-            continue
-        }
-
-        switch choice {
-        case 0:
-            printWithEmptyLine("退出程序")
-            return
-        case 1:
-            clearLog()
-            downloadYunzai()
-        case 2:
-            clearLog()
-            manageYunzaiMenu()
-        case 3:
-            clearLog()
-            bugsFixMenu()
         default:
             printWithEmptyLine("选择不正确，请重新选择")
         }
