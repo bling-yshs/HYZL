@@ -2,6 +2,8 @@ package main
 
 import (
     "bufio"
+    "crypto/md5"
+    "encoding/hex"
     "fmt"
     "io"
     "net/http"
@@ -14,54 +16,57 @@ import (
 )
 
 //↓工具函数
-
-func downloadFile(url string, outputPath string) error {
-    if outputPath == "" {
-        outputPath = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Temp", filepath.Base(url))
-    }
-
-    // 创建一个文件来存储下载的内容
-    output, err := os.Create(outputPath)
+func getFileContent(filePath string) (string, error) {
+    // 读取文件内容
+    content, err := os.ReadFile(filePath)
     if err != nil {
-        return fmt.Errorf("Error creating file: %v", err)
+        return "", fmt.Errorf("read file error: %v", err)
     }
-    defer output.Close()
 
-    // 发送 GET 请求并将响应写入文件
-    client := http.Client{}
-    req, err := http.NewRequest("GET", url, nil)
+    // 返回字符串格式的文件内容
+    return string(content), nil
+}
+
+func getFileMD5(fPath string) string {
+    // 读取文件内容
+    data, err := os.ReadFile(fPath)
     if err != nil {
-        return fmt.Errorf("Error creating request: %v", err)
+        panic(err)
     }
 
-    // 使用 go 协程异步执行请求
-    respChan := make(chan *http.Response)
-    errChan := make(chan error)
-    go func() {
-        resp, err := client.Do(req)
-        if err != nil {
-            errChan <- fmt.Errorf("Error executing request: %v", err)
-            return
-        }
-        respChan <- resp
-    }()
+    // 计算MD5值
+    md5Ctx := md5.New()
+    md5Ctx.Write(data)
+    cipherStr := md5Ctx.Sum(nil)
 
-    // 通过 select 语句等待下载完成或出错
-    for {
-        select {
-        case resp := <-respChan:
-            defer resp.Body.Close()
-            _, err := io.Copy(output, resp.Body)
-            if err != nil {
-                return fmt.Errorf("Error writing to file: %v", err)
-            } else {
-                fmt.Printf("Downloaded to %s\n", outputPath)
-                return nil
-            }
-        case err := <-errChan:
-            return fmt.Errorf("Error downloading file: %v", err)
+    // 将MD5值转换为字符串格式
+    return hex.EncodeToString(cipherStr)
+}
+
+func downloadFile(downloadURL string, downloadFilePath string) {
+    res, err := http.Get(downloadURL)
+    if err != nil {
+        fmt.Println("下载失败，错误信息为：", err)
+        return
+    }
+    var savePath = downloadFilePath
+
+    if downloadFilePath == "" {
+        downloadFilePath := os.Getenv("TEMP")
+        savePath = filepath.Join(downloadFilePath, filepath.Base(downloadURL))
+        if downloadFilePath == "" {
+            fmt.Println("无法获取到用户目录")
         }
     }
+
+    f, err := os.Create(savePath)
+    if err != nil {
+        fmt.Println("创建文件失败，错误信息为：", err)
+        return
+    }
+    defer f.Close()
+
+    io.Copy(f, res.Body)
 }
 
 func downloadFileSync(dir string, fileUrl string) {
@@ -103,6 +108,7 @@ func clearLog() {
     cmd.Run()
 }
 
+//比较版本号，如果需要更新返回true，否则返回false
 func compareVersion(version string, latestVersion string) bool {
     version = version[1:]                   // 去除前面的v
     v1 := strings.Split(version, ".")       // 将版本号按 "." 分割成数组

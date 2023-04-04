@@ -158,7 +158,7 @@ func mainMenu() {
             return
         case 1:
             clearLog()
-            downloadYunzai()
+            downloadYunzaiFromGitee()
         case 2:
             clearLog()
             manageYunzaiMenu()
@@ -183,5 +183,6 @@ func main() {
         shutdownApp()
     }
     checkRedis()
+    println("当前版本:", version)
     mainMenu()
 }

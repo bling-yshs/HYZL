@@ -2,7 +2,7 @@ package main
 
 import "os"
 
-func downloadYunzai() {
+func downloadYunzaiFromGitee() {
     _, err := os.Stat("./Yunzai-bot")
     if err == nil {
         printWithEmptyLine("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
