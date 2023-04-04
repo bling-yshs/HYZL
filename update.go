@@ -68,7 +68,6 @@ func compareRemind(lastRemindTime string) bool {
 }
 
 func autoUpdate() {
-
     _, latestVersion := getLatestVerion()
     if !compareVersion(version, latestVersion) {
         return
@@ -84,7 +83,7 @@ func autoUpdate() {
         os.Remove("./update.bat")
     }
     //得到tempPath
-    tempPath := filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Temp")
+    tempPath := os.Getenv("TEMP")
     //得到md5的值
     md5DownloadedPath := filepath.Join(tempPath, "yzMD5.txt")
     correctMD5, err := getFileContent(md5DownloadedPath)
@@ -143,7 +142,7 @@ echo Updating...
 ping 127.0.0.1 -n 4 > nul
 set launcher=YzLauncher-windows.exe
 set md5=yzMD5.txt
-set source=%USERPROFILE%\AppData\Local\Temp
+set source=%TEMP%
 set destination=%CD%
 
 if exist "%source%\%launcher%" (

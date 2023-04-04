@@ -171,7 +171,7 @@ func mainMenu() {
     }
 }
 
-const version = "v0.0.6"
+const version = "v0.0.4"
 
 var programRunPath = ""
 
