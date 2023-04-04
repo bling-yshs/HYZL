@@ -68,6 +68,11 @@ func compareRemind(lastRemindTime string) bool {
 }
 
 func autoUpdate() {
+    _, err := os.Stat("./update.bat")
+    if err == nil {
+        //删除update.bat
+        os.Remove("./update.bat")
+    }
     _, latestVersion := getLatestVerion()
     if !compareVersion(version, latestVersion) {
         return
@@ -76,11 +81,6 @@ func autoUpdate() {
     //如果lastRemindTime的时间加上一天大于当前时间，就不提醒
     if !compareRemind(lastRemindTime) {
         return
-    }
-    _, err := os.Stat("./update.bat")
-    if err == nil {
-        //删除update.bat
-        os.Remove("./update.bat")
     }
     //得到tempPath
     tempPath := os.Getenv("TEMP")
