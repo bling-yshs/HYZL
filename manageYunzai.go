@@ -75,47 +75,21 @@ func closeYunzai() {
     executeCmd("taskkill /f /im node.exe", "正在关闭云崽...", "云崽关闭成功！")
 }
 func changeAccount() {
-    // 读取文件内容
-    content, err := os.ReadFile("./Yunzai-Bot/config/config/qq.yaml")
-    if err != nil {
-        panic(err)
-    }
 
-    // 将文件内容转换为字符串
-    strContent := string(content)
-
-    // 读取用户输入的 qq、pwd 和 platform
-    scanner := bufio.NewScanner(os.Stdin)
     fmt.Print("请输入 QQ 账号：")
-    scanner.Scan()
-    qq := scanner.Text()
+    qq := readInt()
     fmt.Print("请输入密码：")
-    scanner.Scan()
-    pwd := scanner.Text()
+    pwd := readString()
     fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad）2023年3月31日：推荐使用MacOS登录：")
-    scanner.Scan()
-    platform := scanner.Text()
-
-    // 替换文件中的 qq、pwd 和 platform 字段
-    lines := strings.Split(strContent, "\n")
-    for i, line := range lines {
-        if strings.HasPrefix(line, "qq:") {
-            lines[i] = fmt.Sprintf("qq: %s", qq)
-        } else if strings.HasPrefix(line, "pwd:") {
-            lines[i] = fmt.Sprintf("pwd: '%s'", pwd)
-        } else if strings.HasPrefix(line, "platform:") {
-            lines[i] = fmt.Sprintf("platform: %s", platform)
-        }
-    }
-    newContent := strings.Join(lines, "\n")
-
-    // 将更新后的配置写回文件
-    err = os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(newContent), fs.FileMode(0777))
+    platform := readInt()
+    fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad\nplatform: %d", qq, pwd, platform)
+    //覆盖掉./Yunzai-Bot/config/config/qq.yaml
+    err := os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(fileContent), fs.FileMode(0777))
     if err != nil {
-        panic(err)
+        printWithEmptyLine("写入文件失败")
+        return
     }
-
-    fmt.Println("云崽账号更新成功！")
+    printWithEmptyLine("切换账号成功！")
 }
 func installJsPlugin() {
     jsPluginDir := programRunPath + "/Yunzai-bot/plugins/example"

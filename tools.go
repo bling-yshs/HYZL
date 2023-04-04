@@ -16,6 +16,33 @@ import (
 )
 
 //↓工具函数
+func readInt() int64 {
+    scanner := bufio.NewScanner(os.Stdin)
+    scanner.Scan()
+    for {
+        s := scanner.Text()
+        i, err := strconv.ParseInt(s, 10, 64)
+        if err != nil {
+            fmt.Println("输入错误，请重新输入")
+            continue
+        }
+        return i
+    }
+}
+
+func readString() string {
+    scanner := bufio.NewScanner(os.Stdin)
+    scanner.Scan()
+    for {
+        s := scanner.Text()
+        if s == "" {
+            fmt.Println("输入错误，请重新输入")
+            continue
+        }
+        return s
+    }
+}
+
 func getFileContent(filePath string) (string, error) {
     // 读取文件内容
     content, err := os.ReadFile(filePath)
@@ -203,6 +230,7 @@ func shutdownApp() {
     fmt.Scanln()
     os.Exit(0)
 }
+
 func checkRedis() {
     _, err := os.Stat("./redis-windows-7.0.4")
     if err == nil {
