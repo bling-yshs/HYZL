@@ -4,7 +4,6 @@ import (
     "bufio"
     "fmt"
     "io/fs"
-    "io/ioutil"
     "os"
     "os/exec"
     "strings"
@@ -116,7 +115,7 @@ func changeMasterQQ() {
     newContent := strings.Join(lines, "\n")
 
     // 将修改后的内容写回文件
-    err = ioutil.WriteFile("./Yunzai-Bot/config/config/other.yaml", []byte(newContent), 0644)
+    err = os.WriteFile("./Yunzai-Bot/config/config/other.yaml", []byte(newContent), 0644)
     if err != nil {
         panic(err)
     }

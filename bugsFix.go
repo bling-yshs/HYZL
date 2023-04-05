@@ -42,6 +42,7 @@ func reInstallDep() {
         fmt.Println("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
         userChoice := ReadChoice("y", "n")
         if userChoice == "y" {
+            os.RemoveAll("./node_modules")
             executeCmd("pnpm update", "开始安装云崽依赖...")
             executeCmd("pnpm install -P", "", "安装云崽依赖成功！")
         }
