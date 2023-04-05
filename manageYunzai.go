@@ -4,6 +4,7 @@ import (
     "bufio"
     "fmt"
     "io/fs"
+    "io/ioutil"
     "os"
     "os/exec"
     "strings"
@@ -74,6 +75,55 @@ func closeYunzai() {
     exec.Command("taskkill", "/FI", "WINDOWTITLE eq Yunzai-bot", "/T", "/F").Run()
     executeCmd("taskkill /f /im node.exe", "正在关闭云崽...", "云崽关闭成功！")
 }
+
+func changeMasterQQ() {
+    // 读取 YAML 配置文件
+    file, err := os.Open("./Yunzai-Bot/config/config/other.yaml")
+    if err != nil {
+        panic(err)
+    }
+    defer file.Close()
+
+    reader := bufio.NewReader(file)
+    var content string
+    for {
+        line, err := reader.ReadString('\n')
+        if err != nil {
+            break
+        }
+        content += line
+    }
+
+    // 让用户输入新的 masterQQ 值
+    fmt.Print("请输入新的主人QQ(直接回车将不改变主人QQ)：")
+    scanner := bufio.NewScanner(os.Stdin)
+    scanner.Scan()
+    newMasterQQ := scanner.Text()
+
+    // 如果用户没有输入新值，就不修改文件
+    if newMasterQQ == "" {
+        return
+    }
+    // 修改 masterQQ 值
+    lines := strings.Split(content, "\n")
+    for i, line := range lines {
+        if strings.HasPrefix(line, "masterQQ:") {
+            lines[i+1] = "  - " + newMasterQQ // 在下一行加入新的 masterQQ 值
+            break
+        }
+    }
+
+    newContent := strings.Join(lines, "\n")
+
+    // 将修改后的内容写回文件
+    err = ioutil.WriteFile("./Yunzai-Bot/config/config/other.yaml", []byte(newContent), 0644)
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Println("masterQQ 值已修改为", newMasterQQ)
+}
+
 func changeAccount() {
 
     fmt.Print("请输入 QQ 账号：")
@@ -82,15 +132,13 @@ func changeAccount() {
     pwd := readString()
     fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad）2023年3月31日：推荐使用MacOS登录：")
     platform := readInt()
+    changeMasterQQ()
     fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad\nplatform: %d", qq, pwd, platform)
     //覆盖掉./Yunzai-Bot/config/config/qq.yaml
-    err := os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(fileContent), fs.FileMode(0777))
-    if err != nil {
-        printWithEmptyLine("写入文件失败")
-        return
-    }
+    os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(fileContent), fs.FileMode(0777))
     printWithEmptyLine("切换账号成功！")
 }
+
 func installJsPlugin() {
     jsPluginDir := programRunPath + "/Yunzai-bot/plugins/example"
     //输入js插件的地址，例如https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js

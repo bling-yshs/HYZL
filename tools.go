@@ -18,9 +18,12 @@ import (
 //↓工具函数
 func readInt() int64 {
     scanner := bufio.NewScanner(os.Stdin)
-    scanner.Scan()
     for {
+        scanner.Scan()
         s := scanner.Text()
+        if s == "" {
+            continue
+        }
         i, err := strconv.ParseInt(s, 10, 64)
         if err != nil {
             fmt.Println("输入错误，请重新输入")
@@ -32,8 +35,8 @@ func readInt() int64 {
 
 func readString() string {
     scanner := bufio.NewScanner(os.Stdin)
-    scanner.Scan()
     for {
+        scanner.Scan()
         s := scanner.Text()
         if s == "" {
             fmt.Println("输入错误，请重新输入")

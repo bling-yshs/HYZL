@@ -72,8 +72,11 @@ func installPluginsTemplate(pluginChineseName string, dirName string, command ..
         if userChoice == "n" {
             return
         }
-    }
-    for _, cmd := range command {
-        executeCmd(cmd)
+        if userChoice == "y" {
+            os.RemoveAll(pluginDir)
+        }
+        for _, cmd := range command {
+            executeCmd(cmd)
+        }
     }
 }
