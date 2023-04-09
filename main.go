@@ -171,6 +171,8 @@ func mainMenu() {
     }
 }
 
+var globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows/`
+
 const version = "v0.0.6"
 
 var programRunPath = ""
