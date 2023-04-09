@@ -128,9 +128,9 @@ func autoUpdate() {
 
 func downloadYz(latestVersion string) {
     if compareVersion(version, latestVersion) {
-        md5downloadLink := globalRepositoryLink + "releases/download/" + latestVersion + "/yzMD5.txt"
+        md5downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/yzMD5.txt"
         go downloadFile(md5downloadLink, "")
-        downloadLink := globalRepositoryLink + "releases/download/" + latestVersion + "/YzLauncher-windows.exe"
+        downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/YzLauncher-windows.exe"
         go downloadFile(downloadLink, "")
     }
 }
@@ -163,7 +163,7 @@ exit
 
 //返回最新版本的下载链接和版本号
 func getLatestVerion() (string, string) {
-    url := globalRepositoryLink + "releases/latest"
+    url := globalRepositoryLink + "/releases/latest"
 
     client := &http.Client{
         CheckRedirect: func(req *http.Request, via []*http.Request) error {
