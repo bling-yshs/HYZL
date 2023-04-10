@@ -113,7 +113,9 @@ func startRedis() *exec.Cmd {
     printWithEmptyLine(dir)
     cmd := exec.Command("cmd", "/c", "start", "", dir)
     err := cmd.Start()
-    fmt.Println(err)
+    if err != nil {
+        printErr(err)
+    }
     println("Redis 启动成功！")
     os.Chdir("..")
     return cmd
