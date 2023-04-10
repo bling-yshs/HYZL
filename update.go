@@ -77,6 +77,8 @@ func autoUpdate() {
     }
     _, latestVersion := getLatestVerion()
     if !compareVersion(version, latestVersion) {
+        //如果没有新版本，就一天内不提醒
+        createRemind()
         return
     }
     lastRemindTime := readRemind()
@@ -125,7 +127,6 @@ func autoUpdate() {
             }
         }
     }
-
 }
 
 func downloadYz(latestVersion string) {
