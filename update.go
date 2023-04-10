@@ -8,6 +8,8 @@ import (
     "path/filepath"
     "strings"
     "time"
+
+    "golang.org/x/text/encoding/simplifiedchinese"
 )
 
 func createRemind() {
@@ -138,7 +140,7 @@ func downloadYz(latestVersion string) {
 func createUpdateBat() {
     batchContent := `
 @echo off
-echo Updating...
+echo 正在更新...
 ping 127.0.0.1 -n 4 > nul
 set launcher=YzLauncher-windows.exe
 set md5=yzMD5.txt
@@ -154,11 +156,9 @@ start %destination%\%launcher%
 exit
 `
 
-    err := os.WriteFile("update.bat", []byte(batchContent), 0777)
-    if err != nil {
-        fmt.Println(err)
-        return
-    }
+    // err := os.WriteFile("update.bat", []byte(batchContent), 0777)
+    content, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
+    os.WriteFile("update.bat", content, 0777)
 }
 
 //返回最新版本的下载链接和版本号
