@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "os"
 )
 
@@ -11,7 +10,7 @@ func downloadYunzaiFromGitee() {
         printWithEmptyLine("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
         userChoice := ReadChoice("y", "n")
         if userChoice == "y" {
-            fmt.Println("重新下载云崽会移除当前目录下的 Yunzai-bot 文件夹，云崽的数据将会被全局删除，且不可恢复，请再次确认是否继续？(是:y 返回菜单:n)")
+            printWithEmptyLine("重新下载云崽会移除当前目录下的 Yunzai-bot 文件夹，云崽的数据将会被全局删除，且不可恢复，请再次确认是否继续？(是:y 返回菜单:n)")
             userChoice := ReadChoice("y", "n")
             if userChoice == "n" {
                 return
