@@ -96,6 +96,8 @@ func reInstallDep() {
 
 func pupCanNotStartFix() {
     os.Chdir("./Yunzai-Bot")
+    executeCmd("git reset --hard origin/main")
+    executeCmd("git pull", "正在更新云崽到最新版本...", "更新云崽到最新版本成功！")
     executeCmd("pnpm uninstall puppeteer", "正在修复 puppeteer...")
     executeCmd("pnpm install puppeteer@19.7.3 -w")
     executeCmd("node ./node_modules/puppeteer/install.js", "正在下载 Chromium...")
