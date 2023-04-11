@@ -75,15 +75,15 @@ func autoUpdate() {
         //删除update.bat
         os.Remove("./update.bat")
     }
+    lastRemindTime := readRemind()
+    //如果lastRemindTime的时间加上一天大于当前时间，就不提醒
+    if !compareRemind(lastRemindTime) {
+        return
+    }
     _, latestVersion := getLatestVerion()
     if !compareVersion(version, latestVersion) {
         //如果没有新版本，就一天内不提醒
         createRemind()
-        return
-    }
-    lastRemindTime := readRemind()
-    //如果lastRemindTime的时间加上一天大于当前时间，就不提醒
-    if !compareRemind(lastRemindTime) {
         return
     }
     //得到tempPath
