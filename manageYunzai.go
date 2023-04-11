@@ -11,7 +11,10 @@ import (
 )
 
 func manageYunzaiMenu() {
-
+    if !yunzaiExists() {
+        printWithEmptyLine("当前目录下不存在云崽，请先下载云崽")
+        return
+    }
     for {
         fmt.Println("===云崽管理===")
         fmt.Println("1. 启动云崽")
@@ -56,6 +59,21 @@ func manageYunzaiMenu() {
         }
     }
 }
+
+//检查云崽是否存在，存在返回true，不存在返回false
+func yunzaiExists() bool {
+    if _, err := os.Stat("./Yunzai-Bot"); err != nil {
+        return false
+    }
+    if _, err := os.Stat("./Yunzai-Bot/package.json"); err != nil {
+        return false
+    }
+    if _, err := os.Stat("./Yunzai-Bot/example"); err != nil {
+        return false
+    }
+    return true
+}
+
 func startYunzai() {
     if !isRedisRunning() {
         startRedis()
@@ -70,6 +88,7 @@ func startYunzai() {
     printWithEmptyLine("云崽启动成功！")
     os.Chdir("..")
 }
+
 func closeYunzai() {
     exec.Command("taskkill", "/FI", "WINDOWTITLE eq Yunzai-bot", "/T", "/F").Run()
     executeCmd("taskkill /f /im node.exe", "正在关闭云崽...", "云崽关闭成功！")
@@ -155,6 +174,7 @@ func installJsPlugin() {
     //下载js插件，保存到jsPluginDir
     downloadFileSync(jsPluginDir, jsPluginUrl)
 }
+
 func customCommand() {
     // 读取用户输入的一串字符串
     fmt.Print("请输入命令：")
