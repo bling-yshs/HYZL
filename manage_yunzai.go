@@ -68,7 +68,7 @@ func yunzaiExists() bool {
     if _, err := os.Stat("./Yunzai-Bot/package.json"); err != nil {
         return false
     }
-    if _, err := os.Stat("./Yunzai-Bot/example"); err != nil {
+    if _, err := os.Stat("./Yunzai-Bot/plugins"); err != nil {
         return false
     }
     return true
