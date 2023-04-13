@@ -157,9 +157,10 @@ start %destination%\%launcher%
 exit
 `
 
-    // err := os.WriteFile("update.bat", []byte(batchContent), 0777)
-    content, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
-    os.WriteFile("update.bat", content, 0777)
+    data1, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
+    os.WriteFile(`temp.bat`, data1, 0777)
+    executeCmd(`type temp.bat | find "" /V > update.bat`)
+    os.RemoveAll(`temp.bat`)
 }
 
 //返回最新版本的下载链接和版本号
