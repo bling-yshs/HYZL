@@ -33,6 +33,10 @@ func createRemind() {
 
 func readRemind() string {
 	//读取remindTime.txt
+	_, err2 := os.Stat("./config/remindTime.txt")
+	if err2 != nil {
+		return ""
+	}
 	file, err := os.Open("./config/remindTime.txt")
 	if err != nil {
 		return ""
@@ -69,72 +73,96 @@ func compareRemind(lastRemindTime string) bool {
 	return true
 }
 
+func isNewYunzai() bool {
+	//得到tempPath
+	tempPath := os.Getenv("TEMP")
+	//得到md5的值
+	md5DownloadedPath := filepath.Join(tempPath, "yzMD5.txt")
+	_, err2 := os.Stat(md5DownloadedPath)
+	if err2 != nil {
+		return false
+	}
+	correctMD5, err := getFileContent(md5DownloadedPath)
+	if err != nil {
+		return false
+	}
+	//得到下载的文件的md5值
+	YzDownloadedPath := filepath.Join(tempPath, "YzLauncher-windows.exe")
+	_, err = os.Stat(YzDownloadedPath)
+	if err != nil {
+		return false
+	}
+	downloadYunzaiMD5 := getFileMD5(YzDownloadedPath)
+	if !strings.EqualFold(correctMD5, downloadYunzaiMD5) {
+		//如果不相等，就删除YzLauncher-windows.exe
+		_ = os.Remove(YzDownloadedPath)
+		_ = os.Remove(md5DownloadedPath)
+		return false
+	}
+	return true
+}
+
+func update() bool {
+	_, latestVersion := getLatestVersion()
+	if !compareVersion(version, latestVersion) {
+		return false
+	}
+	downloadYz(latestVersion)
+	return true
+}
+
+func autoCheckUpdate() {
+	//每三小时执行一次检查
+	if update() {
+		return
+	}
+	ticker := time.NewTicker(3 * time.Hour)
+	for range ticker.C {
+		if update() {
+			return
+		}
+	}
+}
+
 func autoUpdate() {
 	_, err := os.Stat("./update.bat")
 	if err == nil {
 		//删除update.bat
 		_ = os.Remove("./update.bat")
 	}
+
 	lastRemindTime := readRemind()
-	//如果lastRemindTime的时间加上一天大于当前时间，就不提醒
-	if !compareRemind(lastRemindTime) {
-		return
-	}
-	_, latestVersion := getLatestVersion()
-	if !compareVersion(version, latestVersion) {
-		//如果没有新版本，就一天内不提醒
-		createRemind()
-		return
-	}
-	//得到tempPath
-	tempPath := os.Getenv("TEMP")
-	//得到md5的值
-	md5DownloadedPath := filepath.Join(tempPath, "yzMD5.txt")
-	correctMD5, err := getFileContent(md5DownloadedPath)
-	if err != nil {
-		downloadYz(latestVersion)
-		return
-	}
-	//得到下载的文件的md5值
-	YzDownloadedPath := filepath.Join(tempPath, "YzLauncher-windows.exe")
-	_, err = os.Stat(YzDownloadedPath)
-	if err == nil {
-		downloadFileMD5 := getFileMD5(YzDownloadedPath)
-		//比较correctMD5与downloadFileMD5
-		if !strings.EqualFold(correctMD5, downloadFileMD5) {
-			//如果不相等，就删除YzLauncher-windows.exe
-			_ = os.Remove(YzDownloadedPath)
-			_ = os.Remove(md5DownloadedPath)
-			downloadYz(latestVersion)
+	if lastRemindTime != "" {
+		//如果lastRemindTime的时间加上一天大于当前时间，就不提醒
+		if !compareRemind(lastRemindTime) {
 			return
 		}
-		_, err = os.Stat(YzDownloadedPath)
-		if err == nil {
-			fmt.Println("新版本启动器已下载，是否立即更新？(是:y 一天内不提醒:n)")
-			userChoice := ReadChoice("y", "n")
-			//创建update.bat
-			if userChoice == "y" {
-				createUpdateBat()
-				time.Sleep(1 * time.Second)
-				cmd := exec.Command("cmd", "/c", "start", "", filepath.Join(programRunPath, "update.bat"))
-				_ = cmd.Start()
-				time.Sleep(1 * time.Second)
-				os.Exit(0)
-			}
-			if userChoice == "n" {
-				createRemind()
-				return
-			}
+	}
+	if isNewYunzai() {
+		printWithEmptyLine("新版本启动器已下载，是否立即更新？(是:y 一天内不提醒:n)")
+		userChoice := ReadChoice("y", "n")
+		if userChoice == "y" {
+			createUpdateBat()
+			time.Sleep(1 * time.Second)
+			cmd := exec.Command("cmd", "/c", "start", "", filepath.Join(programRunPath, "update.bat"))
+			_ = cmd.Start()
+			time.Sleep(1 * time.Second)
+			os.Exit(0)
+		}
+		if userChoice == "n" {
+			createRemind()
+			return
 		}
 	}
+	go autoCheckUpdate()
 }
 
 func downloadYz(latestVersion string) {
 	if compareVersion(version, latestVersion) {
 		md5downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/yzMD5.txt"
-		go downloadFile(md5downloadLink, "")
+		downloadFile(md5downloadLink, "")
 		downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/YzLauncher-windows.exe"
-		go downloadFile(downloadLink, "")
+		downloadFile(downloadLink, "")
 	}
 }
 
@@ -163,7 +191,7 @@ exit
 	_ = os.RemoveAll(`temp.bat`)
 }
 
-// 返回最新版本的下载链接和版本号
+// string1:最新版本的下载链接 string2版本号
 func getLatestVersion() (string, string) {
 	url := globalRepositoryLink + "/releases/latest"
 

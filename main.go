@@ -181,8 +181,8 @@ var programRunPath = ""
 
 func main() {
 	getAppInfo(&programRunPath)
-	autoUpdate()
 	checkFirstRun()
+	autoUpdate()
 	if !checkEnv() {
 		shutdownApp()
 	}
