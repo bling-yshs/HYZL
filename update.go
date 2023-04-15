@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -129,6 +130,15 @@ func autoUpdate() {
 	if err == nil {
 		//删除update.bat
 		_ = os.Remove("./update.bat")
+		//显示更新日志
+		content, err := getFileContent("./config/changelog.txt")
+		if err != nil {
+			printErr(err)
+			return
+		}
+		printWithEmptyLine("新版本更新内容：" + content)
+		//删除changelog.txt
+		_ = os.Remove("./config/changelog.txt")
 	}
 
 	lastRemindTime := readRemind()
@@ -161,9 +171,28 @@ func downloadYz(latestVersion string) {
 	if compareVersion(version, latestVersion) {
 		md5downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/yzMD5.txt"
 		downloadFile(md5downloadLink, "")
+		createChangelog()
 		downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/YzLauncher-windows.exe"
 		downloadFile(downloadLink, "")
 	}
+}
+
+func createChangelog() {
+	resp, err := http.Get("https://gitee.com/api/v5/repos/bling_yshs/YzLauncher-windows/releases/latest")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var result map[string]interface{}
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	changelog := result["body"]
+	_ = os.WriteFile("./config/changelog.txt", []byte(changelog.(string)), 0777)
 }
 
 func createUpdateBat() {
