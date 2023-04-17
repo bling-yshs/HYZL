@@ -194,7 +194,6 @@ func ReadChoice(allowedValues ...string) string {
 }
 
 func executeCmd(stringArgs ...string) {
-
 	cmd := exec.Command("cmd.exe")
 	cmd.Stdout = os.Stdout // 直接将命令标准输出连接到标准输出流
 	cmd.Stderr = os.Stderr // 将错误输出连接到标准错误流
@@ -205,6 +204,7 @@ func executeCmd(stringArgs ...string) {
 			printWithEmptyLine(stringArgs[1])
 		}
 	}
+	printWithEmptyLine("\x1b[1m\x1b[32m" + "正在执行命令：" + stringArgs[0] + "\x1b[0m")
 	err := cmd.Run()
 	if err != nil {
 		printErr(err)
