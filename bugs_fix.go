@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 func bugsFixMenu() {
@@ -47,6 +49,27 @@ func bugsFixMenu() {
 func icqqProblemFix() {
 	printWithEmptyLine("开始修复 错误码45 错误码238 QQ版本过低...")
 	_ = os.Chdir("./Yunzai-Bot")
+	_, err2 := os.Stat("./data")
+	//如果data文件夹存在
+	if err2 == nil {
+		dataDir, _ := filepath.Abs("./data")
+		files, err := os.ReadDir(dataDir)
+		if err == nil {
+			printWithEmptyLine("正在删除 token 以及 device.json 缓存...")
+			for _, file := range files {
+				name := file.Name()
+				// 如果文件名以_token结尾,删除该文件
+				if strings.HasSuffix(name, "_token") {
+					os.Remove(filepath.Join(dataDir, name))
+				}
+
+				// 如果文件名为device.json,删除该文件
+				if name == "device.json" {
+					os.Remove(filepath.Join(dataDir, name))
+				}
+			}
+		}
+	}
 	executeCmd("pnpm install icqq@latest -f -w")
 	//读取./config/config/qq.yaml
 	s, err := getFileContent("./config/config/qq.yaml")
