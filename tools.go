@@ -210,7 +210,9 @@ func executeCmd(stringArgs ...string) {
 		printErr(err)
 	}
 	if len(stringArgs) >= 3 {
-		printWithEmptyLine(stringArgs[2])
+		if len(stringArgs[2]) > 0 {
+			printWithEmptyLine(stringArgs[2])
+		}
 	}
 }
 
