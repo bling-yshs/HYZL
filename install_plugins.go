@@ -67,7 +67,7 @@ func installPluginsTemplate(pluginChineseName string, dirName string, command ..
 	pluginDir := "./plugins/" + dirName
 	_, err := os.Stat(pluginDir)
 	if err == nil {
-		fmt.Println("当前已安装 ", pluginChineseName, "，请问是否需要重新安装？(是:y 返回菜单:n)")
+		printWithEmptyLine("当前已安装 " + pluginChineseName + "，请问是否需要重新安装？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "n" {
 			return

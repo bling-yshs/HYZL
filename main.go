@@ -126,7 +126,7 @@ func isRedisRunning() bool {
 	cmd := exec.Command("tasklist")
 	output, err := cmd.Output()
 	if err != nil {
-		panic(err)
+		printErr(err)
 	}
 
 	// 检查输出结果中是否包含 redis-server.exe 进程

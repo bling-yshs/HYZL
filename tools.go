@@ -62,7 +62,7 @@ func getFileMD5(fPath string) string {
 	// 读取文件内容
 	data, err := os.ReadFile(fPath)
 	if err != nil {
-		panic(err)
+		printErr(err)
 	}
 
 	// 计算MD5值
@@ -77,7 +77,7 @@ func getFileMD5(fPath string) string {
 func downloadFile(downloadURL string, downloadFilePath string) {
 	res, err := http.Get(downloadURL)
 	if err != nil {
-		fmt.Println("下载失败，错误信息为：", err)
+		printWithEmptyLine("下载失败，错误信息为：" + err.Error())
 		return
 	}
 	var savePath = downloadFilePath
@@ -86,13 +86,13 @@ func downloadFile(downloadURL string, downloadFilePath string) {
 		downloadFilePath := os.Getenv("TEMP")
 		savePath = filepath.Join(downloadFilePath, filepath.Base(downloadURL))
 		if downloadFilePath == "" {
-			fmt.Println("无法获取到用户目录")
+			printWithEmptyLine("无法获取到用户目录")
 		}
 	}
 
 	f, err := os.Create(savePath)
 	if err != nil {
-		fmt.Println("创建文件失败，错误信息为：", err)
+		printWithEmptyLine("创建文件失败，错误信息为：" + err.Error())
 		return
 	}
 	defer f.Close()

@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"os/exec"
@@ -57,7 +56,7 @@ func compareRemind(lastRemindTime string) bool {
 	if lastRemindTime != "" {
 		t, err := time.Parse("2006-01-02", lastRemindTime)
 		if err != nil {
-			fmt.Println("解析时间出错：", err)
+			printWithEmptyLine("解析时间出错：" + err.Error())
 			return false
 		}
 		t = t.Add(24 * time.Hour)
@@ -180,14 +179,14 @@ func downloadYz(latestVersion string) {
 func createChangelog() {
 	resp, err := http.Get("https://gitee.com/api/v5/repos/bling_yshs/YzLauncher-windows/releases/latest")
 	if err != nil {
-		fmt.Println(err)
+		printErr(err)
 		return
 	}
 
 	var result map[string]interface{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		fmt.Println(err)
+		printErr(err)
 		return
 	}
 
@@ -232,7 +231,7 @@ func getLatestVersion() (string, string) {
 	}
 	resp, err := client.Get(url)
 	if err != nil {
-		panic(err)
+		printErr(err)
 	}
 	defer resp.Body.Close()
 	newLink := resp.Header.Get("Location")

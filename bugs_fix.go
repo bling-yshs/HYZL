@@ -80,7 +80,7 @@ func pupPopFix() {
 func reInstallDep() {
 	os.Chdir("./Yunzai-Bot")
 	if _, err := os.Stat("./node_modules"); err == nil {
-		fmt.Println("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
+		printWithEmptyLine("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "y" {
 			executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
