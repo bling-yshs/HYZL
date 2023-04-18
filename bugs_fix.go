@@ -70,7 +70,7 @@ func icqqProblemFix() {
 			}
 		}
 	}
-	executeCmd("pnpm install icqq@latest -f -w")
+	executeCmd("pnpm install icqq@latest -w")
 	//读取./config/config/qq.yaml
 	s, err := getFileContent("./config/config/qq.yaml")
 	if err != nil {
@@ -95,7 +95,7 @@ func pupPopFix() {
 	executeCmd("git pull", "正在更新云崽到最新版本...", "更新云崽到最新版本成功！")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
-	executeCmd("pnpm install puppeteer@19.8.3 -f -w", "正在修复 puppeteer Chromium...", "修复 puppeteer Chromium 成功！")
+	executeCmd("pnpm install puppeteer@19.8.3 -w", "正在修复 puppeteer Chromium...", "修复 puppeteer Chromium 成功！")
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	os.Chdir("..")
 }
@@ -123,7 +123,7 @@ func pupCanNotStartFix() {
 	os.Chdir("./Yunzai-Bot")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
-	executeCmd("pnpm install puppeteer@19.7.3 --force -w", "正在修复 puppeteer Chromium...", "修复 puppeteer Chromium 成功！")
+	executeCmd("pnpm install puppeteer@19.7.3 -w", "正在修复 puppeteer Chromium...", "修复 puppeteer Chromium 成功！")
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	os.Chdir("..")
 }
