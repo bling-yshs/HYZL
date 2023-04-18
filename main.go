@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -109,9 +110,9 @@ func startRedis() *exec.Cmd {
 	printWithEmptyLine("正在启动 Redis ...")
 	_ = os.Chdir("./redis-windows-7.0.4")
 	dir, _ := os.Getwd()
-	dir += "\\redis-server.exe"
-	printWithEmptyLine(dir)
-	cmd := exec.Command("cmd", "/c", "start", "", dir)
+	redisPath := filepath.Join(dir, "redis-server.exe")
+	redisConfigPath := filepath.Join(dir, "redis.conf")
+	cmd := exec.Command("cmd.exe", "/c", "start", redisPath, redisConfigPath)
 	err := cmd.Start()
 	if err != nil {
 		printErr(err)
