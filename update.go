@@ -130,14 +130,17 @@ func autoUpdate() {
 		//删除update.bat
 		_ = os.Remove("./update.bat")
 		//显示更新日志
-		content, err := getFileContent("./config/changelog.txt")
-		if err != nil {
-			printErr(err)
-			return
+		_, err := os.Stat("./config/changelog.txt")
+		if err == nil {
+			content, err := getFileContent("./config/changelog.txt")
+			if err != nil {
+				printErr(err)
+				return
+			}
+			printWithEmptyLine("新版本更新内容：" + content)
+			//删除changelog.txt
+			_ = os.Remove("./config/changelog.txt")
 		}
-		printWithEmptyLine("新版本更新内容：" + content)
-		//删除changelog.txt
-		_ = os.Remove("./config/changelog.txt")
 	}
 
 	lastRemindTime := readRemind()
