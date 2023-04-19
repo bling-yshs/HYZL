@@ -193,7 +193,7 @@ func ReadChoice(allowedValues ...string) string {
 	}
 }
 
-func executeCmd(stringArgs ...string) {
+func executeCmd(stringArgs ...string) error {
 	cmd := exec.Command("cmd.exe")
 	cmd.Stdout = os.Stdout // 直接将命令标准输出连接到标准输出流
 	cmd.Stderr = os.Stderr // 将错误输出连接到标准错误流
@@ -207,13 +207,14 @@ func executeCmd(stringArgs ...string) {
 	printWithEmptyLine("\x1b[1m\x1b[32m" + "正在执行命令：" + stringArgs[0] + "\x1b[0m")
 	err := cmd.Run()
 	if err != nil {
-		printErr(err)
+		return err
 	}
 	if len(stringArgs) >= 3 {
 		if len(stringArgs[2]) > 0 {
 			printWithEmptyLine(stringArgs[2])
 		}
 	}
+	return nil
 }
 
 func printErr(err error) {

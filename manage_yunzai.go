@@ -23,6 +23,7 @@ func manageYunzaiMenu() {
 		fmt.Println("4. 安装插件")
 		fmt.Println("5. 安装js插件")
 		fmt.Println("6. 自定义终端命令")
+		fmt.Println("7. 更新云崽")
 		fmt.Println("0. 返回上一级")
 		fmt.Print("\n请选择操作：")
 		var choice int
@@ -54,10 +55,22 @@ func manageYunzaiMenu() {
 		case 6:
 			clearLog()
 			customCommand()
+		case 7:
+			clearLog()
+			updateYunzaiToLatest()
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
+}
+
+func updateYunzaiToLatest() {
+	os.Chdir("./Yunzai-Bot")
+	err := executeCmd("git pull", "正在更新云崽...")
+	if err != nil {
+		executeCmd("git reset --hard origin/main")
+	}
+	os.Chdir("..")
 }
 
 // 检查云崽是否存在，存在返回true，不存在返回false
@@ -139,7 +152,7 @@ func changeMasterQQ() {
 		printErr(err)
 	}
 
-	printWithEmptyLine("主人 值已修改为" + newMasterQQ)
+	printWithEmptyLine("主人QQ已修改为" + newMasterQQ)
 }
 
 func changeAccount() {
