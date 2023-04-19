@@ -185,7 +185,7 @@ func installJsPlugin() {
 	//如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
 	jsPluginUrl = strings.Replace(jsPluginUrl, "blob", "raw", 1)
 	//下载js插件，保存到jsPluginDir
-	downloadFileSync(jsPluginDir, jsPluginUrl)
+	downloadFile(jsPluginDir, jsPluginUrl)
 }
 
 func customCommand() {

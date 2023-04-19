@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -98,28 +97,6 @@ func downloadFile(downloadURL string, downloadFilePath string) {
 	defer f.Close()
 
 	_, _ = io.Copy(f, res.Body)
-}
-
-func downloadFileSync(dir string, fileUrl string) {
-	resp, err := http.Get(fileUrl)
-	if err != nil {
-		printErr(err)
-	}
-	defer resp.Body.Close()
-
-	fileName, _ := url.PathUnescape(filepath.Base(fileUrl))
-	filePath := filepath.Join(dir, fileName)
-
-	out, err := os.Create(filePath)
-	if err != nil {
-		printErr(err)
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, resp.Body)
-	if err != nil {
-		printErr(err)
-	}
 }
 
 func getAppInfo(args ...*string) {
