@@ -15,6 +15,7 @@ func bugsFixMenu() {
 		fmt.Println("2. 修复 puppeteer Chromium 启动失败(Windows Server 2012专用)")
 		fmt.Println("3. 修复 puppeteer Chromium 弹出cmd窗口(Windows Server 2012请勿使用)")
 		fmt.Println("4. 修复 错误码45 错误码238 QQ版本过低")
+		fmt.Println("5. 修复 #重启 失败(也就是pnpm start pm2报错)")
 		fmt.Println("0. 返回上一级")
 		fmt.Print("\n请选择操作：")
 		var choice int
@@ -40,10 +41,18 @@ func bugsFixMenu() {
 		case 4:
 			clearLog()
 			icqqProblemFix()
+		case 5:
+			clearLog()
+			pm2Fix()
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
+}
+func pm2Fix() {
+	os.Chdir("./Yunzai-Bot")
+	executeCmd("pnpm install pm2@latest -w", "正在修复...", "修复成功！")
+	os.Chdir("..")
 }
 
 func icqqProblemFix() {
