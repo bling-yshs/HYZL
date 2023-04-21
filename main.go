@@ -176,7 +176,7 @@ func mainMenu() {
 
 var globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
 
-const version = "v0.0.10"
+const version = "v0.0.11"
 
 var programRunPath = ""
 
