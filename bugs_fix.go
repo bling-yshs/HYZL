@@ -51,7 +51,8 @@ func bugsFixMenu() {
 }
 func pm2Fix() {
 	os.Chdir("./Yunzai-Bot")
-	executeCmd("pnpm install pm2@latest -w", "正在修复...", "修复成功！")
+	executeCmd("pnpm uninstall pm2", "正在修复...")
+	executeCmd("pnpm install pm2@latest -w", "", "修复成功！")
 	os.Chdir("..")
 }
 

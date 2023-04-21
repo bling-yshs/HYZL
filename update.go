@@ -137,7 +137,7 @@ func autoUpdate() {
 				printErr(err)
 				return
 			}
-			printWithEmptyLine("新版本更新内容：" + content)
+			printWithEmptyLine("新版本更新内容：\n" + content)
 			//删除changelog.txt
 			_ = os.Remove("./config/changelog.txt")
 		}
