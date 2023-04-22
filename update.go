@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -103,7 +101,10 @@ func isNewYunzai() bool {
 }
 
 func update() bool {
-	latestVersion := getLatestVersion()
+	latestVersion, err := giteeAPI.getLatestTag()
+	if err != nil {
+		return false
+	}
 	if !compareVersion(version, latestVersion) {
 		return false
 	}
@@ -180,21 +181,12 @@ func downloadYz(latestVersion string) {
 }
 
 func createChangelog() {
-	resp, err := http.Get("https://gitee.com/api/v5/repos/bling_yshs/YzLauncher-windows/releases/latest")
-	if err != nil {
-		printErr(err)
+	changelog, err2 := giteeAPI.getBody()
+	if err2 != nil {
+		printErr(err2)
 		return
 	}
-
-	var result map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		printErr(err)
-		return
-	}
-
-	changelog := result["body"]
-	_ = os.WriteFile("./config/changelog.txt", []byte(changelog.(string)), 0777)
+	_ = os.WriteFile("./config/changelog.txt", []byte(changelog), 0777)
 }
 
 func createUpdateBat() {
@@ -220,24 +212,4 @@ exit
 	_ = os.WriteFile(`temp.bat`, data1, 0777)
 	executeCmd(`type temp.bat | find "" /V > update.bat`)
 	_ = os.RemoveAll(`temp.bat`)
-}
-
-// string1:最新版本的下载链接 string2版本号
-func getLatestVersion() string {
-	url := "https://gitee.com/api/v5/repos/" + ownerAndRepo + "/releases/latest"
-	resp, err := http.Get(url)
-	if err != nil {
-		printErr(err)
-		return ""
-	}
-
-	var result map[string]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&result)
-	if err != nil {
-		printErr(err)
-		return ""
-	}
-
-	tagName := result["tag_name"].(string)
-	return tagName
 }

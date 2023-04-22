@@ -178,6 +178,7 @@ var (
 	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
 	programRunPath       = ""
 	ownerAndRepo         = "bling_yshs/YzLauncher-windows"
+	giteeAPI             = &GiteeAPI{}
 )
 
 const (
