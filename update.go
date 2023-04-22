@@ -103,7 +103,7 @@ func isNewYunzai() bool {
 }
 
 func update() bool {
-	_, latestVersion := getLatestVersion()
+	latestVersion := getLatestVersion()
 	if !compareVersion(version, latestVersion) {
 		return false
 	}
@@ -223,23 +223,21 @@ exit
 }
 
 // string1:最新版本的下载链接 string2版本号
-func getLatestVersion() (string, string) {
-	url := globalRepositoryLink + "/releases/latest"
-
-	client := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			// Disable automatic redirect following
-			return http.ErrUseLastResponse
-		},
-	}
-	resp, err := client.Get(url)
+func getLatestVersion() string {
+	url := "https://gitee.com/api/v5/repos/" + ownerAndRepo + "/releases/latest"
+	resp, err := http.Get(url)
 	if err != nil {
 		printErr(err)
+		return ""
 	}
-	defer resp.Body.Close()
-	newLink := resp.Header.Get("Location")
-	segments := strings.Split(newLink, "/")
 
-	// Get the last segment
-	return newLink, segments[len(segments)-1]
+	var result map[string]interface{}
+	err = json.NewDecoder(resp.Body).Decode(&result)
+	if err != nil {
+		printErr(err)
+		return ""
+	}
+
+	tagName := result["tag_name"].(string)
+	return tagName
 }

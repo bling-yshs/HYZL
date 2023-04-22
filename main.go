@@ -174,11 +174,15 @@ func mainMenu() {
 	}
 }
 
-var globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
+var (
+	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
+	programRunPath       = ""
+	ownerAndRepo         = "bling_yshs/YzLauncher-windows"
+)
 
-const version = "v0.0.11"
-
-var programRunPath = ""
+const (
+	version = "v0.0.11"
+)
 
 func main() {
 	getAppInfo(&programRunPath)
