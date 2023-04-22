@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
+	ct "github.com/daviddengcn/go-colortext"
 	"io"
 	"net/http"
 	"os"
@@ -181,7 +182,9 @@ func executeCmd(stringArgs ...string) error {
 			printWithEmptyLine(stringArgs[1])
 		}
 	}
-	printWithEmptyLine("\x1b[1m\x1b[32m" + "正在执行命令：" + stringArgs[0] + "\x1b[0m")
+	ct.Foreground(ct.Green, true)
+	printWithEmptyLine("正在执行命令：" + stringArgs[0])
+	ct.ResetColor() // 重置颜色
 	err := cmd.Run()
 	if err != nil {
 		return err

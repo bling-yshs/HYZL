@@ -1,6 +1,7 @@
 package main
 
 import (
+	ct "github.com/daviddengcn/go-colortext"
 	"os"
 )
 
@@ -10,7 +11,9 @@ func downloadYunzaiFromGitee() {
 		printWithEmptyLine("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "y" {
-			printWithEmptyLine("\x1b[1m\x1b[31m重新下载云崽会移除当前目录下的 Yunzai-bot 文件夹，云崽的数据将会被全部删除，且不可恢复，请再次确认是否继续？(是:y 返回菜单:n)\x1b[0m")
+			ct.Foreground(ct.Red, true)
+			printWithEmptyLine("重新下载云崽会移除当前目录下的 Yunzai-bot 文件夹，云崽的数据将会被全部删除，且不可恢复，请再次确认是否继续？(是:y 返回菜单:n)")
+			ct.ResetColor()
 			userChoice := ReadChoice("y", "n")
 			if userChoice == "n" {
 				return
