@@ -16,6 +16,7 @@ func bugsFixMenu() {
 		fmt.Println("3. 修复 puppeteer Chromium 弹出cmd窗口(Windows Server 2012请勿使用)")
 		fmt.Println("4. 修复 错误码45 错误码238 QQ版本过低")
 		fmt.Println("5. 修复 #重启 失败(也就是pnpm start pm2报错)")
+		fmt.Println("6. 修复 cookie 总是失效过期(Redis启动参数错误导致)")
 		fmt.Println("0. 返回上一级")
 		fmt.Print("\n请选择操作：")
 		var choice int
@@ -44,10 +45,20 @@ func bugsFixMenu() {
 		case 5:
 			clearLog()
 			pm2Fix()
+		case 6:
+			clearLog()
+			cookieRedisFix()
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
+}
+
+func cookieRedisFix() {
+	os.Chdir("./redis-windows-7.0.4")
+	downloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "redis.conf")
+	printWithEmptyLine("修复成功！")
+	os.Chdir("..")
 }
 func pm2Fix() {
 	os.Chdir("./Yunzai-Bot")

@@ -77,7 +77,7 @@ func getFileMD5(fPath string) string {
 func downloadFile(downloadURL string, downloadFilePath string) {
 	res, err := http.Get(downloadURL)
 	if err != nil {
-		printWithEmptyLine("下载失败，错误信息为：" + err.Error())
+		printWithEmptyLine("下载文件失败，请检查网络连接，错误信息为：" + err.Error())
 		return
 	}
 	var savePath = downloadFilePath
