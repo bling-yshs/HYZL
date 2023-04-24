@@ -161,7 +161,7 @@ func changeAccount() {
 	qq := readInt()
 	fmt.Print("请输入密码：")
 	pwd := readString()
-	fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad）2023年3月31日：推荐使用MacOS登录：")
+	fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad）2023年4月24日：推荐使用5:iPad登录：")
 	platform := readInt()
 	changeMasterQQ()
 	fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad\nplatform: %d", qq, pwd, platform)
