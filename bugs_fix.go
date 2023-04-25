@@ -100,7 +100,7 @@ func icqqProblemFix() {
 		return
 	}
 	regex := regexp.MustCompile(`platform: \d`)
-	s = regex.ReplaceAllString(s, `platform: 5`)
+	s = regex.ReplaceAllString(s, `platform: 6`)
 	//写入./config/config/qq.yaml
 	err = os.WriteFile("./config/config/qq.yaml", []byte(s), 0777)
 	if err != nil {
