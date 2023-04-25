@@ -189,7 +189,7 @@ func main() {
 func readAndWriteSomeConfig(config *Config) {
 	//读取配置文件
 	file, err := os.Open("./config/config.json")
-	if err == nil {
+	if err != nil {
 		return
 	}
 	defer file.Close()
