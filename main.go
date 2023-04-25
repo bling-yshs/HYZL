@@ -10,13 +10,7 @@ import (
 	"strings"
 )
 
-type Config struct {
-	GitInstalled    bool `json:"git_installed"`
-	NodeJSInstalled bool `json:"nodejs_installed"`
-	NpmInstalled    bool `json:"npm_installed"`
-}
-
-func checkFirstRun() {
+func createNormalConfig(config Config) {
 	//检查当前目录下是否存在config文件夹
 	_, err := os.Stat("./config")
 	//如果不存在就创建
@@ -33,10 +27,6 @@ func checkFirstRun() {
 			return
 		}
 		defer file.Close()
-		var config Config
-		config.GitInstalled = false
-		config.NodeJSInstalled = false
-		config.NpmInstalled = false
 		//写入文件
 		data, err := json.MarshalIndent(config, "", "    ")
 		if err != nil {
@@ -51,18 +41,8 @@ func checkFirstRun() {
 	}
 }
 
-func checkEnv() bool {
+func checkEnv(config *Config) bool {
 	var willWrite = false
-	var config Config
-	file, err := os.Open("./config/config.json")
-	if err == nil {
-		defer file.Close()
-		decoder := json.NewDecoder(file)
-		err = decoder.Decode(&config)
-		if err != nil {
-			printErr(err)
-		}
-	}
 	if !config.GitInstalled {
 		if !checkCommand("git -v") {
 			printWithEmptyLine("检测到未安装 Git ，请安装后继续")
@@ -174,11 +154,19 @@ func mainMenu() {
 	}
 }
 
+type Config struct {
+	GitInstalled    bool   `json:"git_installed"`
+	NodeJSInstalled bool   `json:"nodejs_installed"`
+	NpmInstalled    bool   `json:"npm_installed"`
+	SystemTempPath  string `json:"system_temp_path"`
+}
+
 var (
 	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
 	programRunPath       = ""
 	ownerAndRepo         = "bling_yshs/YzLauncher-windows"
 	giteeAPI             = &GiteeAPI{}
+	config               Config
 )
 
 const (
@@ -187,12 +175,28 @@ const (
 
 func main() {
 	getAppInfo(&programRunPath)
-	checkFirstRun()
+	createNormalConfig(config)
+	readAndWriteSomeConfig(&config)
 	autoUpdate()
-	if !checkEnv() {
+	if !checkEnv(&config) {
 		shutdownApp()
 	}
 	checkRedis()
 	println("当前版本:", version)
 	mainMenu()
+}
+
+func readAndWriteSomeConfig(config *Config) {
+	//读取配置文件
+	file, err := os.Open("./config/config.json")
+	if err == nil {
+		return
+	}
+	defer file.Close()
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
+		return
+	}
+	writeSystemTempPath(config)
 }

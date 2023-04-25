@@ -201,7 +201,7 @@ func printErr(err error) {
 	fmt.Println("发生错误，请截图并反馈给作者:", err)
 }
 
-func printWithEmptyLine(str string) {
+func printWithEmptyLine(str any) {
 	fmt.Println()
 	fmt.Println(str)
 	fmt.Println()
