@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -171,8 +173,9 @@ func changeAccount() {
 }
 
 func installJsPlugin() {
-	jsPluginDir := programRunPath + "/Yunzai-bot/plugins/example"
-	//输入js插件的地址，例如https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
+	//得到下载目录
+	jsPluginDir := filepath.Join(programRunPath, "Yunzai-bot/plugins/example")
+	//输入js插件的地址
 	fmt.Print("请输入js插件的地址：")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
@@ -184,8 +187,11 @@ func installJsPlugin() {
 	}
 	//如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
 	jsPluginUrl = strings.Replace(jsPluginUrl, "blob", "raw", 1)
-	//下载js插件，保存到jsPluginDir
-	downloadFile(jsPluginDir, jsPluginUrl)
+	//因为输入的网址可能是url编码后的，所以要进行解码
+	unescape, _ := url.QueryUnescape(filepath.Base(jsPluginUrl))
+	//得到完整的文件路径
+	jsPluginDir = filepath.Join(jsPluginDir, unescape)
+	downloadFile(jsPluginUrl, jsPluginDir)
 }
 
 func customCommand() {
