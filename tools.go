@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	ct "github.com/daviddengcn/go-colortext"
 	"io"
@@ -75,11 +76,38 @@ func getFileMD5(fPath string) string {
 	return hex.EncodeToString(cipherStr)
 }
 
+func copyFile(srcPath string, dstPath string) error {
+	// 打开要复制的源文件
+	src, err := os.Open(srcPath)
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	// 创建目标文件
+	dst, err := os.Create(dstPath)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	// 复制源文件到目标文件
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func downloadFile(downloadURL string, downloadFilePath string) error {
 	res, err := http.Get(downloadURL)
 	if err != nil {
 		printWithEmptyLine("下载文件失败，请检查网络连接，错误信息为：" + err.Error())
 		return err
+	}
+	if res.StatusCode != http.StatusOK {
+		return errors.New("网页返回错误状态码")
 	}
 	fileName, _ := url.QueryUnescape(filepath.Base(downloadURL))
 

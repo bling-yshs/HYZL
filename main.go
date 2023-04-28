@@ -159,6 +159,7 @@ type Config struct {
 	NodeJSInstalled bool   `json:"nodejs_installed"`
 	NpmInstalled    bool   `json:"npm_installed"`
 	SystemTempPath  string `json:"system_temp_path"`
+	ConfigPath      string `json:"config_path"`
 }
 
 var (
@@ -183,6 +184,7 @@ func main() {
 	}
 	checkRedis()
 	println("当前版本:", version)
+	getAndPrintAnnouncement()
 	mainMenu()
 }
 
@@ -199,4 +201,5 @@ func readAndWriteSomeConfig(config *Config) {
 		return
 	}
 	writeSystemTempPath(config)
+	writeConfigPath(config)
 }
