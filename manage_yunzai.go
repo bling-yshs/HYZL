@@ -176,7 +176,7 @@ func installJsPlugin() {
 	//得到下载目录
 	jsPluginDir := filepath.Join(programRunPath, "Yunzai-bot/plugins/example")
 	//输入js插件的地址
-	fmt.Print("请输入js插件的地址：")
+	fmt.Print("请输入需要下载的js插件的地址：")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	jsPluginUrl := scanner.Text()
