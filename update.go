@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -108,7 +109,7 @@ func update() bool {
 	if !compareVersion(version, latestVersion) {
 		return false
 	}
-	downloadYz(latestVersion)
+	downloadLauncher(latestVersion)
 	return true
 }
 
@@ -170,12 +171,12 @@ func autoUpdate() {
 	go autoCheckUpdate()
 }
 
-func downloadYz(latestVersion string) {
+func downloadLauncher(latestVersion string) {
 	if compareVersion(version, latestVersion) {
-		md5downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/yzMD5.txt"
+		md5downloadLink, _ := url.JoinPath(globalRepositoryLink, "releases", "download", latestVersion, "yzMD5.txt")
 		downloadFile(md5downloadLink, "")
 		createChangelog()
-		downloadLink := globalRepositoryLink + "/releases/download/" + latestVersion + "/YzLauncher-windows.exe"
+		downloadLink, _ := url.JoinPath(globalRepositoryLink, "releases", "download", latestVersion, "YzLauncher-windows.exe")
 		downloadFile(downloadLink, "")
 	}
 }
