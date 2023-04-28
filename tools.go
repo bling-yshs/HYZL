@@ -8,6 +8,7 @@ import (
 	ct "github.com/daviddengcn/go-colortext"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -74,30 +75,33 @@ func getFileMD5(fPath string) string {
 	return hex.EncodeToString(cipherStr)
 }
 
-func downloadFile(downloadURL string, downloadFilePath string) {
+func downloadFile(downloadURL string, downloadFilePath string) error {
 	res, err := http.Get(downloadURL)
 	if err != nil {
 		printWithEmptyLine("下载文件失败，请检查网络连接，错误信息为：" + err.Error())
-		return
+		return err
 	}
+	fileName, _ := url.QueryUnescape(filepath.Base(downloadURL))
+
 	var savePath = downloadFilePath
-
 	if downloadFilePath == "" {
-		downloadFilePath := os.Getenv("TEMP")
-		savePath = filepath.Join(downloadFilePath, filepath.Base(downloadURL))
-		if downloadFilePath == "" {
-			printWithEmptyLine("无法获取到用户目录")
-		}
+		savePath = config.SystemTempPath
 	}
 
-	f, err := os.Create(savePath)
+	filePath := filepath.Join(savePath, fileName)
+	_, err = os.Stat(filePath)
+	if err != nil {
+		os.MkdirAll(savePath, os.ModePerm)
+	}
+	f, err := os.Create(filePath)
 	if err != nil {
 		printWithEmptyLine("创建文件失败，错误信息为：" + err.Error())
-		return
+		return err
 	}
 	defer f.Close()
 
 	_, _ = io.Copy(f, res.Body)
+	return nil
 }
 
 func getAppInfo(args ...*string) {
