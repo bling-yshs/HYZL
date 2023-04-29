@@ -131,13 +131,13 @@ func reInstallDep() {
 		if userChoice == "y" {
 			executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 			os.RemoveAll("./node_modules")
-			executeCmd("pnpm install -P", "开始安装云崽依赖...", "安装云崽依赖成功！")
+			executeCmd("pnpm install", "开始安装云崽依赖...", "安装云崽依赖成功！")
 		}
 		if userChoice == "n" {
 			return
 		}
 	} else {
-		executeCmd("pnpm install -P", "", "安装云崽依赖成功！")
+		executeCmd("pnpm install", "", "安装云崽依赖成功！")
 	}
 	os.Chdir("..")
 }

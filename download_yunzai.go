@@ -46,7 +46,7 @@ func downloadYunzaiFromGitee() {
 	}
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "设置 pnpm 镜像源成功！")
-	executeCmd("pnpm install -P", "开始安装云崽依赖", "安装云崽依赖成功！")
+	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")
 	if installMiao {
 		installMiaoPlugin()
 	}
