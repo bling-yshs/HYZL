@@ -181,7 +181,7 @@ func installJsPlugin() {
 	jsPluginUrl := scanner.Text()
 	//检查url是否为https://开头，并且以js结尾
 	if !strings.HasPrefix(jsPluginUrl, "https://") || !strings.HasSuffix(jsPluginUrl, ".js") {
-		executeCmd("输入的js插件地址不正确，请重新输入")
+		printWithEmptyLine("输入的js插件地址不正确，请重新输入")
 		return
 	}
 	//如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
