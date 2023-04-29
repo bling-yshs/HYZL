@@ -168,6 +168,7 @@ var (
 	ownerAndRepo         = "bling_yshs/YzLauncher-windows"
 	giteeAPI             = &GiteeAPI{}
 	config               Config
+	wd                   = &WorkingDirectory{}
 )
 
 const (

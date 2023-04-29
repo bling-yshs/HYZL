@@ -18,6 +18,16 @@ import (
 	"syscall"
 )
 
+type WorkingDirectory struct{}
+
+func (dir *WorkingDirectory) changeToRoot() {
+	os.Chdir(programRunPath)
+}
+
+func (dir *WorkingDirectory) changeToYunzai() {
+	os.Chdir(filepath.Join(programRunPath, "Yunzai-Bot"))
+}
+
 // ↓工具函数
 func readInt() int64 {
 	scanner := bufio.NewScanner(os.Stdin)
