@@ -73,10 +73,8 @@ func compareRemind(lastRemindTime string) bool {
 }
 
 func isNewYunzai() bool {
-	//得到tempPath
-	tempPath := os.Getenv("TEMP")
 	//得到md5的值
-	md5DownloadedPath := filepath.Join(tempPath, "yzMD5.txt")
+	md5DownloadedPath := filepath.Join(config.SystemTempPath, "yzMD5.txt")
 	_, err2 := os.Stat(md5DownloadedPath)
 	if err2 != nil {
 		return false
@@ -86,7 +84,7 @@ func isNewYunzai() bool {
 		return false
 	}
 	//得到下载的文件的md5值
-	YzDownloadedPath := filepath.Join(tempPath, "YzLauncher-windows.exe")
+	YzDownloadedPath := filepath.Join(config.SystemTempPath, "YzLauncher-windows.exe")
 	_, err = os.Stat(YzDownloadedPath)
 	if err != nil {
 		return false

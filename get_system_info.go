@@ -9,6 +9,15 @@ import (
 func getSystemTempPath() string {
 	// 获取系统临时目录
 	tempDir := os.Getenv("TEMP")
+	_, err := os.Stat(tempDir)
+	//如果不存在就创建
+	if err != nil {
+		err = os.Mkdir(tempDir, 0777)
+		if err != nil {
+			printErr(err)
+			return ""
+		}
+	}
 	return tempDir
 }
 
