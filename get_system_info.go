@@ -12,7 +12,7 @@ func getSystemTempPath() string {
 	_, err := os.Stat(tempDir)
 	//如果不存在就创建
 	if err != nil {
-		err = os.Mkdir(tempDir, 0777)
+		err = os.MkdirAll(tempDir, 0777)
 		if err != nil {
 			printErr(err)
 			return ""
