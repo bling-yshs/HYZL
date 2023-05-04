@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/url"
 	"os"
 	"os/exec"
@@ -189,23 +190,22 @@ func createChangelog() {
 }
 
 func createUpdateBat() {
-	batchContent := `
+	batchContent := fmt.Sprintf(`
 @echo off
 echo 正在更新...
 ping 127.0.0.1 -n 4 > nul
 set launcher=YzLauncher-windows.exe
 set md5=yzMD5.txt
-set source=%TEMP%
-set destination=%CD%
+set source=%%TEMP%%
+set destination=%%CD%%
 
-if exist "%source%\%launcher%" (
-copy /Y "%source%\%launcher%" "%destination%\%launcher%" > nul
-del /Q "%source%\%launcher%"
-del /Q "%source%\%md5%"
+if exist "%%source%%\%%launcher%%" (
+copy /Y "%%source%%\%%launcher%%" "%%destination%%\%s" > nul
+del /Q "%%source%%\%%launcher%%"
+del /Q "%%source%%\%%md5%%"
 ) 
-start %destination%\%launcher%
-exit
-`
+start %%destination%%\%s
+exit`, programName, programName)
 
 	data1, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
 	_ = os.WriteFile(`temp.bat`, data1, 0777)

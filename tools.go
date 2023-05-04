@@ -150,6 +150,10 @@ func getAppInfo(args ...*string) {
 	}
 	currentDir := filepath.Dir(execPath)
 	*args[0] = currentDir
+
+	//获取程序名字
+	*args[1] = filepath.Base(execPath)
+
 }
 
 func clearLog() {
