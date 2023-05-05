@@ -125,7 +125,6 @@ func downloadFile(downloadURL string, downloadFilePath string) error {
 	if downloadFilePath == "" {
 		savePath = config.SystemTempPath
 	}
-
 	filePath := filepath.Join(savePath, fileName)
 	_, err = os.Stat(filePath)
 	if err != nil {

@@ -65,7 +65,7 @@ func installMiaoPlugin() {
 }
 
 func installXiaoyaoPlugin() {
-	installPluginsTemplate("逍遥插件", "xiaoyao-cvs-plugin", "git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/ ./plugins/xiaoyao-cvs-plugin/", "pnpm add promise-retry -w", "pnpm add superagent -w")
+	installPluginsTemplate("逍遥插件", "xiaoyao-cvs-plugin", "git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/", "pnpm add promise-retry -w", "pnpm add superagent -w")
 }
 
 func installFengyePlugin() {

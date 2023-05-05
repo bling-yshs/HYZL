@@ -56,7 +56,7 @@ func bugsFixMenu() {
 
 func cookieRedisFix() {
 	os.Chdir("./redis-windows-7.0.4")
-	downloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "redis.conf")
+	downloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "./")
 	printWithEmptyLine("修复成功！")
 	os.Chdir("..")
 }
@@ -150,6 +150,6 @@ func pupCanNotStartFix() {
 	executeCmd("pnpm install puppeteer@19.7.3 -w")
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	printWithEmptyLine("正在下载cmd弹窗修复文件...")
-	downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/puppeteer.js", "./lib/puppeteer/puppeteer.js")
+	downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/puppeteer.js", "./lib/puppeteer")
 	os.Chdir("..")
 }
