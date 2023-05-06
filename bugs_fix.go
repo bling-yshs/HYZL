@@ -83,7 +83,9 @@ func icqqProblemFix() {
 				if strings.HasSuffix(name, "_token") {
 					os.Remove(filepath.Join(dataDir, name))
 				}
-
+				if name == "icqq" {
+					os.RemoveAll(filepath.Join(dataDir, name))
+				}
 				// 如果文件名为device.json,删除该文件
 				if name == "device.json" {
 					os.Remove(filepath.Join(dataDir, name))
