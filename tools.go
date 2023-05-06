@@ -112,12 +112,12 @@ func copyFile(srcPath string, dstPath string) error {
 
 func downloadFile(downloadURL string, downloadFilePath string) error {
 	res, err := http.Get(downloadURL)
+	if res.StatusCode != http.StatusOK {
+		return errors.New("网页返回错误状态码")
+	}
 	if err != nil {
 		printWithEmptyLine("下载文件失败，请检查网络连接，错误信息为：" + err.Error())
 		return err
-	}
-	if res.StatusCode != http.StatusOK {
-		return errors.New("网页返回错误状态码")
 	}
 	fileName, _ := url.QueryUnescape(filepath.Base(downloadURL))
 
