@@ -14,7 +14,7 @@ func bugsFixMenu() {
 		fmt.Println("1. 重装依赖")
 		fmt.Println("2. 修复 puppeteer Chromium 启动失败(Windows Server 2012专用)")
 		fmt.Println("3. 修复 puppeteer Chromium 弹出cmd窗口(Windows Server 2012请勿使用)")
-		fmt.Println("4. 修复 错误码45 错误码238 QQ版本过低")
+		fmt.Println("4. 修复 云崽登录QQ失败")
 		fmt.Println("5. 修复 #重启 失败(也就是pnpm start pm2报错)")
 		fmt.Println("6. 修复 cookie 总是失效过期(Redis启动参数错误导致)")
 		fmt.Println("0. 返回上一级")
@@ -94,7 +94,7 @@ func icqqProblemFix() {
 		}
 	}
 	executeCmd("pnpm uninstall icqq")
-	executeCmd("pnpm install icqq@latest -w")
+	executeCmd("pnpm install icqq@0.3.1 -w")
 	//读取./config/config/qq.yaml
 	s, err := getFileContent("./config/config/qq.yaml")
 	if err != nil {
