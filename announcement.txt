@@ -1,1 +1,1 @@
-云崽登录不上的请把启动器更新到0.1.6，并且使用“BUG修复->4. 修复 云崽登录QQ失败”(可以正常用的请无视这条公告)
+目前部分云崽会无限提示“登录token过期”，怎么登都登不上，暂时无法解决，问题issue：https://gitee.com/yoimiya-kokomi/Yunzai-Bot/issues/I71F6W
