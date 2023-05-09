@@ -26,8 +26,8 @@ func downloadYunzaiFromGitee() {
 			return
 		}
 	}
-	printWithEmptyLine("请选择云崽类别：\n1.官方云崽\n2.喵喵云崽\n3.Trss云崽")
-	userChoice := ReadChoice("1", "2", "3")
+	printWithEmptyLine("请选择云崽类别：\n1.官方云崽\n2.喵喵云崽")
+	userChoice := ReadChoice("1", "2")
 	if userChoice == "1" {
 		executeCmd("git clone --depth 1 -b main https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git", "开始下载官方云崽...", "下载官方云崽成功！")
 	}
@@ -36,11 +36,6 @@ func downloadYunzaiFromGitee() {
 		executeCmd("git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git", "开始下载喵喵云崽...", "下载喵喵云崽成功！")
 		//将Miao-Yunzai文件夹重命名为Yunzai-Bot
 		os.Rename("./Miao-Yunzai", "./Yunzai-Bot")
-		installMiao = true
-	}
-	if userChoice == "3" {
-		executeCmd("git clone --depth 1 -b main https://gitee.com/TimeRainStarSky/Yunzai", "开始下载Trss云崽...", "下载Trss云崽成功！")
-		os.Rename("./Yunzai", "./Yunzai-Bot")
 		installMiao = true
 	}
 	//进入Yunzai-Bot文件夹
