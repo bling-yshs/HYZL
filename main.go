@@ -174,7 +174,7 @@ var (
 )
 
 const (
-	version = "v0.1.7"
+	version = "v0.1.8"
 )
 
 func main() {

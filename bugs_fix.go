@@ -98,7 +98,7 @@ func icqqProblemFix() {
 		}
 	}
 	executeCmd("pnpm uninstall icqq")
-	executeCmd("pnpm install icqq@0.3.1 -w")
+	executeCmd("pnpm install icqq@latest -w")
 	//读取./config/config/qq.yaml
 	s, err := getFileContent("./config/config/qq.yaml")
 	if err != nil {
