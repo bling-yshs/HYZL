@@ -9,6 +9,10 @@ import (
 )
 
 func bugsFixMenu() {
+	if !yunzaiExists() {
+		printWithEmptyLine("当前目录下不存在云崽，请先下载云崽")
+		return
+	}
 	for {
 		fmt.Println("===BUG修复===")
 		fmt.Println("1. 重装依赖")
@@ -115,7 +119,7 @@ func icqqProblemFix() {
 
 func pupPopFix() {
 	os.Chdir("./Yunzai-Bot")
-	executeCmd("git reset --hard origin/main")
+	executeCmd("git reset --hard origin/HEAD")
 	executeCmd("git pull", "正在更新云崽到最新版本...", "更新云崽到最新版本成功！")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")

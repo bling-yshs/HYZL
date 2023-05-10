@@ -69,7 +69,7 @@ func updateYunzaiToLatest() {
 	os.Chdir("./Yunzai-Bot")
 	err := executeCmd("git pull", "正在更新云崽...")
 	if err != nil {
-		executeCmd("git reset --hard origin/main")
+		executeCmd("git reset --hard origin/HEAD")
 	}
 	os.Chdir("..")
 }

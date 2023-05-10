@@ -163,6 +163,7 @@ type Config struct {
 }
 
 var (
+	gitBranchName        = "main"
 	programName          = "YzLauncher-windows"
 	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
 	programRunPath       = ""
@@ -177,7 +178,7 @@ const (
 )
 
 func main() {
-	getAppInfo(&programRunPath, &programName)
+	getAppInfo(&programRunPath, &programName, &gitBranchName)
 	createNormalConfig(config)
 	readAndWriteSomeConfig(&config)
 	autoUpdate()
