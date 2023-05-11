@@ -125,6 +125,7 @@ func mainMenu() {
 		fmt.Println("1. 安装云崽")
 		fmt.Println("2. 云崽管理")
 		fmt.Println("3. BUG修复")
+		fmt.Println("4. 立即更新启动器")
 		fmt.Println("0. 退出程序")
 		fmt.Print("\n请选择操作：")
 
@@ -148,6 +149,9 @@ func mainMenu() {
 		case 3:
 			clearLog()
 			bugsFixMenu()
+		case 4:
+			clearLog()
+			updateLauncherRightNow()
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}
@@ -171,10 +175,11 @@ var (
 	giteeAPI             = &GiteeAPI{}
 	config               Config
 	wd                   = &WorkingDirectory{}
+	updating             = false
 )
 
 const (
-	version = "v0.1.8"
+	version = "v0.1.7"
 )
 
 func main() {

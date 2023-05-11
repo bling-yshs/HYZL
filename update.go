@@ -92,9 +92,6 @@ func isNewYunzai() bool {
 	}
 	downloadYunzaiMD5 := getFileMD5(YzDownloadedPath)
 	if !strings.EqualFold(correctMD5, downloadYunzaiMD5) {
-		//如果不相等，就删除YzLauncher-windows.exe
-		_ = os.Remove(YzDownloadedPath)
-		_ = os.Remove(md5DownloadedPath)
 		return false
 	}
 	return true
@@ -171,6 +168,7 @@ func autoUpdate() {
 }
 
 func downloadLauncher(latestVersion string) {
+	updating = true
 	if compareVersion(version, latestVersion) {
 		md5downloadLink, _ := url.JoinPath(globalRepositoryLink, "releases", "download", latestVersion, "yzMD5.txt")
 		downloadFile(md5downloadLink, "")
@@ -211,4 +209,28 @@ exit`, programName, programName)
 	_ = os.WriteFile(`temp.bat`, data1, 0777)
 	executeCmd(`type temp.bat | find "" /V > update.bat`)
 	_ = os.RemoveAll(`temp.bat`)
+}
+
+func updateLauncherRightNow() {
+	latestVersion, err := giteeAPI.getLatestTag()
+	if err != nil {
+		return
+	}
+	if !compareVersion(version, latestVersion) {
+		printWithEmptyLine("当前已是最新版本")
+		return
+	}
+	printWithEmptyLine("正在下载更新...")
+	if updating == false {
+		downloadLauncher(latestVersion)
+	}
+	if !isNewYunzai() {
+		return
+	}
+	createUpdateBat()
+	time.Sleep(1 * time.Second)
+	cmd := exec.Command("cmd", "/c", "start", "", filepath.Join(programRunPath, "update.bat"))
+	_ = cmd.Start()
+	time.Sleep(1 * time.Second)
+	os.Exit(0)
 }
