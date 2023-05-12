@@ -16,8 +16,8 @@ func bugsFixMenu() {
 	for {
 		fmt.Println("===BUG修复===")
 		fmt.Println("1. 重装依赖")
-		fmt.Println("2. 修复 puppeteer Chromium 启动失败(Windows Server 2012专用)")
-		fmt.Println("3. 修复 puppeteer Chromium 弹出cmd窗口(Windows Server 2012请勿使用)")
+		fmt.Println("2. 修复 puppeteer 启动失败(Windows Server 2012专用)")
+		fmt.Println("3. 修复 puppeteer 弹出cmd窗口 或者 puppeteer启动失败(Windows Server 2012请勿使用)")
 		fmt.Println("4. 修复 云崽登录QQ失败")
 		fmt.Println("5. 修复 #重启 失败(也就是pnpm start pm2报错)")
 		fmt.Println("6. 修复 cookie 总是失效过期(Redis启动参数错误导致)")
@@ -135,6 +135,7 @@ func reInstallDep() {
 		printWithEmptyLine("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "y" {
+			executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
 			executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 			os.RemoveAll("./node_modules")
 			executeCmd("pnpm install", "开始安装云崽依赖...", "安装云崽依赖成功！")
@@ -143,6 +144,8 @@ func reInstallDep() {
 			return
 		}
 	} else {
+		executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
+		executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 		executeCmd("pnpm install", "", "安装云崽依赖成功！")
 	}
 	os.Chdir("..")
