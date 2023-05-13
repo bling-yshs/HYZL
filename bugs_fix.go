@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -14,26 +13,18 @@ func bugsFixMenu() {
 		return
 	}
 	for {
-		fmt.Println("===BUG修复===")
-		fmt.Println("1. 重装依赖")
-		fmt.Println("2. 修复 puppeteer 启动失败(Windows Server 2012专用)")
-		fmt.Println("3. 修复 puppeteer 弹出cmd窗口 或者 puppeteer启动失败(Windows Server 2012请勿使用)")
-		fmt.Println("4. 修复 云崽登录QQ失败")
-		fmt.Println("5. 修复 #重启 失败(也就是pnpm start pm2报错)")
-		fmt.Println("6. 修复 cookie 总是失效过期(Redis启动参数错误导致)")
-		fmt.Println("0. 返回上一级")
-		fmt.Print("\n请选择操作：")
-		var choice int
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			printWithEmptyLine("输入错误，请重新选择")
-			continue
+		options := []string{
+			"重装依赖",
+			"修复 puppeteer 启动失败(Windows Server 2012专用)",
+			"修复 puppeteer 弹出cmd窗口 或者 puppeteer启动失败(Windows Server 2012请勿使用)",
+			"修复 云崽登录QQ失败",
+			"修复 #重启 失败(也就是pnpm start pm2报错)",
+			"修复 cookie 总是失效过期(Redis启动参数错误导致)",
 		}
 
+		choice := showMenu("BUG修复", options, false)
+
 		switch choice {
-		case 0:
-			clearLog()
-			return
 		case 1:
 			clearLog()
 			reInstallDep()
@@ -52,6 +43,9 @@ func bugsFixMenu() {
 		case 6:
 			clearLog()
 			cookieRedisFix()
+		case 7:
+			clearLog()
+			return
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}

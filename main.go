@@ -25,6 +25,7 @@ func createNormalConfig(config Config) {
 		printErr(err)
 		return
 	}
+
 	//再创建config.json
 	file, err := os.Create("./config/config.json")
 	if err != nil {
@@ -32,6 +33,7 @@ func createNormalConfig(config Config) {
 		return
 	}
 	defer file.Close()
+
 	//写入文件
 	data, err := json.MarshalIndent(config, "", "    ")
 	if err != nil {
@@ -122,28 +124,19 @@ func isRedisRunning() bool {
 	}
 }
 
-// ↓菜单函数
+// 主菜单函数
 func mainMenu() {
-	for {
-		fmt.Println("===主菜单===")
-		fmt.Println("1. 安装云崽")
-		fmt.Println("2. 云崽管理")
-		fmt.Println("3. BUG修复")
-		fmt.Println("4. 立即更新启动器")
-		fmt.Println("0. 退出程序")
-		fmt.Print("\n请选择操作：")
+	options := []string{
+		"安装云崽",
+		"云崽管理",
+		"BUG修复",
+		"立即更新启动器",
+	}
 
-		var choice int
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			printWithEmptyLine("输入错误，请重新选择")
-			continue
-		}
+	for {
+		choice := showMenu("主菜单", options, true)
 
 		switch choice {
-		case 0:
-			printWithEmptyLine("退出程序")
-			return
 		case 1:
 			clearLog()
 			downloadYunzaiFromGitee()
@@ -156,8 +149,6 @@ func mainMenu() {
 		case 4:
 			clearLog()
 			updateLauncherRightNow()
-		default:
-			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
 }

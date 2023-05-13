@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	ct "github.com/daviddengcn/go-colortext"
 	"io"
 	"net/http"
 	"net/url"
@@ -16,6 +15,8 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
+	ct "github.com/daviddengcn/go-colortext"
 )
 
 type WorkingDirectory struct{}
@@ -139,6 +140,41 @@ func downloadFile(downloadURL string, downloadFilePath string) error {
 
 	_, _ = io.Copy(f, res.Body)
 	return nil
+}
+
+func showMenu(title string, options []string, isMainMenu bool) int {
+	for {
+		fmt.Println("===" + title + "===")
+		for i, option := range options {
+			fmt.Printf("%d. %s\n", i+1, option)
+		}
+		if isMainMenu {
+			fmt.Println("0. 退出程序")
+		} else {
+			fmt.Println("0. 返回上一级")
+		}
+
+		fmt.Print("\n请选择操作：")
+
+		var choice int
+		_, err := fmt.Scanln(&choice)
+		if err != nil {
+			fmt.Println("输入错误，请重新选择")
+			continue
+		}
+
+		if choice == 0 {
+			fmt.Println("退出程序")
+			os.Exit(0)
+		}
+
+		if choice < 1 || choice > len(options) {
+			fmt.Println("选择不正确，请重新选择")
+			continue
+		}
+
+		return choice
+	}
 }
 
 func getAppInfo(args ...*string) {

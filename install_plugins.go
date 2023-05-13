@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -9,26 +8,17 @@ import (
 func installPluginsMenu() {
 	_ = os.Chdir("./Yunzai-Bot")
 	for {
-		fmt.Println("===安装插件===")
-		fmt.Println("1. 锅巴插件")
-		fmt.Println("2. 喵喵插件")
-		fmt.Println("3. 逍遥插件")
-		fmt.Println("4. 枫叶插件")
-		fmt.Println("5. 星穹铁道插件")
-		fmt.Println("0. 返回上一级")
-		fmt.Print("\n请选择操作：")
-		var choice int
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			printWithEmptyLine("输入错误，请重新选择")
-			continue
+		options := []string{
+			"锅巴插件",
+			"喵喵插件",
+			"逍遥插件",
+			"枫叶插件",
+			"星穹铁道插件",
 		}
 
+		choice := showMenu("安装插件", options, false)
+
 		switch choice {
-		case 0:
-			clearLog()
-			_ = os.Chdir("..")
-			return
 		case 1:
 			clearLog()
 			installGuobaPlugin()
