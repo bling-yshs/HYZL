@@ -45,9 +45,12 @@ func downloadYunzaiFromGitee() {
 		executeCmd("npm install pnpm -g --registry=https://registry.npmmirror.com", "开始安装 pnpm ...", "安装 pnpm 成功！")
 	}
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
-	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "设置 pnpm 镜像源成功！")
+	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer 镜像源...")
+	executeCmd("pnpm install puppeteer@19.8.3 -w", "开始修改 puppeteer 版本并安装云崽依赖")
+	executeCmd("node ./node_modules/puppeteer/install.js")
 	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")
 	if installMiao {
+		printWithEmptyLine("开始下载必须的喵喵插件...")
 		installMiaoPlugin()
 	}
 	wd.changeToRoot()
