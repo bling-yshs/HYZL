@@ -184,7 +184,7 @@ func createChangelog() {
 		printErr(err2)
 		return
 	}
-	_ = os.WriteFile("./config/changelog.txt", []byte(changelog), 0777)
+	_ = os.WriteFile("./config/changelog.txt", []byte(changelog), os.ModePerm)
 }
 
 func createUpdateBat() {
@@ -206,7 +206,7 @@ start %%destination%%\%s
 exit`, programName, programName)
 
 	data1, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
-	_ = os.WriteFile(`temp.bat`, data1, 0777)
+	_ = os.WriteFile(`temp.bat`, data1, os.ModePerm)
 	executeCmd(`type temp.bat | find "" /V > update.bat`)
 	_ = os.RemoveAll(`temp.bat`)
 }

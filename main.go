@@ -13,31 +13,35 @@ import (
 func createNormalConfig(config Config) {
 	//检查当前目录下是否存在config文件夹
 	_, err := os.Stat("./config")
-	//如果不存在就创建
+
+	//如果存在就不创建
+	if err == nil {
+		return
+	}
+
+	//创建文件
+	err = os.Mkdir("./config", os.ModePerm)
 	if err != nil {
-		err = os.Mkdir("./config", 0777)
-		if err != nil {
-			printErr(err)
-			return
-		}
-		//再创建config.json
-		file, err := os.Create("./config/config.json")
-		if err != nil {
-			printErr(err)
-			return
-		}
-		defer file.Close()
-		//写入文件
-		data, err := json.MarshalIndent(config, "", "    ")
-		if err != nil {
-			printErr(err)
-			return
-		}
-		_, err = file.Write(data)
-		if err != nil {
-			printErr(err)
-			return
-		}
+		printErr(err)
+		return
+	}
+	//再创建config.json
+	file, err := os.Create("./config/config.json")
+	if err != nil {
+		printErr(err)
+		return
+	}
+	defer file.Close()
+	//写入文件
+	data, err := json.MarshalIndent(config, "", "    ")
+	if err != nil {
+		printErr(err)
+		return
+	}
+	_, err = file.Write(data)
+	if err != nil {
+		printErr(err)
+		return
 	}
 }
 
@@ -77,7 +81,7 @@ func checkEnv(config *Config) bool {
 			printErr(err)
 			return false
 		}
-		err = os.WriteFile("./config/config.json", data, 0777)
+		err = os.WriteFile("./config/config.json", data, os.ModePerm)
 		if err != nil {
 			printErr(err)
 			return false
