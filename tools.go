@@ -30,30 +30,51 @@ func (dir *WorkingDirectory) changeToYunzai() {
 }
 
 // ↓工具函数
-func readInt() int64 {
+
+// 参数canBeEmpty如果为true，表示输入可以为空，返回0
+func readInt(canBeEmpty ...bool) int64 {
+
+	allowEmpty := false
+	if len(canBeEmpty) > 0 {
+		allowEmpty = canBeEmpty[0]
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		scanner.Scan()
 		s := scanner.Text()
 		if s == "" {
+			if allowEmpty {
+				return 0
+			}
+			fmt.Print("输入不能为空，请重新输入：")
 			continue
 		}
 		i, err := strconv.ParseInt(s, 10, 64)
 		if err != nil {
-			fmt.Println("输入错误，请重新输入")
+			fmt.Print("输入错误，请重新输入：")
 			continue
 		}
 		return i
 	}
 }
 
-func readString() string {
+// 参数canBeEmpty如果为true，表示输入可以为空，返回空字符串
+func readString(canBeEmpty ...bool) string {
+	allowEmpty := false
+	if len(canBeEmpty) > 0 {
+		allowEmpty = canBeEmpty[0]
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		scanner.Scan()
 		s := scanner.Text()
 		if s == "" {
-			fmt.Println("输入错误，请重新输入")
+			if allowEmpty {
+				return ""
+			}
+			fmt.Print("输入不能为空，请重新输入：")
 			continue
 		}
 		return s

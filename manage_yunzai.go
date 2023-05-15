@@ -3,10 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -17,27 +17,19 @@ func manageYunzaiMenu() {
 		return
 	}
 	for {
-		fmt.Println("===云崽管理===")
-		fmt.Println("1. 启动云崽")
-		fmt.Println("2. 强制关闭云崽")
-		fmt.Println("3. 切换账号")
-		fmt.Println("4. 安装插件")
-		fmt.Println("5. 安装js插件")
-		fmt.Println("6. 自定义终端命令")
-		fmt.Println("7. 更新云崽")
-		fmt.Println("0. 返回上一级")
-		fmt.Print("\n请选择操作：")
-		var choice int
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			printWithEmptyLine("输入错误，请重新选择")
-			continue
+		options := []string{
+			"启动云崽",
+			"强制关闭云崽",
+			"修改云崽账号密码或者修改主人QQ",
+			"安装插件",
+			"安装js插件",
+			"自定义终端命令",
+			"更新云崽",
 		}
 
+		choice := showMenu("云崽管理", options, false)
+
 		switch choice {
-		case 0:
-			clearLog()
-			return
 		case 1:
 			clearLog()
 			startYunzai()
@@ -109,38 +101,58 @@ func closeYunzai() {
 }
 
 func changeMasterQQ() {
+	var isOtherYamlExists bool = true
 	// 读取 YAML 配置文件
-	file, err := os.Open("./Yunzai-Bot/config/config/other.yaml")
-	if err != nil {
-		printErr(err)
-	}
-	defer file.Close()
-
-	reader := bufio.NewReader(file)
-	var content string
-	for {
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			break
+	stat, err := os.Stat("./Yunzai-Bot/config/config/other.yaml")
+	if err != nil || stat.Size() == 0 {
+		isOtherYamlExists = false
+		printWithEmptyLine("警告：检测到other.yaml配置文件内容为空，请问是否还原默认配置？(是:y 退出修改:n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			stat, err := os.Stat("./Yunzai-Bot/config/default_config/other.yaml")
+			if err != nil || stat.Size() == 0 {
+				downloadFile("https://gitee.com/yoimiya-kokomi/Yunzai-Bot/raw/main/config/default_config/other.yaml", "./Yunzai-Bot/config/config/other.yaml")
+			} else {
+				copyFile("./Yunzai-Bot/config/default_config/other.yaml", "./Yunzai-Bot/config/config/other.yaml")
+			}
 		}
-		content += line
+		if choice == "n" {
+			return
+		}
 	}
 
-	// 让用户输入新的 masterQQ 值
-	fmt.Print("请输入新的主人QQ(直接回车将不改变主人QQ)：")
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	newMasterQQ := scanner.Text()
+	content, err := os.ReadFile("./Yunzai-Bot/config/config/other.yaml")
 
-	// 如果用户没有输入新值，就不修改文件
-	if newMasterQQ == "" {
-		return
+	var newMasterQQ int64
+
+	if isOtherYamlExists == true {
+		fmt.Print("请输入新的主人QQ(直接回车将不改变主人QQ)：")
+		newMasterQQ = readInt(true)
+
+		// 如果用户没有输入新值，就不修改文件
+		if newMasterQQ == 0 {
+			return
+		}
 	}
+	if isOtherYamlExists == false {
+		for {
+			fmt.Print("请输入新的主人QQ：")
+			newMasterQQ = readInt()
+			if newMasterQQ == 0 {
+				printWithEmptyLine("主人QQ不能为空！")
+				continue
+			} else {
+				break
+			}
+		}
+
+	}
+
 	// 修改 masterQQ 值
-	lines := strings.Split(content, "\n")
+	lines := strings.Split(string(content), "\n")
 	for i, line := range lines {
 		if strings.HasPrefix(line, "masterQQ:") {
-			lines[i+1] = "  - " + newMasterQQ // 在下一行加入新的 masterQQ 值
+			lines[i+1] = "  - " + strconv.FormatInt(newMasterQQ, 10) // 在下一行加入新的 masterQQ 值
 			break
 		}
 	}
@@ -148,26 +160,27 @@ func changeMasterQQ() {
 	newContent := strings.Join(lines, "\n")
 
 	// 将修改后的内容写回文件
-	err = os.WriteFile("./Yunzai-Bot/config/config/other.yaml", []byte(newContent), 0644)
+	err = os.WriteFile("./Yunzai-Bot/config/config/other.yaml", []byte(newContent), os.ModePerm)
 	if err != nil {
 		printErr(err)
 	}
 
-	printWithEmptyLine("主人QQ已修改为" + newMasterQQ)
+	printWithEmptyLine("主人QQ已修改为" + strconv.FormatInt(newMasterQQ, 10))
 }
 
 func changeAccount() {
-
-	fmt.Print("请输入 QQ 账号：")
-	qq := readInt()
-	fmt.Print("请输入密码：")
-	pwd := readString()
-	fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad、6:old_Android）2023年4月24日：推荐使用6:old_Android登录：")
-	platform := readInt()
+	fmt.Print("请输入 QQ 账号(直接回车将不改变QQ账号和密码)：")
+	qq := readInt(true)
+	if qq != 0 {
+		fmt.Print("请输入密码：")
+		pwd := readString()
+		fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad、6:old_Android）2023年4月24日：推荐使用6:old_Android登录：")
+		platform := readInt()
+		fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad 、 6:old_Android\nplatform: %d", qq, pwd, platform)
+		//覆盖掉./Yunzai-Bot/config/config/qq.yaml
+		os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(fileContent), os.ModePerm)
+	}
 	changeMasterQQ()
-	fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad 、 6:old_Android\nplatform: %d", qq, pwd, platform)
-	//覆盖掉./Yunzai-Bot/config/config/qq.yaml
-	os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(fileContent), fs.FileMode(0777))
 	printWithEmptyLine("切换账号成功！")
 }
 
