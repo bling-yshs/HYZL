@@ -30,6 +30,9 @@ func manageYunzaiMenu() {
 		choice := showMenu("云崽管理", options, false)
 
 		switch choice {
+		case 0:
+			clearLog()
+			return
 		case 1:
 			clearLog()
 			startYunzai()

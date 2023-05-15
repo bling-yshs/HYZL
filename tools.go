@@ -184,12 +184,7 @@ func showMenu(title string, options []string, isMainMenu bool) int {
 			continue
 		}
 
-		if choice == 0 {
-			fmt.Println("退出程序")
-			os.Exit(0)
-		}
-
-		if choice < 1 || choice > len(options) {
+		if choice > len(options) {
 			fmt.Println("选择不正确，请重新选择")
 			continue
 		}

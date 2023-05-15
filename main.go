@@ -137,6 +137,9 @@ func mainMenu() {
 		choice := showMenu("主菜单", options, true)
 
 		switch choice {
+		case 0:
+			os.Exit(0)
+			return
 		case 1:
 			clearLog()
 			downloadYunzaiFromGitee()
@@ -174,7 +177,7 @@ var (
 )
 
 const (
-	version = "v0.1.11"
+	version = "v0.1.12"
 )
 
 func main() {

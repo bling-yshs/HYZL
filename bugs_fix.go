@@ -25,6 +25,9 @@ func bugsFixMenu() {
 		choice := showMenu("BUG修复", options, false)
 
 		switch choice {
+		case 0:
+			clearLog()
+			return
 		case 1:
 			clearLog()
 			reInstallDep()

@@ -19,6 +19,9 @@ func installPluginsMenu() {
 		choice := showMenu("安装插件", options, false)
 
 		switch choice {
+		case 0:
+			clearLog()
+			return
 		case 1:
 			clearLog()
 			installGuobaPlugin()
