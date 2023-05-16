@@ -94,6 +94,16 @@ func isNewYunzai() bool {
 	if !strings.EqualFold(correctMD5, downloadYunzaiMD5) {
 		return false
 	}
+	//最后检验一下是否是最新的版本
+	latestVersion, err := giteeAPI.getLatestTag()
+	if err != nil {
+		return false
+	}
+	if !compareVersion(version, latestVersion) {
+		os.Remove(md5DownloadedPath)
+		os.Remove(YzDownloadedPath)
+		return false
+	}
 	return true
 }
 
