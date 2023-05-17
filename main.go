@@ -93,8 +93,8 @@ func checkEnv(config *Config) bool {
 }
 
 func startRedis() *exec.Cmd {
+	wd.changeToRedis()
 	printWithEmptyLine("正在启动 Redis ...")
-	_ = os.Chdir("./redis-windows-7.0.4")
 	dir, _ := os.Getwd()
 	redisPath := filepath.Join(dir, "redis-server.exe")
 	redisConfigPath := filepath.Join(dir, "redis.conf")
@@ -104,7 +104,6 @@ func startRedis() *exec.Cmd {
 		printErr(err)
 	}
 	println("Redis 启动成功！")
-	_ = os.Chdir("..")
 	return cmd
 }
 
@@ -134,6 +133,7 @@ func mainMenu() {
 	}
 
 	for {
+		wd.changeToRoot()
 		choice := showMenu("主菜单", options, true)
 
 		switch choice {

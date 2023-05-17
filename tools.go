@@ -29,6 +29,10 @@ func (dir *WorkingDirectory) changeToYunzai() {
 	os.Chdir(filepath.Join(programRunPath, "Yunzai-Bot"))
 }
 
+func (dir *WorkingDirectory) changeToRedis() {
+	os.Chdir(filepath.Join(programRunPath, "redis-windows-7.0.4"))
+}
+
 // ↓工具函数
 
 // 参数canBeEmpty如果为true，表示输入可以为空，返回0

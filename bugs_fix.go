@@ -13,6 +13,7 @@ func bugsFixMenu() {
 		return
 	}
 	for {
+		wd.changeToRoot()
 		options := []string{
 			"重装依赖",
 			"修复 puppeteer 启动失败(Windows Server 2012专用)",
@@ -56,21 +57,19 @@ func bugsFixMenu() {
 }
 
 func cookieRedisFix() {
-	os.Chdir("./redis-windows-7.0.4")
+	wd.changeToRedis()
 	downloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "./")
 	printWithEmptyLine("修复成功！")
-	os.Chdir("..")
 }
 func pm2Fix() {
-	os.Chdir("./Yunzai-Bot")
+	wd.changeToYunzai()
 	executeCmd("pnpm uninstall pm2", "正在修复...")
 	executeCmd("pnpm install pm2@latest -w", "", "修复成功！")
-	os.Chdir("..")
 }
 
 func icqqProblemFix() {
+	wd.changeToYunzai()
 	printWithEmptyLine("开始修复 错误码45 错误码238 QQ版本过低...")
-	_ = os.Chdir("./Yunzai-Bot")
 	_, err2 := os.Stat("./data")
 	//如果data文件夹存在
 	if err2 == nil {
@@ -111,11 +110,10 @@ func icqqProblemFix() {
 		return
 	}
 	printWithEmptyLine("修复成功！")
-	os.Chdir("..")
 }
 
 func pupPopFix() {
-	os.Chdir("./Yunzai-Bot")
+	wd.changeToYunzai()
 	executeCmd("git reset --hard origin/HEAD")
 	executeCmd("git pull", "正在更新云崽到最新版本...", "更新云崽到最新版本成功！")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
@@ -123,11 +121,10 @@ func pupPopFix() {
 	executeCmd("pnpm uninstall puppeteer", "正在修复 puppeteer Chromium...")
 	executeCmd("pnpm install puppeteer@19.8.3 -w")
 	executeCmd("node ./node_modules/puppeteer/install.js")
-	os.Chdir("..")
 }
 
 func reInstallDep() {
-	os.Chdir("./Yunzai-Bot")
+	wd.changeToYunzai()
 	if _, err := os.Stat("./node_modules"); err == nil {
 		printWithEmptyLine("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
@@ -145,11 +142,10 @@ func reInstallDep() {
 		executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 		executeCmd("pnpm install", "", "安装云崽依赖成功！")
 	}
-	os.Chdir("..")
 }
 
 func pupCanNotStartFix() {
-	os.Chdir("./Yunzai-Bot")
+	wd.changeToYunzai()
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 	executeCmd("pnpm uninstall puppeteer", "正在修复 puppeteer Chromium...")
@@ -157,5 +153,4 @@ func pupCanNotStartFix() {
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	printWithEmptyLine("正在下载cmd弹窗修复文件...")
 	downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/puppeteer.js", "./lib/puppeteer")
-	os.Chdir("..")
 }

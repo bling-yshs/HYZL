@@ -39,7 +39,7 @@ func downloadYunzaiFromGitee() {
 		installMiao = true
 	}
 	//进入Yunzai-Bot文件夹
-	os.Chdir("./Yunzai-Bot")
+	wd.changeToYunzai()
 	b2 := checkCommand("pnpm -v")
 	if !b2 {
 		executeCmd("npm install pnpm -g --registry=https://registry.npmmirror.com", "开始安装 pnpm ...", "安装 pnpm 成功！")
@@ -53,5 +53,4 @@ func downloadYunzaiFromGitee() {
 		printWithEmptyLine("开始下载必须的喵喵插件...")
 		installMiaoPlugin()
 	}
-	wd.changeToRoot()
 }

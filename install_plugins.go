@@ -6,8 +6,8 @@ import (
 )
 
 func installPluginsMenu() {
-	_ = os.Chdir("./Yunzai-Bot")
 	for {
+		wd.changeToYunzai()
 		options := []string{
 			"锅巴插件",
 			"喵喵插件",

@@ -17,6 +17,7 @@ func manageYunzaiMenu() {
 		return
 	}
 	for {
+		wd.changeToRoot()
 		options := []string{
 			"启动云崽",
 			"强制关闭云崽",
@@ -61,16 +62,16 @@ func manageYunzaiMenu() {
 }
 
 func updateYunzaiToLatest() {
-	os.Chdir("./Yunzai-Bot")
+	wd.changeToYunzai()
 	err := executeCmd("git pull", "正在更新云崽...")
 	if err != nil {
 		executeCmd("git reset --hard origin/HEAD")
 	}
-	os.Chdir("..")
 }
 
 // 检查云崽是否存在，存在返回true，不存在返回false
 func yunzaiExists() bool {
+	wd.changeToRoot()
 	if _, err := os.Stat("./Yunzai-Bot"); err != nil {
 		return false
 	}
@@ -89,13 +90,12 @@ func startYunzai() {
 		//等待1秒
 		time.Sleep(1 * time.Second)
 	}
-	os.Chdir("./Yunzai-Bot")
+	wd.changeToYunzai()
 	printWithEmptyLine("正在启动云崽...")
 	dir, _ := os.Getwd()
 	cmd := exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node app")
 	cmd.Start()
 	printWithEmptyLine("云崽启动成功！")
-	os.Chdir("..")
 }
 
 func closeYunzai() {
@@ -209,13 +209,11 @@ func installJsPlugin() {
 }
 
 func customCommand() {
+	wd.changeToYunzai()
 	// 读取用户输入的一串字符串
 	fmt.Print("请输入命令：")
 	reader := bufio.NewReader(os.Stdin)
 	command, _ := reader.ReadString('\n')
 	command = strings.TrimSuffix(command, "\n")
-
-	os.Chdir("./Yunzai-Bot")
 	executeCmd(command)
-	os.Chdir("..")
 }
