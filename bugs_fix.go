@@ -34,7 +34,7 @@ func bugsFixMenu() {
 			reInstallDep()
 		case 2:
 			clearLog()
-			pupCanNotStartFix()
+			Win2012PuppeteerCanNotStartFix()
 		case 3:
 			clearLog()
 			pupPopFix()
@@ -144,7 +144,7 @@ func reInstallDep() {
 	}
 }
 
-func pupCanNotStartFix() {
+func Win2012PuppeteerCanNotStartFix() {
 	wd.changeToYunzai()
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
@@ -152,5 +152,11 @@ func pupCanNotStartFix() {
 	executeCmd("pnpm install puppeteer@19.7.3 -w")
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	printWithEmptyLine("正在下载cmd弹窗修复文件...")
-	downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/puppeteer.js", "./lib/puppeteer")
+	_, err := os.Stat("./renderers")
+	if err != nil {
+		downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/puppeteer.js", "./lib/puppeteer")
+	} else {
+		downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/MiaoYunzai/config_default.yaml", "./renderers/puppeteer")
+		downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/MiaoYunzai/puppeteer.js", "./renderers/puppeteer/lib")
+	}
 }
