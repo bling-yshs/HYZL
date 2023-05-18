@@ -234,8 +234,11 @@ func updateLauncherRightNow() {
 	if updating == false {
 		downloadLauncher(latestVersion)
 	}
-	if !isNewYunzai() {
-		return
+	for {
+		if isNewYunzai() {
+			break
+		}
+		time.Sleep(5 * time.Second)
 	}
 	createUpdateBat()
 	time.Sleep(1 * time.Second)
