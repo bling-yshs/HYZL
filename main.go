@@ -165,20 +165,20 @@ type Config struct {
 }
 
 var (
-	gitBranchName        string = "main"
-	programName          string = "YzLauncher-windows"
-	globalRepositoryLink string = `https://gitee.com/bling_yshs/YzLauncher-windows`
-	programRunPath       string = ""
-	ownerAndRepo         string = "bling_yshs/YzLauncher-windows"
-	giteeAPI                    = &GiteeAPI{}
+	gitBranchName        = "main"
+	programName          = "YzLauncher-windows"
+	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
+	programRunPath       = ""
+	ownerAndRepo         = "bling_yshs/YzLauncher-windows"
+	giteeAPI             = &GiteeAPI{}
 	config               Config
 	wd                         = &WorkingDirectory{}
-	updating             bool  = false
+	updating                   = false
 	windowsVersion       int64 = 10
 )
 
 const (
-	version = "v0.1.15"
+	version = "v0.1.16"
 )
 
 func main() {
