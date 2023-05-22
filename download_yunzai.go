@@ -1,7 +1,6 @@
 package main
 
 import (
-	ct "github.com/daviddengcn/go-colortext"
 	"os"
 )
 
@@ -11,9 +10,7 @@ func downloadYunzaiFromGitee() {
 		printWithEmptyLine("检测到当前目录下已存在 Yunzai-bot ，请问是否需要重新下载？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "y" {
-			ct.Foreground(ct.Red, true)
-			printWithEmptyLine("重新下载云崽会移除当前目录下的 Yunzai-bot 文件夹，云崽的数据将会被全部删除，且不可恢复，请再次确认是否继续？(是:y 返回菜单:n)")
-			ct.ResetColor()
+			printRedInfo("重新下载云崽会移除当前目录下的 Yunzai-bot 文件夹，云崽的数据将会被全部删除，且不可恢复，请再次确认是否继续？(是:y 返回菜单:n)")
 			userChoice := ReadChoice("y", "n")
 			if userChoice == "n" {
 				return
@@ -46,7 +43,18 @@ func downloadYunzaiFromGitee() {
 	}
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer 镜像源...")
-	executeCmd("pnpm install puppeteer@19.8.3 -w", "开始修改 puppeteer 版本并安装云崽依赖")
+	if windowsVersion < 10 {
+		executeCmd("pnpm install puppeteer@19.7.3 -w", "开始修改 puppeteer 版本并安装云崽依赖")
+		_, err := os.Stat("./renderers")
+		if err != nil {
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/puppeteer.js", "./lib/puppeteer")
+		} else {
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/MiaoYunzai/config_default.yaml", "./renderers/puppeteer")
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/MiaoYunzai/puppeteer.js", "./renderers/puppeteer/lib")
+		}
+	} else {
+		executeCmd("pnpm install puppeteer@19.8.3 -w", "开始修改 puppeteer 版本并安装云崽依赖")
+	}
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")
 	if installMiao {

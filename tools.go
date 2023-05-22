@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"github.com/James-Ye/go-frame/win"
 	"io"
 	"net/http"
 	"net/url"
@@ -208,7 +209,16 @@ func getAppInfo(args ...*string) {
 
 	//获取程序名字
 	*args[1] = filepath.Base(execPath)
+}
+func getAppInfoInt(args ...*int64) {
+	majorVersion, _, _ := win.RtlGetNtVersionNumbers()
+	*args[0] = int64(majorVersion)
+}
 
+func printRedInfo(str any) {
+	ct.Foreground(ct.Red, true)
+	printWithEmptyLine(str)
+	ct.ResetColor()
 }
 
 func clearLog() {

@@ -165,15 +165,16 @@ type Config struct {
 }
 
 var (
-	gitBranchName        = "main"
-	programName          = "YzLauncher-windows"
-	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
-	programRunPath       = ""
-	ownerAndRepo         = "bling_yshs/YzLauncher-windows"
-	giteeAPI             = &GiteeAPI{}
+	gitBranchName        string = "main"
+	programName          string = "YzLauncher-windows"
+	globalRepositoryLink string = `https://gitee.com/bling_yshs/YzLauncher-windows`
+	programRunPath       string = ""
+	ownerAndRepo         string = "bling_yshs/YzLauncher-windows"
+	giteeAPI                    = &GiteeAPI{}
 	config               Config
-	wd                   = &WorkingDirectory{}
-	updating             = false
+	wd                         = &WorkingDirectory{}
+	updating             bool  = false
+	windowsVersion       int64 = 10
 )
 
 const (
@@ -181,7 +182,11 @@ const (
 )
 
 func main() {
+	getAppInfoInt(&windowsVersion)
 	getAppInfo(&programRunPath, &programName, &gitBranchName)
+	if checkYunzaiFileExist() {
+		printRedInfo("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
+	}
 	createNormalConfig(config)
 	readAndWriteSomeConfig(&config)
 	autoUpdate()
@@ -192,6 +197,17 @@ func main() {
 	println("当前版本:", version)
 	getAndPrintAnnouncement()
 	mainMenu()
+}
+
+func checkYunzaiFileExist() bool {
+	wd.changeToRoot()
+	if _, err := os.Stat("./package.json"); err == nil {
+		return true
+	}
+	if _, err := os.Stat("./plugins"); err == nil {
+		return true
+	}
+	return false
 }
 
 func readAndWriteSomeConfig(config *Config) {
