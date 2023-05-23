@@ -17,7 +17,7 @@ func bugsFixMenu() {
 		options := []string{
 			"重装依赖",
 			"修复 puppeteer 启动失败(Windows Server 2012专用)",
-			"修复 puppeteer 弹出cmd窗口 或者 puppeteer启动失败(Windows Server 2012请勿使用)",
+			"修复 puppeteer启动失败(Windows Server 2012请勿使用)",
 			"修复 云崽登录QQ失败",
 			"修复 #重启 失败(也就是pnpm start pm2报错)",
 			"修复 cookie 总是失效过期(Redis启动参数错误导致)",
@@ -114,8 +114,6 @@ func icqqProblemFix() {
 
 func pupPopFix() {
 	wd.changeToYunzai()
-	executeCmd("git reset --hard origin/HEAD")
-	executeCmd("git pull", "正在更新云崽到最新版本...", "更新云崽到最新版本成功！")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 	executeCmd("pnpm uninstall puppeteer", "正在修复 puppeteer Chromium...")

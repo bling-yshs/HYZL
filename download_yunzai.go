@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"io"
 	"os"
 )
 
@@ -43,6 +45,7 @@ func downloadYunzaiFromGitee() {
 	}
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer 镜像源...")
+	delDep()
 	if windowsVersion < 10 {
 		executeCmd("pnpm install puppeteer@19.7.3 -w", "开始修改 puppeteer 版本并安装云崽依赖")
 		_, err := os.Stat("./renderers")
@@ -60,5 +63,49 @@ func downloadYunzaiFromGitee() {
 	if installMiao {
 		printWithEmptyLine("开始下载必须的喵喵插件...")
 		installMiaoPlugin()
+	}
+}
+
+type PackageJSON struct {
+	Name         string            `json:"name"`
+	Version      string            `json:"version"`
+	Author       string            `json:"author"`
+	Description  string            `json:"description"`
+	Main         string            `json:"main"`
+	Type         string            `json:"type"`
+	Scripts      map[string]string `json:"scripts"`
+	Dependencies map[string]string `json:"dependencies"`
+	DevDeps      map[string]string `json:"devDependencies"`
+	Imports      map[string]string `json:"imports"`
+}
+
+func delDep() {
+	// 读取原始文件内容
+	filePath := "./package.json"
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	bytes, err := io.ReadAll(file)
+	if err != nil {
+		panic(err)
+	}
+	// 解析 JSON
+	var pkg PackageJSON
+	if err := json.Unmarshal(bytes, &pkg); err != nil {
+		panic(err)
+	}
+	// 修改内容
+	delete(pkg.Dependencies, "sqlite3")
+	delete(pkg.Dependencies, "puppeteer")
+	// 重新编码为 JSON
+	newBytes, err := json.MarshalIndent(pkg, "", "  ")
+	if err != nil {
+		panic(err)
+	}
+	// 覆写回去
+	if err := os.WriteFile(filePath, newBytes, os.ModePerm); err != nil {
+		panic(err)
 	}
 }
