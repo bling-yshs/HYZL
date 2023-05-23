@@ -210,10 +210,17 @@ func installJsPlugin() {
 
 func customCommand() {
 	wd.changeToYunzai()
+	for {
+		fmt.Println()
+		fmt.Print("请输入命令(输入0退出)：")
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		command := scanner.Text()
+		printWithEmptyLine(command)
+		if "0" == command {
+			break
+		}
+		executeCmd(command)
+	}
 	// 读取用户输入的一串字符串
-	fmt.Print("请输入命令：")
-	reader := bufio.NewReader(os.Stdin)
-	command, _ := reader.ReadString('\n')
-	command = strings.TrimSuffix(command, "\n")
-	executeCmd(command)
 }
