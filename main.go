@@ -165,7 +165,6 @@ type Config struct {
 }
 
 var (
-	gitBranchName        = "main"
 	programName          = "YzLauncher-windows"
 	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
 	programRunPath       = ""
@@ -175,6 +174,7 @@ var (
 	wd                         = &WorkingDirectory{}
 	updating                   = false
 	windowsVersion       int64 = 10
+	configPath                 = ""
 )
 
 const (
@@ -183,7 +183,7 @@ const (
 
 func main() {
 	getAppInfoInt(&windowsVersion)
-	getAppInfo(&programRunPath, &programName, &gitBranchName)
+	getAppInfo(&programRunPath, &programName, &configPath)
 	if checkYunzaiFileExist() {
 		printRedInfo("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
 	}
@@ -223,5 +223,4 @@ func readAndWriteSomeConfig(config *Config) {
 		return
 	}
 	writeSystemTempPath(config)
-	writeConfigPath(config)
 }

@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"path/filepath"
 )
 
 func getSystemTempPath() string {
@@ -45,14 +44,6 @@ func writeConfig(config *Config) {
 func writeSystemTempPath(config *Config) {
 	if config.SystemTempPath == "" {
 		config.SystemTempPath = getSystemTempPath()
-		writeConfig(config)
-	}
-}
-
-func writeConfigPath(config *Config) {
-	configPath := filepath.Join(programRunPath, "config")
-	if config.ConfigPath == "" {
-		config.ConfigPath = configPath
 		writeConfig(config)
 	}
 }

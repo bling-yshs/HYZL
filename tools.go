@@ -209,6 +209,7 @@ func getAppInfo(args ...*string) {
 
 	//获取程序名字
 	*args[1] = filepath.Base(execPath)
+	*args[2] = filepath.Join(currentDir, "config")
 }
 func getAppInfoInt(args ...*int64) {
 	majorVersion, _, _ := win.RtlGetNtVersionNumbers()

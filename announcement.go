@@ -38,7 +38,7 @@ func compareAnnouncement() bool {
 }
 
 func printAnnouncement() {
-	announcementPath := filepath.Join(config.ConfigPath, "announcement.txt")
+	announcementPath := filepath.Join(configPath, "announcement.txt")
 	_, err := os.Stat(announcementPath)
 	//如果文件不存在
 	if err != nil {
@@ -61,7 +61,7 @@ func getAnnouncement() {
 	}
 	if compareAnnouncement() {
 		//复制到Config文件夹
-		copyFile(oldAnnouncementPath, filepath.Join(config.ConfigPath, "announcement.txt"))
+		copyFile(oldAnnouncementPath, filepath.Join(configPath, "announcement.txt"))
 	}
 }
 
