@@ -69,7 +69,7 @@ func pm2Fix() {
 
 func icqqProblemFix() {
 	wd.changeToYunzai()
-	printWithEmptyLine("开始修复 错误码45 错误码238 QQ版本过低...")
+	printWithEmptyLine("开始修复云崽登录失败...")
 	_, err2 := os.Stat("./data")
 	//如果data文件夹存在
 	if err2 == nil {

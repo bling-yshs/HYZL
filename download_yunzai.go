@@ -97,7 +97,6 @@ func delDep() {
 		panic(err)
 	}
 	// 修改内容
-	delete(pkg.Dependencies, "sqlite3")
 	delete(pkg.Dependencies, "puppeteer")
 	// 重新编码为 JSON
 	newBytes, err := json.MarshalIndent(pkg, "", "  ")
