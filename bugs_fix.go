@@ -21,6 +21,7 @@ func bugsFixMenu() {
 			"修复 云崽登录QQ失败",
 			"修复 #重启 失败(也就是pnpm start pm2报错)",
 			"修复 cookie 总是失效过期(Redis启动参数错误导致)",
+			"修复 喵喵云崽监听报错(sqlite3缺失，注意可能对icqq版本也有要求)",
 		}
 
 		choice := showMenu("BUG修复", options, false)
@@ -49,6 +50,7 @@ func bugsFixMenu() {
 			cookieRedisFix()
 		case 7:
 			clearLog()
+			sqliteFix()
 			return
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
@@ -56,6 +58,10 @@ func bugsFixMenu() {
 	}
 }
 
+func sqliteFix() {
+	wd.changeToYunzai()
+	executeCmd("pnpm install sqlite3@5.1.6 -w", "正在修复sqlite3缺失...")
+}
 func cookieRedisFix() {
 	wd.changeToRedis()
 	downloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "./")
