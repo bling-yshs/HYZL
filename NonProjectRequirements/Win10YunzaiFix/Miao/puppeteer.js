@@ -28,8 +28,7 @@ export default class PuppeteerRenderer {
         '--disable-gpu',
         '--disable-setuid-sandbox',
         '--no-sandbox',
-        '--no-zygote',
-        '--single-process'
+        '--no-zygote'
       ])
     }
     if (config.chromiumPath || cfg?.bot?.chromium_path) {

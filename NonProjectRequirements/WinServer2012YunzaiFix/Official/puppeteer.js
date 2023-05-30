@@ -2,7 +2,7 @@ import template from 'art-template'
 import fs from 'fs'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
-import cfg from '../config/config.js'
+import cfg from '../../../config/config.json'
 
 const _path = process.cwd()
 
@@ -52,7 +52,7 @@ class Puppeteer {
   async initPupp () {
     if (!lodash.isEmpty(puppeteer)) return puppeteer
 
-    puppeteer = (await import('puppeteer')).default
+    puppeteer = (await import('NonProjectRequirements/WinServer2012YunzaiFix/Official/puppeteer')).default
 
     return puppeteer
   }

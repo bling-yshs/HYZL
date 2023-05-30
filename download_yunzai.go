@@ -47,16 +47,25 @@ func downloadYunzaiFromGitee() {
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer 镜像源...")
 	delDep()
 	if windowsVersion < 10 {
-		executeCmd("pnpm install puppeteer@19.7.3 -w", "开始修改 puppeteer 版本并安装云崽依赖")
+		executeCmd("pnpm install puppeteer@19.7.3 -w")
+		executeCmd("node ./node_modules/puppeteer/install.js")
+		printWithEmptyLine("正在下载修复文件...")
 		_, err := os.Stat("./renderers")
 		if err != nil {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/puppeteer.js", "./lib/puppeteer")
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Official/puppeteer.js", "./lib/puppeteer")
 		} else {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/MiaoYunzai/config_default.yaml", "./renderers/puppeteer")
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/MiaoYunzai/puppeteer.js", "./renderers/puppeteer/lib")
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
 	} else {
-		executeCmd("pnpm install puppeteer@19.8.3 -w", "开始修改 puppeteer 版本并安装云崽依赖")
+		executeCmd("pnpm install puppeteer@19.8.3 -w")
+		executeCmd("node ./node_modules/puppeteer/install.js")
+		printWithEmptyLine("正在下载修复文件...")
+		_, err := os.Stat("./renderers")
+		if err == nil {
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/masterNonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
+		}
 	}
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")
