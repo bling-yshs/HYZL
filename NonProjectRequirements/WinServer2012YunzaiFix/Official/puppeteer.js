@@ -2,7 +2,7 @@ import template from 'art-template'
 import fs from 'fs'
 import lodash from 'lodash'
 import chokidar from 'chokidar'
-import cfg from '../../../config/config.json'
+import cfg from '../config/config.js'
 
 const _path = process.cwd()
 
@@ -16,27 +16,15 @@ class Puppeteer {
     this.restartNum = 100
     /** 截图次数 */
     this.renderNum = 0
-    if (process.platform === 'win32') {
-      this.config = {
-        headless: true,
-        args: [
-          '--disable-gpu',
-          '--disable-setuid-sandbox',
-          '--no-sandbox',
-          '--no-zygote',
-          '--single-process',
-        ]
-      }
-    } else {
-      this.config = {
-        headless: true,
-        args: [
-          '--disable-gpu',
-          '--disable-setuid-sandbox',
-          '--no-sandbox',
-          '--no-zygote',
-        ]
-      }
+    this.config = {
+      headless: true,
+      args: [
+        '--disable-gpu',
+        '--disable-setuid-sandbox',
+        '--no-sandbox',
+        '--no-zygote',
+        '--single-process',
+      ]
     }
 
     if (cfg.bot?.chromium_path) {
@@ -52,7 +40,7 @@ class Puppeteer {
   async initPupp () {
     if (!lodash.isEmpty(puppeteer)) return puppeteer
 
-    puppeteer = (await import('NonProjectRequirements/WinServer2012YunzaiFix/Official/puppeteer')).default
+    puppeteer = (await import('puppeteer')).default
 
     return puppeteer
   }

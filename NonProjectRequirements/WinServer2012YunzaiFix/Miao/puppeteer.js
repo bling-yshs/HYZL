@@ -3,7 +3,7 @@ import os from 'node:os'
 import lodash from 'lodash'
 import template from 'art-template'
 import chokidar from 'chokidar'
-import puppeteer from 'NonProjectRequirements/WinServer2012YunzaiFix/Miao/puppeteer'
+import puppeteer from 'puppeteer'
 // 暂时保留对原config的兼容
 import cfg from '../../../lib/config/config.js'
 import { Data } from '#miao'
