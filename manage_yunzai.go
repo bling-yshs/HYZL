@@ -25,7 +25,7 @@ func manageYunzaiMenu() {
 			"安装插件",
 			"安装js插件",
 			"自定义终端命令",
-			"更新云崽",
+			"强制更新云崽",
 		}
 
 		choice := showMenu("云崽管理", options, false)
