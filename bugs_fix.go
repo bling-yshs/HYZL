@@ -120,6 +120,7 @@ func puppeteerProblemFix() {
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 	executeCmd("pnpm uninstall puppeteer", "正在修复 puppeteer Chromium...")
 	if windowsVersion < 10 {
+		//WinServer2012
 		executeCmd("pnpm install puppeteer@19.7.3 -w")
 		executeCmd("node ./node_modules/puppeteer/install.js")
 		printWithEmptyLine("正在下载修复文件...")
@@ -131,13 +132,14 @@ func puppeteerProblemFix() {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
 	} else {
+		//Win10+
 		executeCmd("pnpm install puppeteer@19.8.3 -w")
 		executeCmd("node ./node_modules/puppeteer/install.js")
 		printWithEmptyLine("正在下载修复文件...")
 		_, err := os.Stat("./renderers")
 		if err == nil {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/masterNonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
 	}
 }
