@@ -62,7 +62,9 @@ func downloadYunzaiFromGitee() {
 		executeCmd("node ./node_modules/puppeteer/install.js")
 		printWithEmptyLine("正在下载修复文件...")
 		_, err := os.Stat("./renderers")
-		if err == nil {
+		if err != nil {
+			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Official/puppeteer.js", "./lib/puppeteer")
+		} else {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
