@@ -95,10 +95,7 @@ func isNewYunzai() bool {
 		return false
 	}
 	//最后检验一下是否是最新的版本
-	latestVersion, err := giteeAPI.getLatestTag()
-	if err != nil {
-		return false
-	}
+	latestVersion := giteeAPI.getLatestTag()
 	if !compareVersion(version, latestVersion) {
 		os.Remove(md5DownloadedPath)
 		os.Remove(YzDownloadedPath)
@@ -107,28 +104,10 @@ func isNewYunzai() bool {
 	return true
 }
 
-func update() bool {
-	latestVersion, err := giteeAPI.getLatestTag()
-	if err != nil {
-		return false
-	}
-	if !compareVersion(version, latestVersion) {
-		return false
-	}
-	downloadLauncher(latestVersion)
-	return true
-}
-
-func autoCheckUpdate() {
-	//每三小时执行一次检查
-	if update() {
-		return
-	}
-	ticker := time.NewTicker(3 * time.Hour)
-	for range ticker.C {
-		if update() {
-			return
-		}
+func update() {
+	latestVersion := giteeAPI.getLatestTag()
+	if compareVersion(version, latestVersion) {
+		downloadLauncher(latestVersion)
 	}
 }
 
@@ -174,7 +153,6 @@ func autoUpdate() {
 			return
 		}
 	}
-	go autoCheckUpdate()
 }
 
 func downloadLauncher(latestVersion string) {
@@ -189,11 +167,7 @@ func downloadLauncher(latestVersion string) {
 }
 
 func createChangelog() {
-	changelog, err2 := giteeAPI.getBody()
-	if err2 != nil {
-		printErr(err2)
-		return
-	}
+	changelog := giteeAPI.getBody()
 	_ = os.WriteFile("./config/changelog.txt", []byte(changelog), os.ModePerm)
 }
 
@@ -222,10 +196,7 @@ exit`, programName, programName)
 }
 
 func updateLauncherRightNow() {
-	latestVersion, err := giteeAPI.getLatestTag()
-	if err != nil {
-		return
-	}
+	latestVersion := giteeAPI.getLatestTag()
 	if !compareVersion(version, latestVersion) {
 		printWithEmptyLine("当前已是最新版本")
 		return

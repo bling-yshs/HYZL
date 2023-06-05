@@ -54,7 +54,7 @@ func printAnnouncement() {
 }
 
 func getAnnouncement() {
-	latestVersion, _ := giteeAPI.getLatestTag()
+	latestVersion := giteeAPI.getLatestTag()
 	err := downloadAnnouncement(latestVersion)
 	if err != nil {
 		return
@@ -69,5 +69,4 @@ func getAndPrintAnnouncement() {
 	newAnnouncementPath = filepath.Join(config.SystemTempPath, "YzLauncher", "download", "announcement.txt")
 	oldAnnouncementPath = filepath.Join(config.SystemTempPath, "YzLauncher", "announcement.txt")
 	printAnnouncement()
-	go getAnnouncement()
 }

@@ -169,7 +169,7 @@ var (
 	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
 	programRunPath       = ""
 	ownerAndRepo         = "bling_yshs/YzLauncher-windows"
-	giteeAPI             = &GiteeAPI{}
+	giteeAPI             = NewGiteeAPI()
 	config               Config
 	wd                         = &WorkingDirectory{}
 	updating                   = false
@@ -178,7 +178,7 @@ var (
 )
 
 const (
-	version = "v0.1.20"
+	version = "v0.1.19"
 )
 
 func main() {
@@ -196,6 +196,7 @@ func main() {
 	checkRedis()
 	println("当前版本:", version)
 	getAndPrintAnnouncement()
+	go scheduleList()
 	mainMenu()
 }
 

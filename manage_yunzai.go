@@ -104,7 +104,7 @@ func closeYunzai() {
 }
 
 func changeMasterQQ() {
-	var isOtherYamlExists bool = true
+	var isOtherYamlExists = true
 	// 读取 YAML 配置文件
 	stat, err := os.Stat("./Yunzai-Bot/config/config/other.yaml")
 	if err != nil || stat.Size() == 0 {
