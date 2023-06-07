@@ -26,6 +26,7 @@ func manageYunzaiMenu() {
 			"安装js插件",
 			"自定义终端命令",
 			"强制更新云崽",
+			"从官方云崽切换为喵喵云崽",
 		}
 
 		choice := showMenu("云崽管理", options, false)
@@ -55,9 +56,32 @@ func manageYunzaiMenu() {
 		case 7:
 			clearLog()
 			updateYunzaiToLatest()
+		case 8:
+			clearLog()
+			updateOfficialYunzaiToMiaoYunzai()
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}
+	}
+}
+
+func updateOfficialYunzaiToMiaoYunzai() {
+	wd.changeToYunzai()
+	printWithEmptyLine("请确认是否要切换为喵喵云崽，此操作不可逆！(y/n)")
+	userChoice := ReadChoice("y", "n")
+	if userChoice == "n" {
+		return
+	}
+	if userChoice == "y" {
+		executeCmd("git branch -m main master")
+		executeCmd("git remote rm origin")
+		executeCmd("git remote add origin https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git")
+		executeCmd("git fetch")
+		executeCmd("git branch --set-upstream-to=origin/master master")
+		executeCmd("git reset --hard origin/master")
+		executeCmd("pnpm update")
+		executeCmd("pnpm install")
+		puppeteerProblemFix()
 	}
 }
 

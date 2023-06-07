@@ -111,7 +111,7 @@ func update() {
 	}
 }
 
-func autoUpdate() {
+func updateThisProgram() {
 	_, err := os.Stat("./update.bat")
 	if err == nil {
 		//删除update.bat

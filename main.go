@@ -178,7 +178,7 @@ var (
 )
 
 const (
-	version = "v0.1.19"
+	version = "v0.1.21"
 )
 
 func main() {
@@ -189,14 +189,14 @@ func main() {
 	}
 	createNormalConfig(config)
 	readAndWriteSomeConfig(&config)
-	autoUpdate()
+	updateThisProgram()
 	if !checkEnv(&config) {
 		shutdownApp()
 	}
 	checkRedis()
 	println("当前版本:", version)
 	getAndPrintAnnouncement()
-	go scheduleList()
+	scheduleList()
 	mainMenu()
 }
 
