@@ -175,6 +175,7 @@ var (
 	updating                   = false
 	windowsVersion       int64 = 10
 	configPath                 = ""
+	updatedVersion             = version
 )
 
 const (

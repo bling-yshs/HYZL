@@ -106,7 +106,7 @@ func isNewYunzai() bool {
 
 func update() {
 	latestVersion := giteeAPI.getLatestTag()
-	if compareVersion(version, latestVersion) {
+	if compareVersion(updatedVersion, latestVersion) {
 		downloadLauncher(latestVersion)
 	}
 }
@@ -157,12 +157,13 @@ func updateThisProgram() {
 
 func downloadLauncher(latestVersion string) {
 	updating = true
-	if compareVersion(version, latestVersion) {
+	if compareVersion(updatedVersion, latestVersion) {
 		md5downloadLink, _ := url.JoinPath(globalRepositoryLink, "releases", "download", latestVersion, "yzMD5.txt")
 		downloadFile(md5downloadLink, "")
 		createChangelog()
 		downloadLink, _ := url.JoinPath(globalRepositoryLink, "releases", "download", latestVersion, "YzLauncher-windows.exe")
 		downloadFile(downloadLink, "")
+		updatedVersion = latestVersion
 	}
 }
 
