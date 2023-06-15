@@ -215,20 +215,25 @@ func installJsPlugin() {
 	//得到下载目录
 	jsPluginDir := filepath.Join(programRunPath, "Yunzai-bot/plugins/example")
 	//输入js插件的地址
-	fmt.Print("请输入需要下载的js插件的地址：")
+	fmt.Print("请输入需要下载或复制的js插件的地址：")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	jsPluginUrl := scanner.Text()
-	//检查url是否为https://开头，并且以js结尾
-	if !strings.HasPrefix(jsPluginUrl, "https://") || !strings.HasSuffix(jsPluginUrl, ".js") {
-		printWithEmptyLine("输入的js插件地址不正确，请重新输入")
-		return
-	}
-	//如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
-	jsPluginUrl = strings.Replace(jsPluginUrl, "blob", "raw", 1)
-	err := downloadFile(jsPluginUrl, jsPluginDir)
-	if err == nil {
-		printWithEmptyLine("下载成功！")
+	//检查输入是否为https://开头，并且以js结尾
+	if strings.HasPrefix(jsPluginUrl, "https://") && strings.HasSuffix(jsPluginUrl, ".js") {
+		//如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
+		jsPluginUrl = strings.Replace(jsPluginUrl, "blob", "raw", 1)
+		err := downloadFile(jsPluginUrl, jsPluginDir)
+		if err == nil {
+			fmt.Println("下载成功！")
+		}
+	} else if filepath.IsAbs(jsPluginUrl) && strings.HasSuffix(jsPluginUrl, ".js") {
+		err := copyFile(jsPluginUrl, filepath.Join(jsPluginDir, filepath.Base(jsPluginUrl)))
+		if err == nil {
+			fmt.Println("复制成功！")
+		}
+	} else {
+		fmt.Println("输入的js插件地址不正确！")
 	}
 }
 
