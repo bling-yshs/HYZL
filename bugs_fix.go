@@ -17,7 +17,7 @@ func bugsFixMenu() {
 		options := []string{
 			"重装依赖",
 			"修复 puppeteer 的各种问题",
-			"修复 云崽登录QQ失败",
+			"修复 云崽登录QQ失败(显示被风控发不出消息也可以尝试此选项)",
 			"修复 #重启 失败(也就是pnpm start pm2报错)",
 			"修复 cookie 总是失效过期(Redis启动参数错误导致)",
 			"修复 喵喵云崽监听报错(sqlite3缺失，注意可能对icqq版本也有要求)",
