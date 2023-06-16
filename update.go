@@ -197,6 +197,7 @@ exit`, programName, programName)
 }
 
 func updateLauncherRightNow() {
+	giteeAPI.updateReleaseDataFromAPI()
 	latestVersion := giteeAPI.getLatestTag()
 	if !compareVersion(version, latestVersion) {
 		printWithEmptyLine("当前已是最新版本")
