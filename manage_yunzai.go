@@ -96,13 +96,13 @@ func updateYunzaiToLatest() {
 // 检查云崽是否存在，存在返回true，不存在返回false
 func yunzaiExists() bool {
 	wd.changeToRoot()
-	if _, err := os.Stat("./Yunzai-Bot"); err != nil {
+	if _, err := os.Stat(yunzaiName); err != nil {
 		return false
 	}
-	if _, err := os.Stat("./Yunzai-Bot/package.json"); err != nil {
+	if _, err := os.Stat(filepath.Join(yunzaiName, "package.json")); err != nil {
 		return false
 	}
-	if _, err := os.Stat("./Yunzai-Bot/plugins"); err != nil {
+	if _, err := os.Stat(filepath.Join(yunzaiName, "plugins")); err != nil {
 		return false
 	}
 	return true
@@ -130,17 +130,17 @@ func closeYunzai() {
 func changeMasterQQ() {
 	var isOtherYamlExists = true
 	// 读取 YAML 配置文件
-	stat, err := os.Stat("./Yunzai-Bot/config/config/other.yaml")
+	stat, err := os.Stat(filepath.Join(yunzaiName, "config/config/other.yaml"))
 	if err != nil || stat.Size() == 0 {
 		isOtherYamlExists = false
 		printWithEmptyLine("警告：检测到other.yaml配置文件内容为空，请问是否还原默认配置？(是:y 退出修改:n)")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
-			stat, err := os.Stat("./Yunzai-Bot/config/default_config/other.yaml")
+			stat, err := os.Stat(filepath.Join(yunzaiName, "config/default_config/other.yaml"))
 			if err != nil || stat.Size() == 0 {
-				downloadFile("https://gitee.com/yoimiya-kokomi/Yunzai-Bot/raw/main/config/default_config/other.yaml", "./Yunzai-Bot/config/config/other.yaml")
+				downloadFile("https://gitee.com/yoimiya-kokomi/Yunzai-Bot/raw/main/config/default_config/other.yaml", filepath.Join(yunzaiName, "config/config/other.yaml"))
 			} else {
-				copyFile("./Yunzai-Bot/config/default_config/other.yaml", "./Yunzai-Bot/config/config/other.yaml")
+				copyFile(filepath.Join(yunzaiName, "config/default_config/other.yaml"), filepath.Join(yunzaiName, "config/config/other.yaml"))
 			}
 		}
 		if choice == "n" {
@@ -148,7 +148,7 @@ func changeMasterQQ() {
 		}
 	}
 
-	content, err := os.ReadFile("./Yunzai-Bot/config/config/other.yaml")
+	content, err := os.ReadFile(filepath.Join(yunzaiName, "config/config/other.yaml"))
 
 	var newMasterQQ int64
 
@@ -187,7 +187,7 @@ func changeMasterQQ() {
 	newContent := strings.Join(lines, "\n")
 
 	// 将修改后的内容写回文件
-	err = os.WriteFile("./Yunzai-Bot/config/config/other.yaml", []byte(newContent), os.ModePerm)
+	err = os.WriteFile(filepath.Join(yunzaiName, "config/config/other.yaml"), []byte(newContent), os.ModePerm)
 	if err != nil {
 		printErr(err)
 	}
@@ -205,7 +205,7 @@ func changeAccount() {
 		platform := readInt()
 		fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad 、 6:old_Android\nplatform: %d", qq, pwd, platform)
 		//覆盖掉./Yunzai-Bot/config/config/qq.yaml
-		os.WriteFile("./Yunzai-Bot/config/config/qq.yaml", []byte(fileContent), os.ModePerm)
+		os.WriteFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), []byte(fileContent), os.ModePerm)
 	}
 	changeMasterQQ()
 	printWithEmptyLine("切换账号成功！")
@@ -213,7 +213,7 @@ func changeAccount() {
 
 func installJsPlugin() {
 	//得到下载目录
-	jsPluginDir := filepath.Join(programRunPath, "Yunzai-bot/plugins/example")
+	jsPluginDir := filepath.Join(programRunPath, filepath.Join(yunzaiName, "plugins/example"))
 	//输入js插件的地址
 	fmt.Print("请输入需要下载或复制的js插件的地址：")
 	scanner := bufio.NewScanner(os.Stdin)

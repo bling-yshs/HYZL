@@ -118,7 +118,7 @@ func puppeteerProblemFix() {
 	wd.changeToYunzai()
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
-	executeCmd("pnpm uninstall puppeteer", "正在修复 puppeteer Chromium...")
+	executeCmd("pnpm uninstall puppeteer -w", "正在修复 puppeteer Chromium...")
 	if windowsVersion < 10 {
 		//WinServer2012
 		executeCmd("pnpm install puppeteer@19.7.3 -w")

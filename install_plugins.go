@@ -67,7 +67,7 @@ func installFengyePlugin() {
 
 func installPluginsTemplate(pluginChineseName string, dirName string, command ...string) {
 	wd.changeToYunzai()
-	pluginDir := filepath.Join(programRunPath, "Yunzai-Bot", "plugins", dirName)
+	pluginDir := filepath.Join(programRunPath, yunzaiName, "plugins", dirName)
 	_, err := os.Stat(pluginDir)
 	if err == nil {
 		printWithEmptyLine("当前已安装 " + pluginChineseName + "，请问是否需要重新安装？(是:y 返回菜单:n)")

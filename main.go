@@ -165,6 +165,7 @@ type Config struct {
 }
 
 var (
+	yunzaiName           = "Yunzai-bot"
 	programName          = "YzLauncher-windows"
 	globalRepositoryLink = `https://gitee.com/bling_yshs/YzLauncher-windows`
 	programRunPath       = ""
@@ -179,12 +180,12 @@ var (
 )
 
 const (
-	version = "v0.1.23"
+	version = "v0.1.24"
 )
 
 func main() {
 	getAppInfoInt(&windowsVersion)
-	getAppInfo(&programRunPath, &programName, &configPath)
+	getAppInfo(&programRunPath, &programName, &configPath, &yunzaiName)
 	if checkYunzaiFileExist() {
 		printRedInfo("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
 	}

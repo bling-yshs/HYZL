@@ -27,7 +27,7 @@ func (dir *WorkingDirectory) changeToRoot() {
 }
 
 func (dir *WorkingDirectory) changeToYunzai() {
-	os.Chdir(filepath.Join(programRunPath, "Yunzai-Bot"))
+	os.Chdir(filepath.Join(programRunPath, yunzaiName))
 }
 
 func (dir *WorkingDirectory) changeToRedis() {
@@ -210,6 +210,11 @@ func getAppInfo(args ...*string) {
 	//获取程序名字
 	*args[1] = filepath.Base(execPath)
 	*args[2] = filepath.Join(currentDir, "config")
+	_, err = os.Stat("./Miao-Yunzai")
+	if err == nil {
+		*args[3] = "Miao-Yunzai"
+	}
+
 }
 func getAppInfoInt(args ...*int64) {
 	majorVersion, _, _ := win.RtlGetNtVersionNumbers()
