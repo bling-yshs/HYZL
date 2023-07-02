@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/bling-yshs/YzLauncher-windows/tools"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
@@ -47,7 +47,6 @@ func bugsFixMenu() {
 		case 6:
 			clearLog()
 			sqliteFix()
-			return
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}
@@ -98,19 +97,7 @@ func icqqProblemFix() {
 	executeCmd("pnpm uninstall icqq")
 	executeCmd("pnpm install icqq@latest -w")
 	//读取./config/config/qq.yaml
-	s, err := getFileContent("./config/config/qq.yaml")
-	if err != nil {
-		printErr(err)
-		return
-	}
-	regex := regexp.MustCompile(`platform: \d`)
-	s = regex.ReplaceAllString(s, `platform: 6`)
-	//写入./config/config/qq.yaml
-	err = os.WriteFile("./config/config/qq.yaml", []byte(s), os.ModePerm)
-	if err != nil {
-		printErr(err)
-		return
-	}
+	tools.UpdateYAMLFile("./config/config/qq.yaml", "platform", 1)
 	printWithEmptyLine("修复成功！")
 }
 
@@ -131,6 +118,7 @@ func puppeteerProblemFix() {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
+		printWithEmptyLine("下载修复文件完成!")
 	} else {
 		//Win10+
 		executeCmd("pnpm install puppeteer@19.8.3 -w")
@@ -143,6 +131,7 @@ func puppeteerProblemFix() {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
+		printWithEmptyLine("下载修复文件完成!")
 	}
 }
 

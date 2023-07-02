@@ -57,6 +57,7 @@ func downloadYunzaiFromGitee() {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
+		printWithEmptyLine("下载修复文件完成!")
 	} else {
 		executeCmd("pnpm install puppeteer@19.8.3 -w")
 		executeCmd("node ./node_modules/puppeteer/install.js")
@@ -68,6 +69,7 @@ func downloadYunzaiFromGitee() {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
 		}
+		printWithEmptyLine("下载修复文件完成!")
 	}
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")

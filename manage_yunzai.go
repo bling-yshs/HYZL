@@ -3,6 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/Masterminds/semver"
+	"github.com/bling-yshs/YzLauncher-windows/tools"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -27,6 +30,7 @@ func manageYunzaiMenu() {
 			"自定义终端命令",
 			"强制更新云崽",
 			"从官方云崽切换为喵喵云崽",
+			"启动签名API",
 		}
 
 		choice := showMenu("云崽管理", options, false)
@@ -59,10 +63,71 @@ func manageYunzaiMenu() {
 		case 8:
 			clearLog()
 			updateOfficialYunzaiToMiaoYunzai()
+		case 9:
+			clearLog()
+			signApi()
 		default:
 			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
+}
+func signApi() {
+	wd.changeToRoot()
+	//检测API文件夹是否存在
+	_, err := os.Stat("API")
+	if err != nil {
+		printWithEmptyLine("当前目录下不存在API文件夹，请下载并解压API文件夹到当前目录")
+		return
+	}
+	//检查platform是否为1或者2
+	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
+	if err != nil {
+		printRedInfo("读取 config/config/qq.yaml 失败，请检查配置文件是否存在")
+		return
+	}
+	if value != 1 && value != 2 {
+		printRedInfo("当前配置文件中的 platform 值不为 1: Android 或者 2:AndroidPad ，可能会导致登录失败，是否需要修改？(y/n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			printWithEmptyLine("请输入 1 或者 2")
+			platform := ReadChoice("1", "2")
+			tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", platform)
+		}
+	}
+	//检查node_modules/icqq/package.json里的version是否大于0.4.8
+	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
+	if err != nil {
+		printRedInfo("读取 node_modules/icqq/package.json 值失败，请反馈给作者")
+		return
+	}
+	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
+	minVersion, _ := semver.NewVersion("0.4.8")
+	if icqqVersion.LessThan(minVersion) {
+		printRedInfo("当前 icqq 版本过低，请更新 icqq 到 0.4.8 以上")
+		return
+	}
+	//检测8080端口是否被占用
+	port := "8080"
+	listener, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		printRedInfo("当前" + port + "端口被占用，请检查签名API是否已经启动，或关闭占用端口的程序后重试")
+		return
+	} else {
+		_ = listener.Close() // 关闭监听器以释放端口
+	}
+	//检查是否存在JAVA_HOME环境变量
+	_, exists := os.LookupEnv("JAVA_HOME")
+	if !exists {
+		printWithEmptyLine("当前系统未设置JAVA_HOME环境变量，正在自动设置...")
+		JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
+		var setJavaHomeCommand string = "setx JAVA_HOME \"" + JavaHome + "\""
+		executeCmd(setJavaHomeCommand, "正在设置JAVA_HOME环境变量...", "设置JAVA_HOME环境变量成功！")
+		_ = os.Setenv("JAVA_HOME", JavaHome)
+	}
+	//运行./API/start.bat
+	os.Chdir("./API")
+	cmd := exec.Command("cmd", "/c", "start", "start.bat")
+	cmd.Start()
 }
 
 func updateOfficialYunzaiToMiaoYunzai() {
@@ -129,6 +194,7 @@ func closeYunzai() {
 
 func changeMasterQQ() {
 	var isOtherYamlExists = true
+
 	// 读取 YAML 配置文件
 	stat, err := os.Stat(filepath.Join(yunzaiName, "config/config/other.yaml"))
 	if err != nil || stat.Size() == 0 {

@@ -130,6 +130,7 @@ func mainMenu() {
 		"云崽管理",
 		"BUG修复",
 		"立即更新启动器",
+		"获取自建签名API下载地址",
 	}
 
 	for {
@@ -152,6 +153,9 @@ func mainMenu() {
 		case 4:
 			clearLog()
 			updateLauncherRightNow()
+		case 5:
+			clearLog()
+			getSelfSignAPI()
 		}
 	}
 }
@@ -180,7 +184,7 @@ var (
 )
 
 const (
-	version = "v0.1.24"
+	version = "v0.1.25"
 )
 
 func main() {
@@ -226,4 +230,8 @@ func readAndWriteSomeConfig(config *Config) {
 		return
 	}
 	writeSystemTempPath(config)
+}
+
+func getSelfSignAPI() {
+	printWithEmptyLine("下载地址 https://www.123pan.com/s/tsd9-boNJv.html ，解压后放到与启动器同级目录下，然后进入解压出来的文件夹，查阅里面的 一小段说明.txt ，然后运行云崽管理->启动签名API，等待弹出的窗口显示[FEKit_]info: task_handle.h:74 TaskSystem not allow 即为成功")
 }
