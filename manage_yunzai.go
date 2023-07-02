@@ -103,9 +103,16 @@ func signApi() {
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
 	minVersion, _ := semver.NewVersion("0.4.8")
 	if icqqVersion.LessThan(minVersion) {
-		printRedInfo("当前 icqq 版本过低，请更新 icqq 到 0.4.8 以上")
+		printRedInfo("当前 icqq 版本过低，是否需要自动将 icqq 更新到 0.4.8 以上?(y/n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			wd.changeToYunzai()
+			executeCmd("pnpm uninstall icqq")
+			executeCmd("pnpm install icqq@latest -w")
+		}
 		return
 	}
+	wd.changeToRoot()
 	//检测8080端口是否被占用
 	port := "8080"
 	listener, err := net.Listen("tcp", ":"+port)
@@ -130,6 +137,7 @@ func signApi() {
 	os.Chdir("./API")
 	cmd := exec.Command("cmd", "/c", "start", "start.bat")
 	cmd.Start()
+	printWithEmptyLine("正在启动签名API，请等待弹出的新窗口内显示 [FEKit_]info: task_handle.h:74 TaskSystem not allow 后方可正常启动云崽")
 }
 
 func updateOfficialYunzaiToMiaoYunzai() {
