@@ -124,6 +124,9 @@ func signApi() {
 		executeCmd(setJavaHomeCommand, "正在设置JAVA_HOME环境变量...", "设置JAVA_HOME环境变量成功！")
 		_ = os.Setenv("JAVA_HOME", JavaHome)
 	}
+	//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:8080/sign
+	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:8080/sign")
+
 	//运行./API/start.bat
 	os.Chdir("./API")
 	cmd := exec.Command("cmd", "/c", "start", "start.bat")
