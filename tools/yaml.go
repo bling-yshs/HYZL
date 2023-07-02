@@ -45,7 +45,15 @@ func AppendToYaml(filePath string, key string, value interface{}) error {
 	for i := 0; i < len(node.Content[0].Content); i += 2 {
 		if node.Content[0].Content[i].Value == key {
 			// 修改键的值
-			node.Content[0].Content[i+1].Value = fmt.Sprintf("%v", value)
+			if node.Content[0].Content[i+1].Tag == "!!null" {
+				// 如果是 null 类型，替换整个节点
+				node.Content[0].Content[i+1] = &yaml.Node{
+					Kind:  yaml.ScalarNode,
+					Value: fmt.Sprintf("%v", value),
+				}
+			} else {
+				node.Content[0].Content[i+1].Value = fmt.Sprintf("%v", value)
+			}
 			found = true
 			break
 		}
