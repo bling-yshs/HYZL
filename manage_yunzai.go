@@ -295,7 +295,7 @@ func changeAccount() {
 	if qq != 0 {
 		fmt.Print("请输入密码：")
 		pwd := readString()
-		fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad、6:old_Android）2023年4月24日：推荐使用6:old_Android登录：")
+		fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad、6:TIM）：")
 		platform := readInt()
 		fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad 、 6:old_Android\nplatform: %d", qq, pwd, platform)
 		//覆盖掉./Yunzai-Bot/config/config/qq.yaml
