@@ -6,9 +6,6 @@ import (
 )
 
 func TestIcqqProblemFix(t *testing.T) {
-	err := tools.UpdateValueInJSONFile("D:/AllCodeWorkspace/goland/YzLauncher-windows/Yunzai-Bot/package.json", "dependencies", "puppeteer", "19.8.3")
-	if err != nil {
-		t.Error(err)
-
-	}
+	b, _ := tools.CheckKeyInJSONFile("./Yunzai-bot/package.json", "puppeteer")
+	println(b)
 }

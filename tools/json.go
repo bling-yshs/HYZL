@@ -2,6 +2,7 @@ package tools
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -19,20 +20,20 @@ func GetValueFromJSONFile(filePath, key string) (interface{}, error) {
 		return nil, fmt.Errorf("failed to read file: %v", err)
 	}
 
-	var jsonData map[string]interface{}
+	var jsonData interface{}
 	if err = json.Unmarshal(byteValue, &jsonData); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal JSON: %v", err)
 	}
 
-	value, ok := jsonData[key]
-	if !ok {
+	value, err := getJsonValue(jsonData, key)
+	if err != nil {
 		return nil, fmt.Errorf("key '%s' not found in JSON file", key)
 	}
 
 	return value, nil
 }
 
-func CheckKeyInJSONFile(filePath, key, subKey string) (bool, error) {
+func CheckKeyInJSONFile(filePath, key string) (bool, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return false, fmt.Errorf("failed to open file: %v", err)
@@ -44,29 +45,40 @@ func CheckKeyInJSONFile(filePath, key, subKey string) (bool, error) {
 		return false, fmt.Errorf("failed to read file: %v", err)
 	}
 
-	var jsonData map[string]interface{}
+	var jsonData interface{}
 	if err = json.Unmarshal(byteValue, &jsonData); err != nil {
 		return false, fmt.Errorf("failed to unmarshal JSON: %v", err)
 	}
-
-	if subKey != "" {
-		subObj, ok := jsonData[key]
-		if !ok {
-			return false, fmt.Errorf("key '%s' not found in JSON file", key)
-		}
-
-		subData, ok := subObj.(map[string]interface{})
-		if !ok {
-			return false, fmt.Errorf("key '%s' is not a JSON object", key)
-		}
-
-		_, ok = subData[subKey]
-		return ok, nil
+	_, err = getJsonValue(jsonData, key)
+	if err == nil {
+		return true, nil
+	} else {
+		return false, nil
 	}
 
-	_, ok := jsonData[key]
+}
 
-	return ok, nil
+func getJsonValue(data interface{}, key string) (interface{}, error) {
+	switch v := data.(type) {
+	case map[string]interface{}:
+		for k, v := range v {
+			if k == key {
+				return v, nil
+			}
+			value, err := getJsonValue(v, key)
+			if err == nil {
+				return value, nil
+			}
+		}
+	case []interface{}:
+		for _, v := range v {
+			value, err := getJsonValue(v, key)
+			if err == nil {
+				return value, nil
+			}
+		}
+	}
+	return nil, errors.New("key not found")
 }
 
 func UpdateValueInJSONFile(filePath, key, subKey string, newValue interface{}) error {

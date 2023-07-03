@@ -141,7 +141,7 @@ func reInstallDep() {
 		printWithEmptyLine("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "y" {
-			if _, err = tools.CheckKeyInJSONFile("./package.json", "dependencies", "puppeteer"); err == nil {
+			if _, err = tools.CheckKeyInJSONFile("./package.json", "puppeteer"); err == nil {
 				_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
 			}
 			executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
@@ -153,7 +153,7 @@ func reInstallDep() {
 			return
 		}
 	} else {
-		if _, err = tools.CheckKeyInJSONFile("./package.json", "dependencies", "puppeteer"); err == nil {
+		if _, err = tools.CheckKeyInJSONFile("./package.json", "puppeteer"); err == nil {
 			_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
 		}
 		executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
