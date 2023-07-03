@@ -6,6 +6,7 @@ import (
 	"github.com/Masterminds/semver"
 	"github.com/bling-yshs/YzLauncher-windows/tools"
 	"net"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -138,6 +139,23 @@ func signApi() {
 	cmd := exec.Command("cmd", "/c", "start", "start.bat")
 	cmd.Start()
 	printWithEmptyLine("正在启动签名API，请等待弹出的新窗口内显示 [FEKit_]info: task_handle.h:74 TaskSystem not allow 后方可正常启动云崽")
+	//每隔两秒向http://127.0.0.1:8080/sign发送一次get请求，直到返回200为止
+	for {
+		resp, err := http.Get("http://127.0.0.1:8080/sign")
+		if err != nil {
+			time.Sleep(2 * time.Second)
+			continue
+		}
+		if resp.StatusCode == 200 {
+			printWithEmptyLine("签名API启动成功！")
+			break
+		}
+	}
+	printWithEmptyLine("是否需要立即启动云崽？(y/n)")
+	readChoice := ReadChoice("y", "n")
+	if readChoice == "y" {
+		startYunzai()
+	}
 }
 
 func updateOfficialYunzaiToMiaoYunzai() {
