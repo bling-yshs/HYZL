@@ -141,6 +141,9 @@ func reInstallDep() {
 		printWithEmptyLine("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "y" {
+			if _, err = tools.CheckKeyInJSONFile("./package.json", "dependencies", "puppeteer"); err == nil {
+				_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
+			}
 			executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
 			executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 			os.RemoveAll("./node_modules")
@@ -150,6 +153,9 @@ func reInstallDep() {
 			return
 		}
 	} else {
+		if _, err = tools.CheckKeyInJSONFile("./package.json", "dependencies", "puppeteer"); err == nil {
+			_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
+		}
 		executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
 		executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 		executeCmd("pnpm install", "", "安装云崽依赖成功！")

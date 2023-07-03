@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/bling-yshs/YzLauncher-windows/tools"
 	"io"
 	"os"
 )
@@ -47,8 +48,9 @@ func downloadYunzaiFromGitee() {
 	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer 镜像源...")
 	delDep()
 	if windowsVersion < 10 {
-		executeCmd("pnpm install puppeteer@19.7.3 -w")
-		executeCmd("node ./node_modules/puppeteer/install.js")
+		printWithEmptyLine("正在修改 puppeteer 版本...")
+		_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "puppeteer", "19.7.3")
+		printWithEmptyLine("修改 puppeteer 版本完成！")
 		printWithEmptyLine("正在下载修复文件...")
 		_, err := os.Stat("./renderers")
 		if err != nil {
@@ -59,8 +61,9 @@ func downloadYunzaiFromGitee() {
 		}
 		printWithEmptyLine("下载修复文件完成!")
 	} else {
-		executeCmd("pnpm install puppeteer@19.8.3 -w")
-		executeCmd("node ./node_modules/puppeteer/install.js")
+		printWithEmptyLine("正在修改 puppeteer 版本...")
+		_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "puppeteer", "19.8.3")
+		printWithEmptyLine("修改 puppeteer 版本完成！")
 		printWithEmptyLine("正在下载修复文件...")
 		_, err := os.Stat("./renderers")
 		if err != nil {
@@ -71,8 +74,8 @@ func downloadYunzaiFromGitee() {
 		}
 		printWithEmptyLine("下载修复文件完成!")
 	}
-	executeCmd("node ./node_modules/puppeteer/install.js")
 	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")
+	executeCmd("node ./node_modules/puppeteer/install.js")
 	if installMiao {
 		printWithEmptyLine("开始下载必须的喵喵插件...")
 		installMiaoPlugin()
