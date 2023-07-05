@@ -80,6 +80,19 @@ func signApi() {
 		printWithEmptyLine("当前目录下不存在API文件夹，请下载并解压API文件夹到当前目录")
 		return
 	}
+	//检查文件目录是否正确
+	//检查是否存在API/start.bat
+	_, err = os.Stat("API/start.bat")
+	if err != nil {
+		//检查是否存在API/API/start.bat
+		_, err = os.Stat("API/API/start.bat")
+		if err != nil {
+			printRedInfo("检查到 API 文件夹下存在 API 文件夹嵌套，请将 API 文件夹下的 API 文件夹往上移动一层！")
+		} else {
+			printRedInfo("请确保 API 文件夹下的 start.bat 文件存在！")
+		}
+		return
+	}
 	//检查platform是否为1或者2
 	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
 	if err != nil {
