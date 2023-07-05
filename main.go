@@ -165,7 +165,6 @@ type Config struct {
 	NodeJSInstalled bool   `json:"nodejs_installed"`
 	NpmInstalled    bool   `json:"npm_installed"`
 	SystemTempPath  string `json:"system_temp_path"`
-	ConfigPath      string `json:"config_path"`
 }
 
 var (
