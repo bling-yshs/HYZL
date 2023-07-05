@@ -44,8 +44,9 @@ func downloadYunzaiFromGitee() {
 	if !b2 {
 		executeCmd("npm install pnpm -g --registry=https://registry.npmmirror.com", "开始安装 pnpm ...", "安装 pnpm 成功！")
 	}
+	executeCmd("npm config set registry https://registry.npmmirror.com")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
-	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer 镜像源...")
+	executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer 镜像源...")
 	delDep()
 	if windowsVersion < 10 {
 		printWithEmptyLine("正在修改 puppeteer 版本...")

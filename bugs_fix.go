@@ -103,8 +103,9 @@ func icqqProblemFix() {
 
 func puppeteerProblemFix() {
 	wd.changeToYunzai()
+	executeCmd("npm config set registry https://registry.npmmirror.com")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
-	executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
+	executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 	executeCmd("pnpm uninstall puppeteer -w", "正在修复 puppeteer Chromium...")
 	if windowsVersion < 10 {
 		//WinServer2012
@@ -144,8 +145,9 @@ func reInstallDep() {
 			if _, err = tools.CheckKeyInJSONFile("./package.json", "puppeteer"); err == nil {
 				_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
 			}
+			executeCmd("npm config set registry https://registry.npmmirror.com")
 			executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
-			executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
+			executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 			os.RemoveAll("./node_modules")
 			executeCmd("pnpm install", "开始安装云崽依赖...", "安装云崽依赖成功！")
 		}
@@ -156,8 +158,9 @@ func reInstallDep() {
 		if _, err = tools.CheckKeyInJSONFile("./package.json", "puppeteer"); err == nil {
 			_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
 		}
+		executeCmd("npm config set registry https://registry.npmmirror.com")
 		executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
-		executeCmd("pnpm config set PUPPETEER_DOWNLOAD_HOST=https://npmmirror.com/mirrors", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
+		executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 		executeCmd("pnpm install", "", "安装云崽依赖成功！")
 	}
 }
