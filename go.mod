@@ -9,7 +9,10 @@ require (
 
 require gopkg.in/yaml.v3 v3.0.1
 
-require github.com/Masterminds/semver v1.5.0 // indirect
+require (
+	github.com/Masterminds/semver v1.5.0 // indirect
+	github.com/mitchellh/go-ps v1.0.0 // indirect
+)
 
 require (
 	github.com/daviddengcn/go-colortext v1.0.0

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Masterminds/semver"
 	"github.com/bling-yshs/YzLauncher-windows/tools"
+	"github.com/mitchellh/go-ps"
 	"net"
 	"net/http"
 	"os"
@@ -221,6 +222,29 @@ func startYunzai() {
 		time.Sleep(1 * time.Second)
 	}
 	wd.changeToYunzai()
+	//检查是否有node.exe在运行
+	processList, err := ps.Processes()
+	if err != nil {
+		printRedInfo("无权限获取进程列表!")
+		return
+	}
+
+	isNodeRunning := false
+	for _, process := range processList {
+		if strings.ToLower(process.Executable()) == "node.exe" {
+			isNodeRunning = true
+			break
+		}
+	}
+
+	if isNodeRunning {
+		printWithEmptyLine("检测到后台存在 node 程序正在运行，可能为云崽的后台进程，是否关闭云崽并重新启动？(是:y 跳过:n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			closeYunzai()
+		}
+	}
+	//
 	printWithEmptyLine("正在启动云崽...")
 	dir, _ := os.Getwd()
 	cmd := exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node app")
