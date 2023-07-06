@@ -122,7 +122,7 @@ func signApi() {
 		if choice == "y" {
 			wd.changeToYunzai()
 			executeCmd("pnpm uninstall icqq")
-			executeCmd("pnpm install icqq@latest -w")
+			executeCmd("pnpm install icqq@0.4.8 -w")
 		}
 		return
 	}
