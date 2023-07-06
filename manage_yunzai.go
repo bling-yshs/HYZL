@@ -116,8 +116,8 @@ func signApi() {
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
 	minVersion, _ := semver.NewVersion("0.4.8")
-	if icqqVersion.LessThan(minVersion) {
-		printRedInfo("当前 icqq 版本过低，是否需要自动将 icqq 更新到 0.4.8 以上?(y/n)")
+	if !icqqVersion.Equal(minVersion) {
+		printRedInfo("当前 icqq 版本不为 0.4.8，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.8?(是:y 否:n)")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()
