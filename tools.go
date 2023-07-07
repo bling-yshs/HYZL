@@ -229,9 +229,7 @@ func printRedInfo(str any) {
 
 func clearLog() {
 	//执行clear指令清除控制台
-	cmd := exec.Command("cmd", "/c", "cls")
-	cmd.Stdout = os.Stdout
-	_ = cmd.Run()
+	executeCmd("cls")
 }
 
 // 比较版本号，如果需要更新返回true，否则返回false
