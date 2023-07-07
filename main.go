@@ -4,6 +4,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mitchellh/go-ps"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -108,15 +109,20 @@ func startRedis() *exec.Cmd {
 }
 
 func isRedisRunning() bool {
-	// 执行 tasklist 命令并获取输出结果
-	cmd := exec.Command("tasklist")
-	output, err := cmd.Output()
+	processList, err := ps.Processes()
 	if err != nil {
-		printErr(err)
+		printRedInfo("无权限获取进程列表!")
+		return true
 	}
 
-	// 检查输出结果中是否包含 redis-server.exe 进程
-	if strings.Contains(string(output), "redis-server.exe") {
+	isRedisRunning := false
+	for _, process := range processList {
+		if strings.Contains(process.Executable(), "redis") {
+			isRedisRunning = true
+			break
+		}
+	}
+	if isRedisRunning {
 		return true
 	} else {
 		return false
