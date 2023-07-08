@@ -88,9 +88,10 @@ func signApi() {
 		//检查是否存在API/API/start.bat
 		_, err = os.Stat("API/API/start.bat")
 		if err != nil {
-			printRedInfo("检查到 API 文件夹下存在 API 文件夹嵌套，请将 API 文件夹下的 API 文件夹往上移动一层！")
-		} else {
 			printRedInfo("请确保 API 文件夹下的 start.bat 文件存在！")
+			fmt.Println(err)
+		} else {
+			printRedInfo("检查到 API 文件夹下存在 API 文件夹嵌套，请将 API 文件夹下的 API 文件夹往上移动一层！")
 		}
 		return
 	}
