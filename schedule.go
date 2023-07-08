@@ -5,9 +5,9 @@ import (
 )
 
 func scheduleList() {
-	go schedule(3*time.Hour, giteeAPI.updateReleaseDataFromAPI, true)
-	go schedule(3*time.Hour, getAnnouncement, true)
-	go schedule(3*time.Hour, update, true)
+	go schedule(1*time.Hour-30*time.Second, giteeAPI.updateReleaseDataFromAPI, true)
+	go schedule(1*time.Hour, getAnnouncement, true)
+	go schedule(1*time.Hour, update, true)
 }
 
 func schedule(delay time.Duration, fn func(), runRightNow bool) {
