@@ -131,37 +131,19 @@ func isRedisRunning() bool {
 
 // 主菜单函数
 func mainMenu() {
-	options := []string{
-		"安装云崽",
-		"云崽管理",
-		"BUG修复",
-		"立即更新启动器",
-		"获取自建签名API下载地址",
+	options := []MenuOption{
+		{"安装云崽", downloadYunzaiFromGitee},
+		{"云崽管理", manageYunzaiMenu},
+		{"BUG修复", bugsFixMenu},
+		{"立即更新启动器", updateLauncherRightNow},
+		{"获取自建签名API下载地址", getSelfSignAPI},
 	}
 
 	for {
-		wd.changeToRoot()
 		choice := showMenu("主菜单", options, true)
-
-		switch choice {
-		case 0:
+		if choice == 0 {
 			os.Exit(0)
 			return
-		case 1:
-			clearLog()
-			downloadYunzaiFromGitee()
-		case 2:
-			clearLog()
-			manageYunzaiMenu()
-		case 3:
-			clearLog()
-			bugsFixMenu()
-		case 4:
-			clearLog()
-			updateLauncherRightNow()
-		case 5:
-			clearLog()
-			getSelfSignAPI()
 		}
 	}
 }
@@ -238,5 +220,5 @@ func readAndWriteSomeConfig(config *Config) {
 }
 
 func getSelfSignAPI() {
-	printWithEmptyLine("下载地址 https://www.123pan.com/s/tsd9-boNJv.html ，解压后放到与启动器同级目录下，然后进入解压出来的文件夹，查阅里面的 一小段说明.txt ，然后运行云崽管理->启动签名API，等待弹出的窗口显示 [FEKit_]info: task_handle.h:74 TaskSystem not allow 即为成功")
+	printWithEmptyLine("下载地址 https://www.123pan.com/s/tsd9-boNJv.html ，解压后放到与启动器同级目录下，然后进入解压出来的文件夹，查阅里面的 一小段说明.txt ，然后运行云崽管理->启动签名 API 并启动云崽，等待弹出的窗口显示 [FEKit_]info: task_handle.h:74 TaskSystem not allow 即为成功")
 }

@@ -16,60 +16,28 @@ import (
 	"time"
 )
 
+type MenuOption struct {
+	Label  string
+	Action func()
+}
+
 func manageYunzaiMenu() {
-	if !yunzaiExists() {
-		printWithEmptyLine("当前目录下不存在云崽，请先下载云崽")
-		return
-	}
 	for {
-		wd.changeToRoot()
-		options := []string{
-			"启动云崽",
-			"强制关闭云崽",
-			"修改云崽账号密码或者修改主人QQ",
-			"安装插件",
-			"安装js插件",
-			"自定义终端命令",
-			"强制更新云崽",
-			"从官方云崽切换为喵喵云崽",
-			"启动签名API",
+		options := []MenuOption{
+			{"启动签名API 并启动云崽", signApi},
+			{"强制关闭云崽(强制关闭node程序)", closeYunzai},
+			{"自定义终端命令", customCommand},
+			{"安装插件", installPluginsMenu},
+			{"安装js插件", installJsPlugin},
+			{"修改云崽账号密码或者修改主人QQ", changeAccount},
+			{"强制更新云崽", updateYunzaiToLatest},
+			{"从官方云崽切换为喵喵云崽", updateOfficialYunzaiToMiaoYunzai},
+			{"启动云崽", startYunzai},
 		}
 
 		choice := showMenu("云崽管理", options, false)
-
-		switch choice {
-		case 0:
-			clearLog()
+		if choice == 0 {
 			return
-		case 1:
-			clearLog()
-			startYunzai()
-		case 2:
-			clearLog()
-			closeYunzai()
-		case 3:
-			clearLog()
-			changeAccount()
-		case 4:
-			clearLog()
-			installPluginsMenu()
-		case 5:
-			clearLog()
-			installJsPlugin()
-		case 6:
-			clearLog()
-			customCommand()
-		case 7:
-			clearLog()
-			updateYunzaiToLatest()
-		case 8:
-			clearLog()
-			updateOfficialYunzaiToMiaoYunzai()
-		case 9:
-			clearLog()
-			signApi()
-		default:
-			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
 }

@@ -13,42 +13,18 @@ func bugsFixMenu() {
 		return
 	}
 	for {
-		wd.changeToRoot()
-		options := []string{
-			"重装依赖",
-			"修复 puppeteer 的各种问题",
-			"修复 云崽登录QQ失败(显示被风控发不出消息也可以尝试此选项)",
-			"修复 #重启 失败(也就是pnpm start pm2报错)",
-			"修复 cookie 总是失效过期(Redis启动参数错误导致)",
-			"修复 喵喵云崽监听报错(sqlite3缺失，注意可能对icqq版本也有要求)",
+		options := []MenuOption{
+			{"重装依赖", reInstallDep},
+			{"修复 puppeteer 的各种问题", puppeteerProblemFix},
+			{"修复 云崽登录QQ失败(显示被风控发不出消息也可以尝试此选项)", icqqProblemFix},
+			{"修复 #重启 失败(也就是pnpm start pm2报错)", pm2Fix},
+			{"修复 cookie 总是失效过期(Redis启动参数错误导致)", cookieRedisFix},
+			{"修复 喵喵云崽监听报错(sqlite3缺失，注意可能对icqq版本也有要求)", sqliteFix},
 		}
 
 		choice := showMenu("BUG修复", options, false)
-
-		switch choice {
-		case 0:
-			clearLog()
+		if choice == 0 {
 			return
-		case 1:
-			clearLog()
-			reInstallDep()
-		case 2:
-			clearLog()
-			puppeteerProblemFix()
-		case 3:
-			clearLog()
-			icqqProblemFix()
-		case 4:
-			clearLog()
-			pm2Fix()
-		case 5:
-			clearLog()
-			cookieRedisFix()
-		case 6:
-			clearLog()
-			sqliteFix()
-		default:
-			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
 }

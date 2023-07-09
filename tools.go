@@ -168,11 +168,11 @@ func downloadFile(downloadURL string, downloadFilePath string) error {
 	return nil
 }
 
-func showMenu(title string, options []string, isMainMenu bool) int {
+func showMenu(title string, options []MenuOption, isMainMenu bool) int {
 	for {
 		fmt.Println("===" + title + "===")
 		for i, option := range options {
-			fmt.Printf("%d. %s\n", i+1, option)
+			fmt.Printf("%d. %s\n", i+1, option.Label)
 		}
 		if isMainMenu {
 			fmt.Println("0. 退出程序")
@@ -189,15 +189,17 @@ func showMenu(title string, options []string, isMainMenu bool) int {
 			continue
 		}
 
-		if choice > len(options) {
+		if choice == 0 {
+			clearLog()
+			return 0
+		} else if choice > 0 && choice <= len(options) {
+			clearLog()
+			options[choice-1].Action()
+		} else {
 			fmt.Println("选择不正确，请重新选择")
-			continue
 		}
-
-		return choice
 	}
 }
-
 func getAppInfo(args ...*string) {
 	//获取程序运行路径
 	execPath, err := os.Executable()

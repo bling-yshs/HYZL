@@ -1,11 +1,10 @@
 package main
 
 import (
-	"github.com/bling-yshs/YzLauncher-windows/tools"
+	"fmt"
 	"testing"
 )
 
 func TestIcqqProblemFix(t *testing.T) {
-	b, _ := tools.CheckKeyInJSONFile("./Yunzai-bot/package.json", "puppeteer")
-	println(b)
+	fmt.Println(`无法连接到 Gitee API，请将此界面截图并反馈给作者，err: 'release.TagName == ' ' `)
 }

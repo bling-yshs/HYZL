@@ -7,38 +7,17 @@ import (
 
 func installPluginsMenu() {
 	for {
-		wd.changeToYunzai()
-		options := []string{
-			"锅巴插件",
-			"喵喵插件",
-			"逍遥插件",
-			"枫叶插件",
-			"星穹铁道插件",
+		options := []MenuOption{
+			{"锅巴插件", installGuobaPlugin},
+			{"喵喵插件", installMiaoPlugin},
+			{"逍遥插件", installXiaoyaoPlugin},
+			{"枫叶插件", installFengyePlugin},
+			{"星穹铁道插件", installStarRailPlugin},
 		}
 
 		choice := showMenu("安装插件", options, false)
-
-		switch choice {
-		case 0:
-			clearLog()
+		if choice == 0 {
 			return
-		case 1:
-			clearLog()
-			installGuobaPlugin()
-		case 2:
-			clearLog()
-			installMiaoPlugin()
-		case 3:
-			clearLog()
-			installXiaoyaoPlugin()
-		case 4:
-			clearLog()
-			installFengyePlugin()
-		case 5:
-			clearLog()
-			installStarRailPlugin()
-		default:
-			printWithEmptyLine("选择不正确，请重新选择")
 		}
 	}
 }
