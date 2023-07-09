@@ -19,7 +19,7 @@ func bugsFixMenu() {
 			{"修复 云崽登录QQ失败(显示被风控发不出消息也可以尝试此选项)", icqqProblemFix},
 			{"修复 #重启 失败(也就是pnpm start pm2报错)", pm2Fix},
 			{"修复 cookie 总是失效过期(Redis启动参数错误导致)", cookieRedisFix},
-			{"修复 喵喵云崽监听报错(sqlite3缺失，注意可能对icqq版本也有要求)", sqliteFix},
+			{"修复 喵喵云崽监听报错(sqlite3缺失，注意可能对icqq版本也有要求)", listenFix},
 		}
 
 		choice := showMenu("BUG修复", options, false)
@@ -29,8 +29,26 @@ func bugsFixMenu() {
 	}
 }
 
-func sqliteFix() {
+func listenFix() {
 	wd.changeToYunzai()
+	_, err := os.Stat("./plugins/miao-plugin")
+	if err != nil {
+		printWithEmptyLine("检测到未安装喵喵插件，是否安装?(是:y 否:n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			installMiaoPlugin()
+		}
+		return
+	}
+	_, err = os.Stat("./plugins/miao-plugin/index.js")
+	if err != nil {
+		printWithEmptyLine("检测到喵喵插件不完整，是否重新安装?(是:y 否:n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			installMiaoPlugin()
+		}
+		return
+	}
 	printWithEmptyLine("请选择需要安装的 sqlite3 版本(1: 5.1.6    2: 5.0.0)(推荐选择 5.1.6，装不上可以尝试 5.0.0)")
 	choice := ReadChoice("1", "2")
 	if choice == "1" {
