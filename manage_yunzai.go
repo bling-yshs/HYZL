@@ -65,18 +65,18 @@ func signApi() {
 	}
 	//检查platform是否为1或者2
 	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
-	if err != nil {
-		printRedInfo("读取 config/config/qq.yaml 失败，请检查配置文件是否存在")
-		return
-	}
-	if value != 1 && value != 2 {
-		printRedInfo("当前配置文件中的 platform 值不为 1: Android 或者 2:AndroidPad ，可能会导致登录失败，是否需要修改？(y/n)")
-		choice := ReadChoice("y", "n")
-		if choice == "y" {
-			printWithEmptyLine("请输入 1 或者 2")
-			platform := ReadChoice("1", "2")
-			tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", platform)
+	if err == nil {
+		if value != 1 && value != 2 {
+			printRedInfo("当前配置文件中的 platform 值不为 1: Android 或者 2:AndroidPad ，可能会导致登录失败，是否需要修改？(y/n)")
+			choice := ReadChoice("y", "n")
+			if choice == "y" {
+				printWithEmptyLine("请输入 1 或者 2")
+				platform := ReadChoice("1", "2")
+				tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", platform)
+			}
 		}
+	} else {
+		printWithEmptyLine("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android，否则可能会导致登录失败")
 	}
 	//检查node_modules/icqq/package.json里的version是否大于0.4.10
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
