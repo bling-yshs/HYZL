@@ -261,7 +261,7 @@ func compareVersion(version string, latestVersion string) bool {
 	return false
 }
 
-func checkCommand(command string) bool {
+func checkCommandExist(command string) bool {
 	cmd := exec.Command("cmd", "/c", command)
 	err := cmd.Run()
 	if err == nil {

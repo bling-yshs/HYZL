@@ -52,7 +52,7 @@ func (api *GiteeAPI) updateReleaseDataFromAPI() {
 
 	json.Unmarshal(body, &release)
 	if release.TagName == "" {
-		printRedInfo(`无法连接到 Gitee API，请将此界面截图并反馈给作者，err: "release.TagName == \"\"" `)
+		printRedInfo(`无法连接到 Gitee API，请将此界面截图并反馈给作者，err: "release.TagName == " " `)
 
 	}
 	api.setLatestTag(release.TagName)

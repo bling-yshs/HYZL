@@ -40,7 +40,7 @@ func downloadYunzaiFromGitee() {
 	}
 	//进入Yunzai-Bot文件夹
 	wd.changeToYunzai()
-	b2 := checkCommand("pnpm -v")
+	b2 := checkCommandExist("pnpm -v")
 	if !b2 {
 		executeCmd("npm install pnpm -g --registry=https://registry.npmmirror.com", "开始安装 pnpm ...", "安装 pnpm 成功！")
 	}

@@ -78,23 +78,23 @@ func signApi() {
 			tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", platform)
 		}
 	}
-	//检查node_modules/icqq/package.json里的version是否大于0.4.8
+	//检查node_modules/icqq/package.json里的version是否大于0.4.10
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
 		printRedInfo("读取 node_modules/icqq/package.json 值失败，请反馈给作者")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
-	minVersion, _ := semver.NewVersion("0.4.8")
+	minVersion, _ := semver.NewVersion("0.4.10")
 	if !icqqVersion.Equal(minVersion) {
-		printRedInfo("当前 icqq 版本不为 0.4.8，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.8?(是:y 否:n)")
+		printRedInfo("当前 icqq 版本不为 0.4.10，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.10?(是:y 否:n)")
+		printRedInfo("因为新版喵喵修改了参数，所以 icqq 版本也跟着调整了，如果你在使用 旧版喵喵+icqq-0.3.8，请选择否")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()
 			executeCmd("pnpm uninstall icqq")
-			executeCmd("pnpm install icqq@0.4.8 -w")
+			executeCmd("pnpm install icqq@0.4.10 -w")
 		}
-		return
 	}
 	wd.changeToRoot()
 	//检测8080端口是否被占用
@@ -109,11 +109,22 @@ func signApi() {
 	//检查是否存在JAVA_HOME环境变量
 	_, exists := os.LookupEnv("JAVA_HOME")
 	if !exists {
-		printWithEmptyLine("当前系统未设置JAVA_HOME环境变量，正在自动设置...")
+		printWithEmptyLine("当前系统未设置 JAVA_HOME 环境变量，正在自动设置...")
 		JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
 		var setJavaHomeCommand string = "setx JAVA_HOME \"" + JavaHome + "\""
 		executeCmd(setJavaHomeCommand, "正在设置JAVA_HOME环境变量...", "设置JAVA_HOME环境变量成功！")
 		_ = os.Setenv("JAVA_HOME", JavaHome)
+	} else {
+		env := os.Getenv("JAVA_HOME")
+		_, err := os.Stat(env)
+		//如果环境变量不存在，就设置JAVA_HOME环境变量
+		if err != nil {
+			printWithEmptyLine("当前系统 JAVA_HOME 环境变量所在文件夹不存在，正在自动设置新的环境变量...")
+			JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
+			var setJavaHomeCommand string = "setx JAVA_HOME \"" + JavaHome + "\""
+			executeCmd(setJavaHomeCommand, "正在设置JAVA_HOME环境变量...", "设置JAVA_HOME环境变量成功！")
+			_ = os.Setenv("JAVA_HOME", JavaHome)
+		}
 	}
 	//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:8080/sign
 	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:8080/sign")

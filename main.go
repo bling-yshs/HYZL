@@ -51,7 +51,7 @@ func createNormalConfig(config Config) {
 func checkEnv(config *Config) bool {
 	var willWrite = false
 	if !config.GitInstalled {
-		if !checkCommand("git -v") {
+		if !checkCommandExist("git -v") {
 			printWithEmptyLine("检测到未安装 Git ，请安装后继续")
 			return false
 		} else {
@@ -60,7 +60,7 @@ func checkEnv(config *Config) bool {
 		}
 	}
 	if !config.NodeJSInstalled {
-		if !checkCommand("node -v") {
+		if !checkCommandExist("node -v") {
 			printWithEmptyLine("检测到未安装 Node.js ，请安装后继续")
 			return false
 		} else {
@@ -70,7 +70,7 @@ func checkEnv(config *Config) bool {
 		}
 	}
 	if !config.NpmInstalled {
-		if !checkCommand("npm -v") {
+		if !checkCommandExist("npm -v") {
 			fmt.Print("检测到未安装 npm ，请手动安装Node.js，具体请看：https://note.youdao.com/s/ImCA210l")
 		} else {
 			config.NpmInstalled = true
@@ -171,7 +171,7 @@ var (
 )
 
 const (
-	version = "v0.1.34"
+	version = "v0.1.36"
 )
 
 func main() {
