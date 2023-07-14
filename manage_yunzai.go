@@ -197,7 +197,7 @@ func yunzaiExists() bool {
 
 func startYunzai() {
 	if !isRedisRunning() {
-		startRedis()
+		_ = startRedis()
 		//等待1秒
 		time.Sleep(1 * time.Second)
 	}

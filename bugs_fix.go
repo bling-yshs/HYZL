@@ -59,7 +59,11 @@ func listenFix() {
 	}
 }
 func cookieRedisFix() {
-	wd.changeToRedis()
+	err := wd.changeToRedis()
+	if err != nil {
+		printRedInfo("Redis目录不存在！")
+		return
+	}
 	downloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "./")
 	printWithEmptyLine("修复成功！")
 }

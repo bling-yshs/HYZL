@@ -77,6 +77,11 @@ func checkEnv(config *Config) bool {
 			willWrite = true
 		}
 	}
+	b := checkRedisExist()
+	if b == true {
+		config.RedisInstalled = true
+		willWrite = true
+	}
 	if willWrite {
 		//写入到文件
 		data, err := json.MarshalIndent(config, "", "    ")
@@ -93,19 +98,23 @@ func checkEnv(config *Config) bool {
 	return true
 }
 
-func startRedis() *exec.Cmd {
-	wd.changeToRedis()
+func startRedis() error {
+	err := wd.changeToRedis()
+	if err != nil {
+		//err则说明没有redis文件夹
+		return err
+	}
 	printWithEmptyLine("正在启动 Redis ...")
 	dir, _ := os.Getwd()
 	redisPath := filepath.Join(dir, "redis-server.exe")
 	redisConfigPath := filepath.Join(dir, "redis.conf")
 	cmd := exec.Command("cmd.exe", "/c", "start", redisPath, redisConfigPath)
-	err := cmd.Start()
+	err = cmd.Start()
 	if err != nil {
 		printErr(err)
 	}
 	println("Redis 启动成功！")
-	return cmd
+	return nil
 }
 
 func isRedisRunning() bool {
@@ -153,6 +162,7 @@ type Config struct {
 	NodeJSInstalled bool   `json:"nodejs_installed"`
 	NpmInstalled    bool   `json:"npm_installed"`
 	SystemTempPath  string `json:"system_temp_path"`
+	RedisInstalled  bool   `json:"redis_installed"`
 }
 
 var (
@@ -171,7 +181,7 @@ var (
 )
 
 const (
-	version = "v0.1.36"
+	version = "v0.1.37"
 )
 
 func main() {
@@ -186,7 +196,6 @@ func main() {
 	if !checkEnv(&config) {
 		shutdownApp()
 	}
-	checkRedis()
 	println("当前版本:", version)
 	getAndPrintAnnouncement()
 	scheduleList()

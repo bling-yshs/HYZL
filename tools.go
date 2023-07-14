@@ -30,8 +30,9 @@ func (dir *WorkingDirectory) changeToYunzai() {
 	os.Chdir(filepath.Join(programRunPath, yunzaiName))
 }
 
-func (dir *WorkingDirectory) changeToRedis() {
-	os.Chdir(filepath.Join(programRunPath, "redis-windows-7.0.4"))
+func (dir *WorkingDirectory) changeToRedis() error {
+	err := os.Chdir(filepath.Join(programRunPath, "redis-windows-7.0.4"))
+	return err
 }
 
 // ↓工具函数
@@ -330,19 +331,21 @@ func shutdownApp() {
 	os.Exit(0)
 }
 
-func checkRedis() {
+// 存在返回true，不存在返回false
+func checkRedisExist() bool {
+	if config.RedisInstalled == true {
+		return false
+	}
 	_, err := os.Stat("./redis-windows-7.0.4")
 	if err == nil {
-		return
+		return true
 	}
-	printWithEmptyLine("检测到当前目录下不存在 redis-windows-7.0.4 ，请问是否需要自动下载 Redis ？(是:y 退出程序:n)")
+	printWithEmptyLine("检测到当前目录下不存在 redis-windows-7.0.4 ，请问是否需要自动下载 Redis ？(是:y 跳过:n)(推荐自动下载)")
 	//读取用户输入y或者n
 	userChoice := ReadChoice("y", "n")
 	if userChoice == "y" {
 		executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/redis-windows-7.0.4", "开始下载 Redis ...", "下载 Redis 成功！")
+		return true
 	}
-	if userChoice == "n" {
-		printWithEmptyLine("退出程序")
-		os.Exit(0)
-	}
+	return true
 }
