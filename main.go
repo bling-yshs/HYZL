@@ -11,6 +11,10 @@ import (
 	"strings"
 )
 
+const (
+	version = "v0.1.38"
+)
+
 func createNormalConfig(config Config) {
 	//检查当前目录下是否存在config文件夹
 	_, err := os.Stat("./config")
@@ -178,10 +182,6 @@ var (
 	windowsVersion       int64 = 10
 	configPath                 = ""
 	updatedVersion             = version
-)
-
-const (
-	version = "v0.1.37"
 )
 
 func main() {

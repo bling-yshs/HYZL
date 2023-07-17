@@ -24,7 +24,7 @@ type MenuOption struct {
 func manageYunzaiMenu() {
 	for {
 		options := []MenuOption{
-			{"启动签名API 并启动云崽", signApi},
+			{"启动签名API 并启动云崽", startSignApiAndYunzai},
 			{"强制关闭云崽(强制关闭node程序)", closeYunzai},
 			{"自定义终端命令", customCommand},
 			{"安装插件", installPluginsMenu},
@@ -41,15 +41,20 @@ func manageYunzaiMenu() {
 		}
 	}
 }
-func signApi() {
+func startSignApiAndYunzai() {
 	wd.changeToRoot()
 	//检测API文件夹是否存在
 	_, err := os.Stat("API")
 	if err != nil {
-		printWithEmptyLine("当前目录下不存在API文件夹，请下载并解压API文件夹到当前目录")
-		return
+		printWithEmptyLine("当前目录下不存在API文件夹，是否需要自动开始下载?(前提是你能正常下载 github 的文件)(是:y 返回:n)")
+		c := ReadChoice("y", "n")
+		if c == "y" {
+			executeCmd("git clone --depth 1 https://github.com/bling-yshs/unidbg-fetch-qsign.git")
+			os.Rename("unidbg-fetch-qsign", "API")
+		} else {
+			return
+		}
 	}
-	//检查文件目录是否正确
 	//检查是否存在API/start.bat
 	_, err = os.Stat("API/start.bat")
 	if err != nil {
@@ -66,22 +71,20 @@ func signApi() {
 	//检查platform是否为1或者2
 	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
 	if err == nil {
-		if value != 1 && value != 2 {
-			printRedInfo("当前配置文件中的 platform 值不为 1: Android 或者 2:AndroidPad ，可能会导致登录失败，是否需要修改？(y/n)")
+		if value != 1 {
+			printRedInfo("当前配置文件中的 platform 值不为 1: Android(安卓手机) ，可能会导致登录失败，是否需要修改？(y/n)")
 			choice := ReadChoice("y", "n")
 			if choice == "y" {
-				printWithEmptyLine("请输入 1 或者 2")
-				platform := ReadChoice("1", "2")
-				tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", platform)
+				tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", 1)
 			}
 		}
 	} else {
-		printWithEmptyLine("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android，否则可能会导致登录失败")
+		printRedInfo("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android(安卓手机)，否则可能会导致登录失败")
 	}
 	//检查node_modules/icqq/package.json里的version是否大于0.4.10
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
-		printRedInfo("读取 node_modules/icqq/package.json 值失败，请反馈给作者")
+		printRedInfo("读取 node_modules/icqq/package.json 值失败，请检查是否安装了 icqq 依赖，如已安装请将此界面截图并反馈给作者")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
@@ -112,7 +115,7 @@ func signApi() {
 		printWithEmptyLine("当前系统未设置 JAVA_HOME 环境变量，正在自动设置...")
 		JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
 		var setJavaHomeCommand string = "setx JAVA_HOME \"" + JavaHome + "\""
-		executeCmd(setJavaHomeCommand, "正在设置JAVA_HOME环境变量...", "设置JAVA_HOME环境变量成功！")
+		executeCmd(setJavaHomeCommand, "正在设置 JAVA_HOME 环境变量...", "设置 JAVA_HOME 环境变量成功！")
 		_ = os.Setenv("JAVA_HOME", JavaHome)
 	} else {
 		env := os.Getenv("JAVA_HOME")
@@ -122,7 +125,7 @@ func signApi() {
 			printWithEmptyLine("当前系统 JAVA_HOME 环境变量所在文件夹不存在，正在自动设置新的环境变量...")
 			JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
 			var setJavaHomeCommand string = "setx JAVA_HOME \"" + JavaHome + "\""
-			executeCmd(setJavaHomeCommand, "正在设置JAVA_HOME环境变量...", "设置JAVA_HOME环境变量成功！")
+			executeCmd(setJavaHomeCommand, "正在设置 JAVA_HOME 环境变量...", "设置 JAVA_HOME 环境变量成功！")
 			_ = os.Setenv("JAVA_HOME", JavaHome)
 		}
 	}
