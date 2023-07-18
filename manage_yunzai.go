@@ -114,7 +114,7 @@ func startSignApiAndYunzai() {
 	if !exists {
 		printWithEmptyLine("当前系统未设置 JAVA_HOME 环境变量，正在自动设置...")
 		JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
-		var setJavaHomeCommand string = "setx JAVA_HOME \"" + JavaHome + "\""
+		setJavaHomeCommand := "setx JAVA_HOME \"" + JavaHome + "\""
 		executeCmd(setJavaHomeCommand, "正在设置 JAVA_HOME 环境变量...", "设置 JAVA_HOME 环境变量成功！")
 		_ = os.Setenv("JAVA_HOME", JavaHome)
 	} else {
@@ -124,7 +124,7 @@ func startSignApiAndYunzai() {
 		if err != nil {
 			printWithEmptyLine("当前系统 JAVA_HOME 环境变量所在文件夹不存在，正在自动设置新的环境变量...")
 			JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
-			var setJavaHomeCommand string = "setx JAVA_HOME \"" + JavaHome + "\""
+			setJavaHomeCommand := "setx JAVA_HOME \"" + JavaHome + "\""
 			executeCmd(setJavaHomeCommand, "正在设置 JAVA_HOME 环境变量...", "设置 JAVA_HOME 环境变量成功！")
 			_ = os.Setenv("JAVA_HOME", JavaHome)
 		}
@@ -252,7 +252,7 @@ func changeMasterQQ() {
 		if choice == "y" {
 			stat, err := os.Stat(filepath.Join(yunzaiName, "config/default_config/other.yaml"))
 			if err != nil || stat.Size() == 0 {
-				downloadFile("https://gitee.com/yoimiya-kokomi/Yunzai-Bot/raw/main/config/default_config/other.yaml", filepath.Join(yunzaiName, "config/config/other.yaml"))
+				downloadFile("https://gitee.com/yoimiya-kokomi/Yunzai-Bot/raw/main/config/default_config/other.yaml", filepath.Join(yunzaiName, "config/config"))
 			} else {
 				copyFile(filepath.Join(yunzaiName, "config/default_config/other.yaml"), filepath.Join(yunzaiName, "config/config/other.yaml"))
 			}
