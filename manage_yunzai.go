@@ -252,6 +252,7 @@ func changeMasterQQ() {
 		if choice == "y" {
 			stat, err := os.Stat(filepath.Join(yunzaiName, "config/default_config/other.yaml"))
 			if err != nil || stat.Size() == 0 {
+				os.RemoveAll(filepath.Join(yunzaiName, "config/default_config/other.yaml"))
 				downloadFile("https://gitee.com/yoimiya-kokomi/Yunzai-Bot/raw/main/config/default_config/other.yaml", filepath.Join(yunzaiName, "config/config"))
 			} else {
 				copyFile(filepath.Join(yunzaiName, "config/default_config/other.yaml"), filepath.Join(yunzaiName, "config/config/other.yaml"))
