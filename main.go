@@ -124,7 +124,7 @@ func startRedis() error {
 func isRedisRunning() bool {
 	processList, err := ps.Processes()
 	if err != nil {
-		printRedInfo("无权限获取进程列表!")
+		printWithRedColor("无权限获取进程列表!")
 		return true
 	}
 
@@ -188,7 +188,7 @@ func main() {
 	getAppInfoInt(&windowsVersion)
 	getAppInfo(&programRunPath, &programName, &configPath, &yunzaiName)
 	if checkYunzaiFileExist() {
-		printRedInfo("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
+		printWithRedColor("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
 	}
 	createNormalConfig(config)
 	readAndWriteSomeConfig(&config)

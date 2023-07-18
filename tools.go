@@ -224,7 +224,7 @@ func getAppInfoInt(args ...*int64) {
 	*args[0] = int64(majorVersion)
 }
 
-func printRedInfo(str any) {
+func printWithRedColor(str any) {
 	ct.Foreground(ct.Red, true)
 	printWithEmptyLine(str)
 	ct.ResetColor()

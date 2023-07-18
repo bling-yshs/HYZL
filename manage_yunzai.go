@@ -61,10 +61,10 @@ func startSignApiAndYunzai() {
 		//检查是否存在API/API/start.bat
 		_, err = os.Stat("API/API/start.bat")
 		if err != nil {
-			printRedInfo("请确保 API 文件夹下的 start.bat 文件存在！")
+			printWithRedColor("请确保 API 文件夹下的 start.bat 文件存在！")
 			fmt.Println(err)
 		} else {
-			printRedInfo("检查到 API 文件夹下存在 API 文件夹嵌套，请将 API 文件夹下的 API 文件夹往上移动一层！")
+			printWithRedColor("检查到 API 文件夹下存在 API 文件夹嵌套，请将 API 文件夹下的 API 文件夹往上移动一层！")
 		}
 		return
 	}
@@ -72,26 +72,26 @@ func startSignApiAndYunzai() {
 	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
 	if err == nil {
 		if value != 1 {
-			printRedInfo("当前配置文件中的 platform 值不为 1: Android(安卓手机) ，可能会导致登录失败，是否需要修改？(y/n)")
+			printWithRedColor("当前配置文件中的 platform 值不为 1: Android(安卓手机) ，可能会导致登录失败，是否需要修改？(y/n)")
 			choice := ReadChoice("y", "n")
 			if choice == "y" {
 				tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", 1)
 			}
 		}
 	} else {
-		printRedInfo("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android(安卓手机)，否则可能会导致登录失败")
+		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android(安卓手机)，否则可能会导致登录失败")
 	}
 	//检查node_modules/icqq/package.json里的version是否大于0.4.10
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
-		printRedInfo("读取 node_modules/icqq/package.json 值失败，请检查是否安装了 icqq 依赖，如已安装请将此界面截图并反馈给作者")
+		printWithRedColor("读取 node_modules/icqq/package.json 值失败，请检查是否安装了 icqq 依赖，如已安装请将此界面截图并反馈给作者")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
 	minVersion, _ := semver.NewVersion("0.4.10")
 	if !icqqVersion.Equal(minVersion) {
-		printRedInfo("当前 icqq 版本不为 0.4.10，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.10?(是:y 否:n)")
-		printRedInfo("因为新版喵喵修改了参数，所以 icqq 版本也跟着调整了，如果你在使用 旧版喵喵+icqq-0.3.8，请选择否")
+		printWithRedColor("当前 icqq 版本不为 0.4.10，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.10?(是:y 否:n)")
+		printWithRedColor("因为新版喵喵修改了参数，所以 icqq 版本也跟着调整了，如果你在使用 旧版喵喵+icqq-0.3.8，请选择否")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()
@@ -104,7 +104,7 @@ func startSignApiAndYunzai() {
 	port := "8080"
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		printRedInfo("当前" + port + "端口被占用，请检查签名API是否已经启动，或关闭占用端口的程序后重试")
+		printWithRedColor("当前" + port + "端口被占用，请检查签名API是否已经启动，或关闭占用端口的程序后重试")
 		return
 	} else {
 		_ = listener.Close() // 关闭监听器以释放端口
@@ -199,6 +199,9 @@ func yunzaiExists() bool {
 }
 
 func startYunzai() {
+	printWithRedColor("目前必须搭配 签名API 才能正常运行云崽，具体请看视频置顶评论，望周知")
+	printWithEmptyLine("云崽将在3秒后启动...")
+	time.Sleep(3 * time.Second)
 	if !isRedisRunning() {
 		_ = startRedis()
 		//等待1秒
@@ -208,7 +211,7 @@ func startYunzai() {
 	//检查是否有node.exe在运行
 	processList, err := ps.Processes()
 	if err != nil {
-		printRedInfo("无权限获取进程列表!")
+		printWithRedColor("无权限获取进程列表!")
 		return
 	}
 
