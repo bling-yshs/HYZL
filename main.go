@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	version = "v0.1.39"
+	version = "v0.1.40"
 )
 
 func createNormalConfig(config Config) {
@@ -185,6 +185,7 @@ var (
 )
 
 func main() {
+	checkAppPermissions()
 	getAppInfoInt(&windowsVersion)
 	getAppInfo(&programRunPath, &programName, &configPath, &yunzaiName)
 	if checkYunzaiFileExist() {
@@ -200,6 +201,12 @@ func main() {
 	getAndPrintAnnouncement()
 	scheduleList()
 	mainMenu()
+}
+
+func checkAppPermissions() {
+	if !checkCommandExist("dir") {
+		printWithEmptyLine("当前软件权限不足，请用管理员权限运行，若使用管理员权限依然无效，那么我也没有办法")
+	}
 }
 
 func checkYunzaiFileExist() bool {
