@@ -199,9 +199,16 @@ func yunzaiExists() bool {
 }
 
 func startYunzai() {
-	printWithRedColor("目前必须搭配 签名API 才能正常运行云崽，具体请看视频置顶评论，望周知")
-	printWithEmptyLine("云崽将在3秒后启动...")
-	time.Sleep(3 * time.Second)
+	//检测8080端口是否被占用
+	port := "8080"
+	listener, err := net.Listen("tcp", ":"+port)
+	if err == nil {
+		_ = listener.Close() // 关闭监听器以释放端口
+	} else {
+		printWithRedColor("目前必须搭配 签名API 才能正常运行云崽，具体请看视频置顶评论，望周知")
+		printWithEmptyLine("云崽将在3秒后启动...")
+		time.Sleep(3 * time.Second)
+	}
 	if !isRedisRunning() {
 		_ = startRedis()
 		//等待1秒
