@@ -81,22 +81,22 @@ func startSignApiAndYunzai() {
 	} else {
 		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android(安卓手机)，否则可能会导致登录失败")
 	}
-	//检查node_modules/icqq/package.json里的version是否大于0.4.10
+	//检查node_modules/icqq/package.json里的version是否大于0.4.11
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
 		printWithRedColor("读取 node_modules/icqq/package.json 值失败，请检查是否安装了 icqq 依赖，如已安装请将此界面截图并反馈给作者")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
-	minVersion, _ := semver.NewVersion("0.4.10")
+	minVersion, _ := semver.NewVersion("0.4.11")
 	if !icqqVersion.Equal(minVersion) {
-		printWithRedColor("当前 icqq 版本不为 0.4.10，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.10?(是:y 否:n)")
+		printWithRedColor("当前 icqq 版本不为 0.4.11，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.11?(是:y 否:n)")
 		printWithRedColor("因为新版喵喵修改了参数，所以 icqq 版本也跟着调整了，如果你在使用 旧版喵喵+icqq-0.3.8，请选择否")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()
 			executeCmd("pnpm uninstall icqq")
-			executeCmd("pnpm install icqq@0.4.10 -w")
+			executeCmd("pnpm install icqq@0.4.11 -w")
 		}
 	}
 	wd.changeToRoot()
@@ -203,8 +203,7 @@ func startYunzai() {
 	port := "8080"
 	listener, err := net.Listen("tcp", ":"+port)
 	if err == nil {
-		_ = listener.Close() // 关闭监听器以释放端口
-	} else {
+		_ = listener.Close()
 		printWithRedColor("目前必须搭配 签名API 才能正常运行云崽，具体请看视频置顶评论，望周知")
 		printWithEmptyLine("云崽将在3秒后启动...")
 		time.Sleep(3 * time.Second)
@@ -256,6 +255,8 @@ func changeMasterQQ() {
 	// 读取 YAML 配置文件
 	stat, err := os.Stat(filepath.Join(yunzaiName, "config/config/other.yaml"))
 	if err != nil || stat.Size() == 0 {
+		fmt.Println(err)
+		fmt.Println(stat.Size())
 		isOtherYamlExists = false
 		printWithEmptyLine("警告：检测到other.yaml配置文件内容为空，请问是否还原默认配置？(是:y 退出修改:n)")
 		choice := ReadChoice("y", "n")

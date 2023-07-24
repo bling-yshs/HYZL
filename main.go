@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	version = "v0.1.40"
+	version = "v0.1.41"
 )
 
 func createNormalConfig(config Config) {
