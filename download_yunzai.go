@@ -48,8 +48,6 @@ func downloadYunzaiFromGitee() {
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
 	executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer 镜像源...")
 	delDep()
-	//将package.json中的sqlite3版本改为5.0.0
-	_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "sqlite3", "5.0.0")
 	if windowsVersion < 10 {
 		printWithEmptyLine("正在修改 puppeteer 版本...")
 		_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "puppeteer", "19.7.3")
@@ -74,6 +72,8 @@ func downloadYunzaiFromGitee() {
 		} else {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
+			//将package.json中的sqlite3版本改为5.0.0
+			_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "sqlite3", "5.0.0")
 		}
 		printWithEmptyLine("下载修复文件完成!")
 	}
