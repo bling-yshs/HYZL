@@ -104,7 +104,7 @@ func startSignApiAndYunzai() {
 	//检查node_modules/icqq/package.json里的version是否大于0.4.12
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
-		printWithRedColor("读取 node_modules/icqq/package.json 值失败，请检查是否安装了 icqq 依赖，如已安装请将此界面截图并反馈给作者")
+		printWithRedColor("读取 node_modules/icqq/package.json 值失败，初步判断为您的云崽依赖没有正常安装，请尝试使用 BUG修复->重装依赖，若还是无法解决，请到云崽仓库将安装依赖时的报错截图发 issue 反馈，地址 https://gitee.com/yoimiya-kokomi/Miao-Yunzai/issues")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
