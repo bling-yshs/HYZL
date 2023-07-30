@@ -15,6 +15,44 @@ const (
 	version = "v0.1.42"
 )
 
+func main() {
+	checkAppPermissions()
+	getAppInfoInt(&windowsVersion)
+	getAppInfo(&programRunPath, &programName, &configPath, &yunzaiName)
+	if checkYunzaiFileExist() {
+		printWithRedColor("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
+	}
+	createNormalConfig(config)
+	readAndWriteSomeConfig(&config)
+	updateThisProgram()
+	if !checkEnv(&config) {
+		shutdownApp()
+	}
+	println("当前版本:", version)
+	getAndPrintAnnouncement()
+	scheduleList()
+	mainMenu()
+}
+
+// 主菜单函数
+func mainMenu() {
+	options := []MenuOption{
+		{"安装云崽", downloadYunzaiFromGitee},
+		{"云崽管理", manageYunzaiMenu},
+		{"BUG修复", bugsFixMenu},
+		{"立即更新启动器", updateLauncherRightNow},
+		{"获取自建签名API下载地址", getSelfSignAPI},
+	}
+
+	for {
+		choice := showMenu("主菜单", options, true)
+		if choice == 0 {
+			os.Exit(0)
+			return
+		}
+	}
+}
+
 func createNormalConfig(config Config) {
 	//检查当前目录下是否存在config文件夹
 	_, err := os.Stat("./config")
@@ -142,25 +180,6 @@ func isRedisRunning() bool {
 	}
 }
 
-// 主菜单函数
-func mainMenu() {
-	options := []MenuOption{
-		{"安装云崽", downloadYunzaiFromGitee},
-		{"云崽管理", manageYunzaiMenu},
-		{"BUG修复", bugsFixMenu},
-		{"立即更新启动器", updateLauncherRightNow},
-		{"获取自建签名API下载地址", getSelfSignAPI},
-	}
-
-	for {
-		choice := showMenu("主菜单", options, true)
-		if choice == 0 {
-			os.Exit(0)
-			return
-		}
-	}
-}
-
 type Config struct {
 	GitInstalled    bool   `json:"git_installed"`
 	NodeJSInstalled bool   `json:"nodejs_installed"`
@@ -183,25 +202,6 @@ var (
 	configPath                 = ""
 	updatedVersion             = version
 )
-
-func main() {
-	checkAppPermissions()
-	getAppInfoInt(&windowsVersion)
-	getAppInfo(&programRunPath, &programName, &configPath, &yunzaiName)
-	if checkYunzaiFileExist() {
-		printWithRedColor("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
-	}
-	createNormalConfig(config)
-	readAndWriteSomeConfig(&config)
-	updateThisProgram()
-	if !checkEnv(&config) {
-		shutdownApp()
-	}
-	println("当前版本:", version)
-	getAndPrintAnnouncement()
-	scheduleList()
-	mainMenu()
-}
 
 func checkAppPermissions() {
 	if !checkCommandExist("dir") {
@@ -237,5 +237,5 @@ func readAndWriteSomeConfig(config *Config) {
 }
 
 func getSelfSignAPI() {
-	printWithEmptyLine("下载地址 https://www.123pan.com/s/tsd9-9xNJv.html ，解压后放到与启动器同级目录下，然后进入解压出来的文件夹，查阅里面的 一小段说明.txt ，然后运行云崽管理->启动签名 API 并启动云崽，等待弹出的窗口显示 [FEKit_]info: task_handle.h:74 TaskSystem not allow 即为成功")
+	printWithEmptyLine("下载地址 https://yshs.lanzouk.com/b0a0q6sbc 密码:0000 ，解压后放到与启动器同级目录下(注意是启动器同级)，然后运行云崽管理->1. 启动签名 API 并启动云崽 即可")
 }
