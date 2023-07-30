@@ -68,6 +68,26 @@ func startSignApiAndYunzai() {
 		}
 		return
 	}
+	//检查是否存在API/当前 API 版本 1.1.5;文件
+	_, err = os.Stat("API/当前 API 版本 1.1.5;")
+	if err != nil {
+		printWithRedColor("请更新到新版签名API，下载地址 https://yshs.lanzouk.com/b0a0q6sbc 密码:0000")
+		printWithEmptyLine("通过 Github 自动下载的用户可以输入 y 来自动更新，是否需要自动更新签名API?(是:y 返回菜单:n)")
+		c := ReadChoice("y", "n")
+		if c == "y" {
+			os.Chdir("API")
+			//检查是否存在.git文件夹
+			_, err = os.Stat(".git")
+			if err != nil {
+				printWithRedColor("检测到当前 API 文件夹不是通过 Github 自动下载的，请手动下载签名 API")
+				return
+			}
+			executeCmd("git pull")
+			os.Chdir("..")
+		} else {
+			return
+		}
+	}
 	//检查platform是否为1或者2
 	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
 	if err == nil {
@@ -81,27 +101,27 @@ func startSignApiAndYunzai() {
 	} else {
 		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android(安卓手机)，否则可能会导致登录失败")
 	}
-	//检查node_modules/icqq/package.json里的version是否大于0.4.11
+	//检查node_modules/icqq/package.json里的version是否大于0.4.12
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
 		printWithRedColor("读取 node_modules/icqq/package.json 值失败，请检查是否安装了 icqq 依赖，如已安装请将此界面截图并反馈给作者")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
-	minVersion, _ := semver.NewVersion("0.4.11")
-	if !icqqVersion.Equal(minVersion) {
-		printWithRedColor("当前 icqq 版本不为 0.4.11，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.11?(是:y 否:n)")
+	minVersion, _ := semver.NewVersion("0.4.12")
+	if icqqVersion.LessThan(minVersion) {
+		printWithRedColor("当前 icqq 版本小于 0.4.12，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.12?(是:y 否:n)")
 		printWithRedColor("因为新版喵喵修改了参数，所以 icqq 版本也跟着调整了，如果你在使用 旧版喵喵+icqq-0.3.8，请选择否")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()
 			executeCmd("pnpm uninstall icqq")
-			executeCmd("pnpm install icqq@0.4.11 -w")
+			executeCmd("pnpm install icqq@0.4.12 -w")
 		}
 	}
 	wd.changeToRoot()
-	//检测8080端口是否被占用
-	port := "8080"
+	//检测1539端口是否被占用
+	port := "1539"
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		printWithRedColor("当前" + port + "端口被占用，请检查签名API是否已经启动，或关闭占用端口的程序后重试")
@@ -129,16 +149,17 @@ func startSignApiAndYunzai() {
 			_ = os.Setenv("JAVA_HOME", JavaHome)
 		}
 	}
-	//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:8080/sign
-	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:8080/sign")
+	//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:1539/sign?key=191539
+	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:1539/sign?key=191539")
 	//运行./API/start.bat
 	os.Chdir("./API")
 	cmd := exec.Command("cmd", "/c", "start", "start.bat")
 	cmd.Start()
-	printWithEmptyLine("正在启动签名API，请等待弹出的新窗口内显示 [FEKit_]info: task_handle.h:74 TaskSystem not allow 后方可正常启动云崽")
-	//每隔两秒向http://127.0.0.1:8080/sign发送一次get请求，直到返回200为止
+	wd.changeToRoot()
+	printWithEmptyLine("正在启动签名API，请勿关闭此窗口...")
+	//每隔两秒向http://127.0.0.1:1539/sign?key=191539发送一次get请求，直到返回200为止
 	for {
-		resp, err := http.Get("http://127.0.0.1:8080/sign")
+		resp, err := http.Get("http://127.0.0.1:1539/sign?key=191539")
 		if err != nil {
 			time.Sleep(2 * time.Second)
 			continue
@@ -199,8 +220,8 @@ func yunzaiExists() bool {
 }
 
 func startYunzai() {
-	//检测8080端口是否被占用
-	port := "8080"
+	//检测1539端口是否被占用
+	port := "1539"
 	listener, err := net.Listen("tcp", ":"+port)
 	if err == nil {
 		_ = listener.Close()
@@ -250,6 +271,7 @@ func closeYunzai() {
 }
 
 func changeMasterQQ() {
+	wd.changeToRoot()
 	var isOtherYamlExists = true
 
 	// 读取 YAML 配置文件
@@ -322,6 +344,7 @@ func changeMasterQQ() {
 }
 
 func changeAccount() {
+	wd.changeToRoot()
 	fmt.Print("请输入 QQ 账号(直接回车将不改变QQ账号和密码)：")
 	qq := readInt(true)
 	if qq != 0 {
