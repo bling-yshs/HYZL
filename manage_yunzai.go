@@ -22,6 +22,11 @@ type MenuOption struct {
 }
 
 func manageYunzaiMenu() {
+	//检查是否存在yunzaiName文件夹
+	if !yunzaiExists() {
+		printWithEmptyLine("未检测到云崽文件夹，请先下载云崽！")
+		return
+	}
 	for {
 		options := []MenuOption{
 			{"启动签名API 并启动云崽", startSignApiAndYunzai},
