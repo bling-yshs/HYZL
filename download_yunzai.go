@@ -78,6 +78,12 @@ func downloadYunzaiFromGitee() {
 		printWithEmptyLine("下载修复文件完成!")
 	}
 	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")
+	//检查是否存在"node_modules/icqq/package.json"，如果不存在则报错提示
+	_, err = os.Stat("./node_modules/icqq/package.json")
+	if err != nil {
+		printWithRedColor("检测到当前目录下不存在 node_modules/icqq/package.json ，初步判断为您的云崽依赖没有正常安装，请尝试使用 BUG修复->重装依赖，若还是无法解决，请到云崽仓库将安装依赖时的报错截图发 issue 反馈，地址 https://gitee.com/yoimiya-kokomi/Miao-Yunzai/issues")
+		shutdownApp()
+	}
 	executeCmd("node ./node_modules/puppeteer/install.js")
 	if installMiao {
 		printWithEmptyLine("开始下载必须的喵喵插件...")
