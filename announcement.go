@@ -54,8 +54,11 @@ func printAnnouncement() {
 }
 
 func getAnnouncement() {
-	latestVersion := giteeAPI.getLatestTag()
-	err := downloadAnnouncement(latestVersion)
+	latestVersion, err := giteeAPI.getLatestTag()
+	if err != nil {
+		return
+	}
+	err = downloadAnnouncement(latestVersion)
 	if err != nil {
 		return
 	}

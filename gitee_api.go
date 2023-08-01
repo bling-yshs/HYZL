@@ -12,36 +12,48 @@ type GiteeAPI struct {
 	body      string
 }
 
+var canConnectToGitee = true
+
 func NewGiteeAPI() *GiteeAPI {
 	api := &GiteeAPI{}
-	api.updateReleaseDataFromAPI()
+	err := api.updateReleaseDataFromAPI()
+	if err != nil {
+		return nil
+	}
 	return api
 }
 
-func (api *GiteeAPI) getLatestTag() string {
-	return api.latestTag
+func (api *GiteeAPI) getLatestTag() (string, error) {
+	if !canConnectToGitee {
+		return "", fmt.Errorf("无法连接到 Gitee API，当前无法使用启动器的在线更新和在线公告功能！")
+	}
+	return api.latestTag, nil
 }
 
 func (api *GiteeAPI) setLatestTag(latestTag string) {
 	api.latestTag = latestTag
 }
 
-func (api *GiteeAPI) getBody() string {
-	return api.body
+func (api *GiteeAPI) getBody() (string, error) {
+	if !canConnectToGitee {
+		return "", fmt.Errorf("无法连接到 Gitee API，当前无法使用启动器的在线更新和在线公告功能！")
+	}
+	return api.body, nil
 }
 
 func (api *GiteeAPI) setBody(body string) {
 	api.body = body
 }
 
-func (api *GiteeAPI) updateReleaseDataFromAPI() {
+func (api *GiteeAPI) updateReleaseDataFromAPI() error {
+	if !canConnectToGitee {
+		//返回error
+		return fmt.Errorf("无法连接到 Gitee API，当前无法使用启动器的在线更新和在线公告功能！")
+	}
 	url := fmt.Sprintf("https://gitee.com/api/v5/repos/%s/releases/latest", ownerAndRepo)
 
 	resp, _ := http.Get(url)
 	defer resp.Body.Close()
-	if resp.Body == nil {
-		printWithRedColor(`无法连接到 Gitee API，请将此界面截图并反馈给作者，err: "resp.Body == nil" `)
-	}
 
 	body, _ := io.ReadAll(resp.Body)
 
@@ -52,9 +64,11 @@ func (api *GiteeAPI) updateReleaseDataFromAPI() {
 
 	json.Unmarshal(body, &release)
 	if release.TagName == "" {
-		printWithRedColor(`无法连接到 Gitee API，请将此界面截图并反馈给作者，err: "release.TagName == " " `)
-
+		printWithRedColor(`无法连接到 Gitee API，当前无法使用启动器的在线更新和在线公告功能！`)
+		canConnectToGitee = false
+		return fmt.Errorf("无法连接到 Gitee API，当前无法使用启动器的在线更新和在线公告功能！")
 	}
 	api.setLatestTag(release.TagName)
 	api.setBody(release.Body)
+	return nil
 }
