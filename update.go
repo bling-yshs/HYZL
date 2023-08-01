@@ -118,7 +118,7 @@ func update() {
 }
 
 func updateThisProgram() {
-	_, err := os.Stat("./22update.bat")
+	_, err := os.Stat("./update.bat")
 	if err == nil {
 		//删除update.bat
 		_ = os.Remove("./update.bat")
