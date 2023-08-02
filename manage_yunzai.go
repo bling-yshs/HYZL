@@ -51,10 +51,20 @@ func startSignApiAndYunzai() {
 	//检测API文件夹是否存在
 	_, err := os.Stat("API")
 	if err != nil {
-		printWithEmptyLine("当前目录下不存在API文件夹，是否需要自动开始下载?(前提是你能正常下载 github 的文件)(是:y 返回:n)")
+		printWithEmptyLine("当前目录下不存在API文件夹，是否需要自动开始下载?(前提是你能正常下载 gitee 的文件)(是:y 返回:n)")
 		c := ReadChoice("y", "n")
 		if c == "y" {
-			executeCmd("git clone --depth 1 https://github.com/bling-yshs/unidbg-fetch-qsign.git")
+			executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/unidbg-fetch-qsign.git")
+			_, err := os.Stat("unidbg-fetch-qsign")
+			if err != nil {
+				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
+				getSelfSignAPI()
+			}
+			_, err = os.Stat("unidbg-fetch-qsign/start.bat")
+			if err != nil {
+				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
+				getSelfSignAPI()
+			}
 			os.Rename("unidbg-fetch-qsign", "API")
 		} else {
 			return
@@ -77,14 +87,14 @@ func startSignApiAndYunzai() {
 	_, err = os.Stat("API/当前 API 版本 1.1.5;")
 	if err != nil {
 		printWithRedColor("请更新到新版签名API，下载地址 https://yshs.lanzouk.com/b0a0q6sbc 密码:0000")
-		printWithEmptyLine("通过 Github 自动下载的用户可以输入 y 来自动更新，是否需要自动更新签名API?(是:y 返回菜单:n)")
+		printWithEmptyLine("通过 Gitee 自动下载的用户可以输入 y 来自动更新，是否需要自动更新签名API?(是:y 返回菜单:n)")
 		c := ReadChoice("y", "n")
 		if c == "y" {
 			os.Chdir("API")
 			//检查是否存在.git文件夹
 			_, err = os.Stat(".git")
 			if err != nil {
-				printWithRedColor("检测到当前 API 文件夹不是通过 Github 自动下载的，请手动下载签名 API")
+				printWithRedColor("检测到当前 API 文件夹不是通过 Gitee 自动下载的，请手动下载签名 API")
 				return
 			}
 			executeCmd("git pull")
@@ -116,7 +126,6 @@ func startSignApiAndYunzai() {
 	minVersion, _ := semver.NewVersion("0.4.12")
 	if icqqVersion.LessThan(minVersion) {
 		printWithRedColor("当前 icqq 版本小于 0.4.12，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.12?(是:y 否:n)")
-		printWithRedColor("因为新版喵喵修改了参数，所以 icqq 版本也跟着调整了，如果你在使用 旧版喵喵+icqq-0.3.8，请选择否")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()

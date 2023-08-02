@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	version = "v0.1.44"
+	version = "v0.1.45"
 )
 
 func main() {
@@ -25,6 +25,7 @@ func main() {
 	createNormalConfig(config)
 	readAndWriteSomeConfig(&config)
 	updateThisProgram()
+	checkProgramEnv()
 	if !checkEnv(&config) {
 		shutdownApp()
 	}
@@ -32,6 +33,18 @@ func main() {
 	getAndPrintAnnouncement()
 	scheduleList()
 	mainMenu()
+}
+
+func checkProgramEnv() {
+	//获取当前程序路径，判断程序路径是否有空格，有则提示并shutdown
+	path, err := os.Executable()
+	if err != nil {
+		return
+	}
+	if strings.Contains(path, " ") {
+		printWithRedColor("当前程序路径下存在空格，请勿将本程序放在有空格的路径下")
+		shutdownApp()
+	}
 }
 
 // 主菜单函数
@@ -237,5 +250,5 @@ func readAndWriteSomeConfig(config *Config) {
 }
 
 func getSelfSignAPI() {
-	printWithEmptyLine("下载地址 https://yshs.lanzouk.com/b0a0q6sbc 密码:0000 ，解压后放到与启动器同级目录下(注意是启动器同级)，然后运行云崽管理->1. 启动签名 API 并启动云崽 即可")
+	printWithEmptyLine("签名API 下载地址 https://yshs.lanzouk.com/b0a0q6sbc 密码:0000 ，解压后放到与启动器同级目录下(注意是启动器同级)，然后运行「云崽管理」->「1. 启动 签名API 并启动云崽」 即可")
 }
