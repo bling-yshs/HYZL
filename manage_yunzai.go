@@ -134,11 +134,31 @@ func startSignApiAndYunzai() {
 		}
 	}
 	wd.changeToRoot()
+	//检查是否是初次使用，也就是检查config.APIPort是否是0
+	if config.APIPort == 0 {
+		//让用户输入API端口，直接回车则使用默认端口1539
+		printWithEmptyLine("请输入签名API端口，直接回车则使用默认端口1539")
+		i := readInt(true)
+		if i == 0 {
+			config.APIPort = 1539
+			writeApiPortConfig(&config)
+			writeConfig(&config)
+		} else {
+			config.APIPort = i
+			writeApiPortConfig(&config)
+			writeConfig(&config)
+			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "server", "port", i)
+			if err != nil {
+				return
+			}
+		}
+	}
+
 	//检测1539端口是否被占用
-	port := "1539"
-	listener, err := net.Listen("tcp", ":"+port)
+	port := config.APIPort
+	listener, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
-		printWithRedColor("当前" + port + "端口被占用，请检查签名API是否已经启动，或关闭占用端口的程序后重试")
+		printWithRedColor("当前" + strconv.Itoa(port) + "端口被占用，请检查签名API是否已经启动，或关闭占用端口的程序后重试")
 		return
 	} else {
 		_ = listener.Close() // 关闭监听器以释放端口
@@ -234,9 +254,9 @@ func yunzaiExists() bool {
 }
 
 func startYunzai() {
-	//检测1539端口是否被占用
-	port := "1539"
-	listener, err := net.Listen("tcp", ":"+port)
+	// 检测1539端口是否被占用
+	port := config.APIPort
+	listener, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err == nil {
 		_ = listener.Close()
 		printWithRedColor("目前必须搭配 签名API 才能正常运行云崽，具体请看视频置顶评论，望周知")
@@ -245,11 +265,11 @@ func startYunzai() {
 	}
 	if !isRedisRunning() {
 		_ = startRedis()
-		//等待1秒
+		// 等待1秒
 		time.Sleep(1 * time.Second)
 	}
 	wd.changeToYunzai()
-	//检查是否有node.exe在运行
+	// 检查是否有node.exe在运行
 	processList, err := ps.Processes()
 	if err != nil {
 		printWithRedColor("无权限获取进程列表!")
@@ -271,7 +291,6 @@ func startYunzai() {
 			closeYunzai()
 		}
 	}
-	//
 	printWithEmptyLine("正在启动云崽...")
 	dir, _ := os.Getwd()
 	cmd := exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node app")
@@ -312,7 +331,7 @@ func changeMasterQQ() {
 
 	content, err := os.ReadFile(filepath.Join(yunzaiName, "config/config/other.yaml"))
 
-	var newMasterQQ int64
+	var newMasterQQ int
 
 	if isOtherYamlExists == true {
 		fmt.Print("请输入新的主人QQ(直接回车将不改变主人QQ)：")
@@ -341,7 +360,7 @@ func changeMasterQQ() {
 	lines := strings.Split(string(content), "\n")
 	for i, line := range lines {
 		if strings.HasPrefix(line, "masterQQ:") {
-			lines[i+1] = "  - " + strconv.FormatInt(newMasterQQ, 10) // 在下一行加入新的 masterQQ 值
+			lines[i+1] = "  - " + strconv.Itoa(newMasterQQ) // 在下一行加入新的 masterQQ 值
 			break
 		}
 	}
@@ -354,7 +373,7 @@ func changeMasterQQ() {
 		printErr(err)
 	}
 
-	printWithEmptyLine("主人QQ已修改为" + strconv.FormatInt(newMasterQQ, 10))
+	printWithEmptyLine("主人QQ已修改为" + strconv.Itoa(newMasterQQ))
 }
 
 func changeAccount() {
@@ -367,7 +386,7 @@ func changeAccount() {
 		fmt.Print("请输入登录方式（1:安卓手机、2:aPad、3:安卓手表、4:MacOS、5:iPad、6:TIM）：")
 		platform := readInt()
 		fileContent := fmt.Sprintf("# qq账号\nqq: %d\n# 密码，为空则用扫码登录,扫码登录现在仅能在同一ip下进行\npwd: '%s'\n# 1:安卓手机、 2:aPad 、 3:安卓手表、 4:MacOS 、 5:iPad 、 6:old_Android\nplatform: %d", qq, pwd, platform)
-		//覆盖掉./Yunzai-Bot/config/config/qq.yaml
+		// 覆盖掉./Yunzai-Bot/config/config/qq.yaml
 		os.WriteFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), []byte(fileContent), os.ModePerm)
 	}
 	changeMasterQQ()
@@ -375,16 +394,16 @@ func changeAccount() {
 }
 
 func installJsPlugin() {
-	//得到下载目录
+	// 得到下载目录
 	jsPluginDir := filepath.Join(programRunPath, filepath.Join(yunzaiName, "plugins/example"))
-	//输入js插件的地址
+	// 输入js插件的地址
 	fmt.Print("请输入需要下载或复制的js插件的地址：")
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	jsPluginUrl := scanner.Text()
-	//检查输入是否为https://开头，并且以js结尾
+	// 检查输入是否为https://开头，并且以js结尾
 	if strings.HasPrefix(jsPluginUrl, "https://") && strings.HasSuffix(jsPluginUrl, ".js") {
-		//如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
+		// 如果输入格式是https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/blob/master/%E5%96%9C%E6%8A%A5.js则自动转换为https://gitee.com/bling_yshs/yunzaiv3-ys-plugin/raw/master/%E5%96%9C%E6%8A%A5.js
 		jsPluginUrl = strings.Replace(jsPluginUrl, "blob", "raw", 1)
 		err := downloadFile(jsPluginUrl, jsPluginDir)
 		if err == nil {

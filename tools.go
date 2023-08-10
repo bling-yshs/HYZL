@@ -38,7 +38,7 @@ func (dir *WorkingDirectory) changeToRedis() error {
 // ↓工具函数
 
 // 参数canBeEmpty如果为true，表示输入可以为空，返回0
-func readInt(canBeEmpty ...bool) int64 {
+func readInt(canBeEmpty ...bool) int {
 
 	allowEmpty := false
 	if len(canBeEmpty) > 0 {
@@ -56,12 +56,12 @@ func readInt(canBeEmpty ...bool) int64 {
 			fmt.Print("输入不能为空，请重新输入：")
 			continue
 		}
-		i, err := strconv.ParseInt(s, 10, 64)
+		i, err := strconv.ParseInt(s, 10, 32)
 		if err != nil {
 			fmt.Print("输入错误，请重新输入：")
 			continue
 		}
-		return i
+		return int(i)
 	}
 }
 
@@ -219,9 +219,9 @@ func getAppInfo(args ...*string) {
 	}
 
 }
-func getAppInfoInt(args ...*int64) {
+func getAppInfoInt(args ...*int) {
 	majorVersion, _, _ := win.RtlGetNtVersionNumbers()
-	*args[0] = int64(majorVersion)
+	*args[0] = int(majorVersion)
 }
 
 func printWithRedColor(str any) {
