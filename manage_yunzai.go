@@ -184,7 +184,7 @@ func startSignApiAndYunzai() {
 		}
 	}
 	//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:1539/sign?key=191539
-	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:1539/sign?key=191539")
+	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(config.APIPort)+"/sign?key=191539")
 	//运行./API/start.bat
 	os.Chdir("./API")
 	cmd := exec.Command("cmd", "/c", "start", "start.bat")
@@ -193,7 +193,7 @@ func startSignApiAndYunzai() {
 	printWithEmptyLine("正在启动签名API，请勿关闭此窗口...")
 	//每隔两秒向http://127.0.0.1:1539/sign?key=191539发送一次get请求，直到返回200为止
 	for {
-		resp, err := http.Get("http://127.0.0.1:1539/sign?key=191539")
+		resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(config.APIPort) + "/sign?key=191539")
 		if err != nil {
 			time.Sleep(2 * time.Second)
 			continue
