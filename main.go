@@ -229,6 +229,13 @@ func checkAppPermissions() {
 		printWithEmptyLine("当前软件权限不足，请用管理员权限运行，若使用管理员权限依然无效，那么我也没有办法")
 		shutdownApp()
 	}
+	_, err := os.Create("./testPermissionsFile.txt")
+	if err != nil {
+		printWithEmptyLine("当前软件权限不足，请用管理员权限运行，若使用管理员权限依然无效，那么我也没有办法")
+		shutdownApp()
+	} else {
+		os.Remove("./testPermissionsFile.txt")
+	}
 }
 
 func checkYunzaiFileExist() bool {
