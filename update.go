@@ -182,6 +182,7 @@ func createChangelog() {
 }
 
 func createUpdateBat() {
+	wd.changeToRoot()
 	batchContent := fmt.Sprintf(`
 @echo off
 echo 正在更新...
@@ -206,6 +207,7 @@ exit`, programName, programName)
 }
 
 func updateLauncherRightNow() {
+	wd.changeToRoot()
 	err := giteeAPI.updateReleaseDataFromAPI()
 	if err != nil {
 		return
