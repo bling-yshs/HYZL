@@ -16,9 +16,9 @@ const (
 )
 
 func main() {
-	checkAppPermissions()
 	getAppInfoInt(&windowsVersion)
 	getAppInfo(&programRunPath, &programName, &configPath, &yunzaiName)
+	checkAppPermissions()
 	if checkYunzaiFileExist() {
 		printWithRedColor("检测到当前目录下可能存在云崽文件，请注意云崽启动器需要在云崽根目录的上一级目录下运行!")
 	}
@@ -225,17 +225,18 @@ var (
 )
 
 func checkAppPermissions() {
+	wd.changeToRoot()
 	if !checkCommandExist("dir") {
 		printWithEmptyLine("当前软件权限不足，请用管理员权限运行，若使用管理员权限依然无效，那么我也没有办法")
 		shutdownApp()
 	}
-	_, err := os.Create("./testPermissionsFile.txt")
+	file, err := os.Create("testPermissionsFile.txt")
 	if err != nil {
 		printWithEmptyLine("当前软件权限不足，请用管理员权限运行，若使用管理员权限依然无效，那么我也没有办法")
 		shutdownApp()
-	} else {
-		os.Remove("./testPermissionsFile.txt")
 	}
+	file.Close()
+	_ = os.Remove("testPermissionsFile.txt")
 }
 
 func checkYunzaiFileExist() bool {
