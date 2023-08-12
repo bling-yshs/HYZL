@@ -56,7 +56,7 @@ func readInt(canBeEmpty ...bool) int {
 			fmt.Print("输入不能为空，请重新输入：")
 			continue
 		}
-		i, err := strconv.ParseInt(s, 10, 32)
+		i, err := strconv.Atoi(s)
 		if err != nil {
 			fmt.Print("输入错误，请重新输入：")
 			continue
