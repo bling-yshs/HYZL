@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
@@ -13,6 +14,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"syscall"
@@ -348,4 +350,24 @@ func checkRedisExist() bool {
 		return true
 	}
 	return true
+}
+
+// 传入查询的端口号，返回端口号对应的进程PID，若没有找到相关进程，返回0和err
+func portInUse(portNumber int) (int, error) {
+	var outBytes bytes.Buffer
+	cmdStr := fmt.Sprintf("netstat -ano -p tcp | findstr %d", portNumber)
+	cmd := exec.Command("cmd", "/c", cmdStr)
+	cmd.Stdout = &outBytes
+	cmd.Run()
+	resStr := outBytes.String()
+	r := regexp.MustCompile(`\s\d+\s`).FindAllString(resStr, -1)
+	var pid = 0
+	if len(r) > 0 {
+		pid2, err := strconv.Atoi(strings.TrimSpace(r[0]))
+		pid = pid2
+		if err != nil {
+			return 0, err
+		}
+	}
+	return pid, nil
 }

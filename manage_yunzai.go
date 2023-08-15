@@ -134,34 +134,59 @@ func startSignApiAndYunzai() {
 		}
 	}
 	wd.changeToRoot()
-	//检查是否是初次使用，也就是检查config.APIPort是否是0
-	if config.APIPort == 0 {
-		//让用户输入API端口，直接回车则使用默认端口1539
-		printWithEmptyLine("请输入签名API端口，直接回车则使用默认端口1539")
+	if config.IsAPIPortSet == false {
+		fmt.Print("请输入签名API端口，直接回车则使用默认端口1539：")
 		i := readInt(true)
 		if i == 0 {
-			config.APIPort = 1539
-			writeApiPortConfig(&config)
+			apiPort = 1539
+			config.IsAPIPortSet = true
 			writeConfig(&config)
+			//写入到filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json")
+			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "server", "port", apiPort)
+			if err != nil {
+				return
+			}
 		} else {
-			config.APIPort = i
-			writeApiPortConfig(&config)
+			apiPort = i
+			config.IsAPIPortSet = true
 			writeConfig(&config)
-			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "server", "port", i)
+			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "server", "port", apiPort)
 			if err != nil {
 				return
 			}
 		}
+	} else {
+		//从filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json")读取端口号
+		port, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "port")
+		if err != nil {
+			return
+		}
+		apiPort = int(port.(float64))
 	}
 
-	//检测1539端口是否被占用
-	port := config.APIPort
-	listener, err := net.Listen("tcp", ":"+strconv.Itoa(port))
+	//检测1539端口是否被占用，并提示是否关闭
+
+	port := apiPort
+
+	// 获取当前系统上的所有网络连接
+	connections, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
-		printWithRedColor("当前" + strconv.Itoa(port) + "端口被占用，请检查签名API是否已经启动，或关闭占用端口的程序后重试")
-		return
+		printWithRedColor("当前" + strconv.Itoa(port) + "端口被占用，是否需要关闭占用端口的进程?(是:y 否:n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			pid, err := portInUse(port)
+			if err != nil {
+				printWithRedColor("错误：监听端口失败，却无法正常关闭占用端口")
+				return
+			}
+			killCmd := exec.Command("taskkill", "/F", "/PID", strconv.Itoa(pid))
+			if err = killCmd.Run(); err != nil {
+				fmt.Println("无法终止进程:", err)
+				return
+			}
+		}
 	} else {
-		_ = listener.Close() // 关闭监听器以释放端口
+		_ = connections.Close()
 	}
 	//检查是否存在JAVA_HOME环境变量
 	_, exists := os.LookupEnv("JAVA_HOME")
@@ -184,18 +209,18 @@ func startSignApiAndYunzai() {
 		}
 	}
 	//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:1539/sign?key=191539
-	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(config.APIPort)+"/sign?key=191539")
+	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(port)+"/sign?key=191539")
 	//运行./API/start.bat
 	os.Chdir("./API")
 	cmd := exec.Command("cmd", "/c", "start", "start.bat")
 	cmd.Start()
 	wd.changeToRoot()
 	printWithEmptyLine("正在启动签名API，请勿关闭此窗口...")
-	//每隔两秒向http://127.0.0.1:1539/sign?key=191539发送一次get请求，直到返回200为止
+	//每隔五秒向http://127.0.0.1:1539/sign?key=191539发送一次get请求，直到返回200为止
 	for {
-		resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(config.APIPort) + "/sign?key=191539")
+		resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(port) + "/sign?key=191539")
 		if err != nil {
-			time.Sleep(2 * time.Second)
+			time.Sleep(5 * time.Second)
 			continue
 		}
 		if resp.StatusCode == 200 {
@@ -203,11 +228,7 @@ func startSignApiAndYunzai() {
 			break
 		}
 	}
-	printWithEmptyLine("是否需要立即启动云崽？(y/n)")
-	readChoice := ReadChoice("y", "n")
-	if readChoice == "y" {
-		startYunzai()
-	}
+	startYunzai()
 }
 
 func updateOfficialYunzaiToMiaoYunzai() {
@@ -254,15 +275,6 @@ func yunzaiExists() bool {
 }
 
 func startYunzai() {
-	// 检测1539端口是否被占用
-	port := config.APIPort
-	listener, err := net.Listen("tcp", ":"+strconv.Itoa(port))
-	if err == nil {
-		_ = listener.Close()
-		printWithRedColor("目前必须搭配 签名API 才能正常运行云崽，具体请看视频置顶评论，望周知")
-		printWithEmptyLine("云崽将在3秒后启动...")
-		time.Sleep(3 * time.Second)
-	}
 	if !isRedisRunning() {
 		_ = startRedis()
 		// 等待1秒

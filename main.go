@@ -35,13 +35,6 @@ func main() {
 	mainMenu()
 }
 
-func writeApiPortConfig(config *Config) {
-	if config.APIPort == 0 {
-		config.APIPort = 1539
-		writeConfig(config)
-	}
-}
-
 func checkProgramEnv() {
 	//获取当前程序路径，判断程序路径是否有空格，有则提示并shutdown
 	path, err := os.Executable()
@@ -206,7 +199,7 @@ type Config struct {
 	NpmInstalled    bool   `json:"npm_installed"`
 	SystemTempPath  string `json:"system_temp_path"`
 	RedisInstalled  bool   `json:"redis_installed"`
-	APIPort         int    `json:"api_port"`
+	IsAPIPortSet    bool   `json:"is_api_port_set"`
 }
 
 var (
@@ -222,6 +215,7 @@ var (
 	windowsVersion       = 10
 	configPath           = ""
 	updatedVersion       = version
+	apiPort              = 1539
 )
 
 func checkAppPermissions() {
