@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	version = "v0.1.49"
+	version = "v0.1.50"
 )
 
 func main() {
@@ -41,6 +41,7 @@ func checkProgramEnv() {
 	if err != nil {
 		return
 	}
+	path = filepath.Dir(path)
 	if strings.Contains(path, " ") {
 		printWithRedColor("当前程序路径下存在空格，请勿将本程序放在有空格的路径下")
 		shutdownApp()
