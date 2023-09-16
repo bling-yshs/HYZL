@@ -72,8 +72,6 @@ func downloadYunzaiFromGitee() {
 		} else {
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
 			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
-			//将package.json中的sqlite3版本改为5.0.0
-			_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "sqlite3", "5.0.0")
 		}
 		printWithEmptyLine("下载修复文件完成!")
 	}

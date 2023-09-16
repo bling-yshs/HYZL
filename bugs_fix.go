@@ -49,14 +49,7 @@ func listenFix() {
 		}
 		return
 	}
-	printWithEmptyLine("请选择需要安装的 sqlite3 版本(1: 5.1.6    2: 5.0.0)(推荐选择 5.1.6，装不上可以尝试 5.0.0)")
-	choice := ReadChoice("1", "2")
-	if choice == "1" {
-		executeCmd("pnpm install sqlite3@5.1.6 -w", "正在修复sqlite3缺失...")
-	}
-	if choice == "2" {
-		executeCmd("pnpm install sqlite3@5.0.0 -w", "正在修复sqlite3缺失...")
-	}
+	executeCmd("pnpm install sqlite3@5.1.6 -w", "正在修复sqlite3缺失...")
 }
 func cookieRedisFix() {
 	err := wd.changeToRedis()
