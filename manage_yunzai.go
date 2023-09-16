@@ -247,7 +247,6 @@ func updateOfficialYunzaiToMiaoYunzai() {
 		executeCmd("git reset --hard origin/master")
 		executeCmd("pnpm update")
 		executeCmd("pnpm install")
-		puppeteerProblemFix()
 	}
 }
 

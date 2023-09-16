@@ -1,9 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"github.com/bling-yshs/YzLauncher-windows/tools"
-	"io"
 	"os"
 )
 
@@ -46,35 +43,6 @@ func downloadYunzaiFromGitee() {
 	}
 	executeCmd("npm config set registry https://registry.npmmirror.com")
 	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
-	executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer 镜像源...")
-	delDep()
-	if windowsVersion < 10 {
-		printWithEmptyLine("正在修改 puppeteer 版本...")
-		_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "puppeteer", "19.7.3")
-		printWithEmptyLine("修改 puppeteer 版本完成！")
-		printWithEmptyLine("正在下载修复文件...")
-		_, err := os.Stat("./renderers")
-		if err != nil {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Official/puppeteer.js", "./lib/puppeteer")
-		} else {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
-		}
-		printWithEmptyLine("下载修复文件完成!")
-	} else {
-		printWithEmptyLine("正在修改 puppeteer 版本...")
-		_ = tools.UpdateValueInJSONFile("package.json", "dependencies", "puppeteer", "19.8.3")
-		printWithEmptyLine("修改 puppeteer 版本完成！")
-		printWithEmptyLine("正在下载修复文件...")
-		_, err := os.Stat("./renderers")
-		if err != nil {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Official/puppeteer.js", "./lib/puppeteer")
-		} else {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
-		}
-		printWithEmptyLine("下载修复文件完成!")
-	}
 	executeCmd("pnpm install", "开始安装云崽依赖", "安装云崽依赖成功！")
 	//检查是否存在"node_modules/icqq/package.json"，如果不存在则报错提示
 	_, err = os.Stat("./node_modules/icqq/package.json")
@@ -82,52 +50,8 @@ func downloadYunzaiFromGitee() {
 		printWithRedColor("检测到当前目录下不存在 node_modules/icqq/package.json ，初步判断为您的云崽依赖没有正常安装，请尝试使用 BUG修复->重装依赖，若还是无法解决，请到云崽仓库将安装依赖时的报错截图发 issue 反馈，地址 https://gitee.com/yoimiya-kokomi/Miao-Yunzai/issues")
 		shutdownApp()
 	}
-	executeCmd("node ./node_modules/puppeteer/install.js")
 	if installMiao {
 		printWithEmptyLine("开始下载必须的喵喵插件...")
 		installMiaoPlugin()
-	}
-}
-
-type PackageJSON struct {
-	Name         string            `json:"name"`
-	Version      string            `json:"version"`
-	Author       string            `json:"author"`
-	Description  string            `json:"description"`
-	Main         string            `json:"main"`
-	Type         string            `json:"type"`
-	Scripts      map[string]string `json:"scripts"`
-	Dependencies map[string]string `json:"dependencies"`
-	DevDeps      map[string]string `json:"devDependencies"`
-	Imports      map[string]string `json:"imports"`
-}
-
-func delDep() {
-	// 读取原始文件内容
-	filePath := "./package.json"
-	file, err := os.Open(filePath)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-	bytes, err := io.ReadAll(file)
-	if err != nil {
-		panic(err)
-	}
-	// 解析 JSON
-	var pkg PackageJSON
-	if err := json.Unmarshal(bytes, &pkg); err != nil {
-		panic(err)
-	}
-	// 修改内容
-	delete(pkg.Dependencies, "puppeteer")
-	// 重新编码为 JSON
-	newBytes, err := json.MarshalIndent(pkg, "", "  ")
-	if err != nil {
-		panic(err)
-	}
-	// 覆写回去
-	if err := os.WriteFile(filePath, newBytes, os.ModePerm); err != nil {
-		panic(err)
 	}
 }

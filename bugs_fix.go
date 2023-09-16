@@ -19,7 +19,7 @@ func bugsFixMenu() {
 			{"修复 云崽登录QQ失败(显示被风控发不出消息也可以尝试此选项)", icqqProblemFix},
 			{"修复 #重启 失败(也就是pnpm start pm2报错)", pm2Fix},
 			{"修复 cookie 总是失效过期(Redis启动参数错误导致)", cookieRedisFix},
-			{"修复 喵喵云崽监听报错(sqlite3缺失，注意可能对icqq版本也有要求)", listenFix},
+			{"修复 喵喵云崽监听报错(也就是sqlite3问题)", listenFix},
 		}
 
 		choice := showMenu("BUG修复", options, false)
@@ -100,38 +100,7 @@ func icqqProblemFix() {
 }
 
 func puppeteerProblemFix() {
-	wd.changeToYunzai()
-	executeCmd("npm config set registry https://registry.npmmirror.com")
-	executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
-	executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
-	executeCmd("pnpm uninstall puppeteer -w", "正在修复 puppeteer Chromium...")
-	if windowsVersion < 10 {
-		//WinServer2012
-		executeCmd("pnpm install puppeteer@19.7.3 -w")
-		executeCmd("node ./node_modules/puppeteer/install.js")
-		printWithEmptyLine("正在下载修复文件...")
-		_, err := os.Stat("./renderers")
-		if err != nil {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Official/puppeteer.js", "./lib/puppeteer")
-		} else {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/WinServer2012YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
-		}
-		printWithEmptyLine("下载修复文件完成!")
-	} else {
-		//Win10+
-		executeCmd("pnpm install puppeteer@19.8.3 -w")
-		executeCmd("node ./node_modules/puppeteer/install.js")
-		printWithEmptyLine("正在下载修复文件...")
-		_, err := os.Stat("./renderers")
-		if err != nil {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Official/puppeteer.js", "./lib/puppeteer")
-		} else {
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/config_default.yaml", "./renderers/puppeteer")
-			downloadFile("https://gitee.com/bling_yshs/YzLauncher-windows/raw/master/NonProjectRequirements/Win10YunzaiFix/Miao/puppeteer.js", "./renderers/puppeteer/lib")
-		}
-		printWithEmptyLine("下载修复文件完成!")
-	}
+	printWithRedColor("该选项暂时移除")
 }
 
 func reInstallDep() {
@@ -140,25 +109,16 @@ func reInstallDep() {
 		printWithEmptyLine("检测到当前目录下已存在 node_modules ，请问是否需要重新安装依赖？(是:y 返回菜单:n)")
 		userChoice := ReadChoice("y", "n")
 		if userChoice == "y" {
-			if _, err = tools.CheckKeyInJSONFile("./package.json", "puppeteer"); err == nil {
-				_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
-			}
 			executeCmd("npm config set registry https://registry.npmmirror.com")
 			executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
-			executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
-			os.RemoveAll("./node_modules")
 			executeCmd("pnpm install", "开始安装云崽依赖...", "安装云崽依赖成功！")
 		}
 		if userChoice == "n" {
 			return
 		}
 	} else {
-		if _, err = tools.CheckKeyInJSONFile("./package.json", "puppeteer"); err == nil {
-			_ = tools.UpdateValueInJSONFile("./package.json", "dependencies", "puppeteer", "19.8.3")
-		}
 		executeCmd("npm config set registry https://registry.npmmirror.com")
 		executeCmd("pnpm config set registry https://registry.npmmirror.com", "开始设置 pnpm 镜像源...")
-		executeCmd("npm config set PUPPETEER_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries", "开始设置 puppeteer Chromium 镜像源...", "设置 puppeteer Chromium 镜像源成功！")
 		executeCmd("pnpm install", "", "安装云崽依赖成功！")
 	}
 }
