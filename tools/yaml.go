@@ -89,7 +89,7 @@ func AppendToYaml(filePath string, key string, value interface{}) error {
 	return nil
 }
 
-func UpdateYAMLFile(filePath string, key string, value interface{}) error {
+func UpdateValueYAML(filePath string, key string, value interface{}) error {
 	// 读取 YAML 文件
 	yamlContent, err := os.ReadFile(filePath)
 	if err != nil {

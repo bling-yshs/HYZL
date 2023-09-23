@@ -110,7 +110,7 @@ func startSignApiAndYunzai() {
 			printWithRedColor("当前配置文件中的 platform 值不为 1: Android(安卓手机) ，可能会导致登录失败，是否需要修改？(y/n)")
 			choice := ReadChoice("y", "n")
 			if choice == "y" {
-				tools.UpdateYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", 1)
+				tools.UpdateValueYAML(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", 1)
 			}
 		}
 	} else {
@@ -252,10 +252,8 @@ func updateOfficialYunzaiToMiaoYunzai() {
 
 func updateYunzaiToLatest() {
 	wd.changeToYunzai()
-	err := executeCmd("git pull", "正在更新云崽...")
-	if err != nil {
-		executeCmd("git reset --hard origin/HEAD")
-	}
+	executeCmd("git pull", "正在更新云崽...")
+	executeCmd("git reset --hard origin/HEAD")
 }
 
 // 检查云崽是否存在，存在返回true，不存在返回false
