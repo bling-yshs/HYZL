@@ -114,7 +114,7 @@ func startSignApiAndYunzai() {
 			}
 		}
 	} else {
-		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽，后续初始化时请注意选择登录方式为 1：Android(安卓手机)，否则可能会导致登录失败。\n并且初次登录因为无法正常配置签名API地址，所以必定会登录失败，请登录失败后关闭所有命令行窗口重新登录一次即可")
+		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽\n后续初始化时请注意一定要选择登录方式为 Android(安卓手机)。\n签名API地址请填入 http://127.0.0.1:您刚刚设置的端口号/sign?key=191539 \n或者您重新重录一次，启动器会自动帮您修改")
 	}
 	//检查node_modules/icqq/package.json里的version是否大于0.4.12
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
