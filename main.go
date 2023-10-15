@@ -55,7 +55,6 @@ func mainMenu() {
 		{"云崽管理", manageYunzaiMenu},
 		{"BUG修复", bugsFixMenu},
 		{"立即更新启动器", updateLauncherRightNow},
-		{"获取自建签名API下载地址", getSelfSignAPI},
 	}
 
 	for {
@@ -260,8 +259,4 @@ func readAndWriteSomeConfig(config *Config) {
 		return
 	}
 	writeSystemTempPath(config)
-}
-
-func getSelfSignAPI() {
-	printWithEmptyLine("签名API 下载地址 https://yshs.lanzouk.com/b0a0q6sbc 密码:0000 ，解压后放到与启动器同级目录下(注意是启动器同级)，然后运行「云崽管理」->「1. 启动 签名API 并启动云崽」 即可")
 }
