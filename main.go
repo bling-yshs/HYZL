@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	version = "v0.1.53"
+	version = "v0.1.54"
 )
 
 func main() {
@@ -217,6 +217,8 @@ var (
 	configPath           = ""
 	updatedVersion       = version
 	apiPort              = 1539
+
+	apiKey = "191539"
 )
 
 func checkAppPermissions() {

@@ -83,11 +83,10 @@ func startSignApiAndYunzai() {
 		}
 		return
 	}
-	//检查是否存在API/当前 API 版本 1.1.5;文件
-	_, err = os.Stat("API/当前 API 版本 1.1.5;")
+	//检查是否存在API/当前 API 版本 1.1.9文件
+	_, err = os.Stat("API/当前 API 版本 1.1.9")
 	if err != nil {
-		printWithRedColor("请更新到新版签名API，下载地址 https://yshs.lanzouk.com/b0a0q6sbc 密码:0000")
-		printWithEmptyLine("通过 Gitee 自动下载的用户可以输入 y 来自动更新，是否需要自动更新签名API?(是:y 返回菜单:n)")
+		printWithEmptyLine("检查到新版API，是否需要自动更新？(如果旧版API可以正常使用那么请勿更新)(是:y 否:n)")
 		c := ReadChoice("y", "n")
 		if c == "y" {
 			os.Chdir("API")
@@ -99,8 +98,6 @@ func startSignApiAndYunzai() {
 			}
 			executeCmd("git pull")
 			os.Chdir("..")
-		} else {
-			return
 		}
 	}
 	//检查platform是否为1或者2
@@ -114,25 +111,28 @@ func startSignApiAndYunzai() {
 			}
 		}
 	} else {
-		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽\n后续初始化时请注意一定要选择登录方式为 Android(安卓手机)。\n签名API地址请填入 http://127.0.0.1:您刚刚设置的端口号/sign?key=191539 \n或者您重新重录一次，启动器会自动帮您修改")
+		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽\n后续初始化时请注意一定要选择登录方式为 Android(安卓手机)。\n签名API地址请填入 http://127.0.0.1:1539/sign?key=191539 \n或者您重新登陆一次，启动器会自动帮您修改")
 	}
-	//检查node_modules/icqq/package.json里的version是否大于0.4.12
+	//检查node_modules/icqq/package.json里的version是否大于0.5.4
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
 		printWithRedColor("读取 node_modules/icqq/package.json 值失败，初步判断为您的云崽依赖没有正常安装，请尝试使用 BUG修复->重装依赖，若还是无法解决，请到云崽仓库将安装依赖时的报错截图发 issue 反馈，地址 https://gitee.com/yoimiya-kokomi/Miao-Yunzai/issues")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
-	minVersion, _ := semver.NewVersion("0.4.12")
+	minVersion, _ := semver.NewVersion("0.5.4")
 	if icqqVersion.LessThan(minVersion) {
-		printWithRedColor("当前 icqq 版本小于 0.4.12，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.4.12?(是:y 否:n)")
+		printWithRedColor("当前 icqq 版本小于 0.5.4，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.5.4?(是:y 否:n)")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()
 			executeCmd("pnpm uninstall icqq")
-			executeCmd("pnpm install icqq@0.4.12 -w")
+			executeCmd("pnpm install icqq@0.5.4 -w")
 		}
 	}
+
+	skipEditConfig := false
+
 	wd.changeToRoot()
 	if config.IsAPIPortSet == false {
 		fmt.Print("请输入签名API端口，直接回车则使用默认端口1539：")
@@ -141,8 +141,8 @@ func startSignApiAndYunzai() {
 			apiPort = 1539
 			config.IsAPIPortSet = true
 			writeConfig(&config)
-			//写入到filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json")
-			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "server", "port", apiPort)
+			//写入到filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json")
+			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "server", "port", apiPort)
 			if err != nil {
 				return
 			}
@@ -150,18 +150,27 @@ func startSignApiAndYunzai() {
 			apiPort = i
 			config.IsAPIPortSet = true
 			writeConfig(&config)
-			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "server", "port", apiPort)
+			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "server", "port", apiPort)
 			if err != nil {
 				return
 			}
 		}
 	} else {
-		//从filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json")读取端口号
-		port, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.68", "config.json"), "port")
+		//从filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json")读取端口号
+		port, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "port")
 		if err != nil {
-			return
+			skipEditConfig = true
+		} else {
+			apiPort = int(port.(float64))
 		}
-		apiPort = int(port.(float64))
+
+		//从filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json")读取key
+		key, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "key")
+		if err != nil {
+			skipEditConfig = true
+		} else {
+			apiKey = key.(string)
+		}
 	}
 
 	//检测1539端口是否被占用，并提示是否关闭
@@ -208,8 +217,11 @@ func startSignApiAndYunzai() {
 			_ = os.Setenv("JAVA_HOME", JavaHome)
 		}
 	}
-	//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:1539/sign?key=191539
-	_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(port)+"/sign?key=191539")
+
+	if !skipEditConfig {
+		//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:1539/sign?key=191539
+		_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(port)+"/sign?key="+apiKey)
+	}
 	//运行./API/start.bat
 	os.Chdir("./API")
 	cmd := exec.Command("cmd", "/c", "start", "start.bat")
@@ -218,7 +230,7 @@ func startSignApiAndYunzai() {
 	printWithEmptyLine("正在启动签名API，请勿关闭此窗口...")
 	//每隔五秒向http://127.0.0.1:1539/sign?key=191539发送一次get请求，直到返回200为止
 	for {
-		resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(port) + "/sign?key=191539")
+		resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(port) + "/sign?key=" + apiKey)
 		if err != nil {
 			time.Sleep(5 * time.Second)
 			continue
