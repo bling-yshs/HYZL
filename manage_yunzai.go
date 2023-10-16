@@ -58,12 +58,10 @@ func startSignApiAndYunzai() {
 			_, err := os.Stat("unidbg-fetch-qsign")
 			if err != nil {
 				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
-				getSelfSignAPI()
 			}
 			_, err = os.Stat("unidbg-fetch-qsign/start.bat")
 			if err != nil {
 				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
-				getSelfSignAPI()
 			}
 			os.Rename("unidbg-fetch-qsign", "API")
 		} else {
@@ -97,6 +95,7 @@ func startSignApiAndYunzai() {
 				return
 			}
 			executeCmd("git pull")
+			executeCmd("git reset --hard origin/HEAD")
 			os.Chdir("..")
 		}
 	}
