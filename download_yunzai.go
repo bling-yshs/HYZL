@@ -23,18 +23,10 @@ func downloadYunzaiFromGitee() {
 			return
 		}
 	}
-	printWithEmptyLine("请选择云崽类别：\n1.官方云崽\n2.喵喵云崽")
-	userChoice := ReadChoice("1", "2")
-	if userChoice == "1" {
-		executeCmd("git clone --depth 1 -b main https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git", "开始下载官方云崽...", "下载官方云崽成功！")
-	}
-	var installMiao = false
-	if userChoice == "2" {
-		executeCmd("git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git", "开始下载喵喵云崽...", "下载喵喵云崽成功！")
-		//将Miao-Yunzai文件夹重命名为Yunzai-Bot
-		os.Rename("./Miao-Yunzai", "./Yunzai-Bot")
-		installMiao = true
-	}
+	printWithEmptyLine("目前已删除官方云崽的下载选项，现自动为您下载喵喵云崽")
+	executeCmd("git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git", "开始下载喵喵云崽...", "下载喵喵云崽成功！")
+	//将Miao-Yunzai文件夹重命名为Yunzai-Bot
+	os.Rename("./Miao-Yunzai", "./Yunzai-Bot")
 	//进入Yunzai-Bot文件夹
 	wd.changeToYunzai()
 	b2 := checkCommandExist("pnpm -v")
@@ -50,8 +42,6 @@ func downloadYunzaiFromGitee() {
 		printWithRedColor("检测到当前目录下不存在 node_modules/icqq/package.json ，初步判断为您的云崽依赖没有正常安装，请尝试使用 BUG修复->重装依赖，若还是无法解决，请到云崽仓库将安装依赖时的报错截图发 issue 反馈，地址 https://gitee.com/yoimiya-kokomi/Miao-Yunzai/issues")
 		shutdownApp()
 	}
-	if installMiao {
-		printWithEmptyLine("开始下载必须的喵喵插件...")
-		installMiaoPlugin()
-	}
+	printWithEmptyLine("开始下载必须的喵喵插件...")
+	installMiaoPlugin()
 }
