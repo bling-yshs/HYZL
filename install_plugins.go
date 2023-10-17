@@ -8,11 +8,13 @@ import (
 func installPluginsMenu() {
 	for {
 		options := []MenuOption{
-			{"锅巴插件", installGuobaPlugin},
-			{"喵喵插件", installMiaoPlugin},
-			{"逍遥插件", installXiaoyaoPlugin},
-			{"枫叶插件", installFengyePlugin},
-			{"星穹铁道插件", installStarRailPlugin},
+			{"锅巴插件(云崽后台管理)(#锅巴帮助)", installGuobaPlugin},
+			{"喵喵插件(#喵喵帮助)", installMiaoPlugin},
+			{"逍遥插件(扫码登录)(#图鉴帮助)", installXiaoyaoPlugin},
+			{"枫叶插件(小黑子插件)", installFengyePlugin},
+			{"原神/星铁图鉴插件", installAtlas},
+			{"土块插件(表情包制作)(#土块帮助)", installEarthKPlugin},
+			{"打开云崽插件库", openYunzaiPluginLibrary},
 		}
 
 		choice := showMenu("安装插件", options, false)
@@ -22,10 +24,19 @@ func installPluginsMenu() {
 	}
 }
 
-//↓插件安装函数
+// 打开云崽插件库https://gitee.com/yhArcadia/Yunzai-Bot-plugins-index
+func openYunzaiPluginLibrary() {
+	executeCmd("start https://gitee.com/yhArcadia/Yunzai-Bot-plugins-index")
+}
 
-func installStarRailPlugin() {
-	installPluginsTemplate("星穹铁道插件 (https://gitee.com/hewang1an/StarRail-plugin)", "StarRail-plugin", "git clone --depth=1 https://gitee.com/hewang1an/StarRail-plugin.git ./plugins/StarRail-plugin/")
+// ↓插件安装函数
+
+func installEarthKPlugin() {
+	installPluginsTemplate("土块插件 (https://gitee.com/diqiushengwu/earth-k-plugin)", "earth-k-plugin", "git clone --depth=1 https://gitee.com/diqiushengwu/earth-k-plugin ./plugins/earth-k-plugin/")
+}
+
+func installAtlas() {
+	installPluginsTemplate("Atlas图鉴插件 (https://gitee.com/Nwflower/atlas)", "Atlas", "git clone --depth=1 https://gitee.com/Nwflower/atlas ./plugins/Atlas/")
 }
 
 func installGuobaPlugin() {
