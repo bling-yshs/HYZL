@@ -91,14 +91,23 @@ func startSignApiAndYunzai() {
 			//检查是否存在.git文件夹
 			_, err = os.Stat(".git")
 			if err != nil {
-				printWithRedColor("检测到当前 API 文件夹不是通过 Gitee 自动下载的，请手动下载签名 API")
-				return
+				printWithRedColor("检测到当前 API 文件夹不是通过 Gitee 自动下载的，请问是否需要完全删除并重新下载 API ？(是:y 返回:n)")
+				c := ReadChoice("y", "n")
+				if c == "y" {
+					wd.changeToRoot()
+					os.RemoveAll("API")
+					executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/unidbg-fetch-qsign.git")
+					os.Rename("unidbg-fetch-qsign", "API")
+				} else {
+					return
+				}
+			} else {
+				executeCmd("git pull")
+				executeCmd("git reset --hard origin/HEAD")
 			}
-			executeCmd("git pull")
-			executeCmd("git reset --hard origin/HEAD")
-			os.Chdir("..")
 		}
 	}
+	wd.changeToRoot()
 	//检查platform是否为1或者2
 	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
 	if err == nil {
