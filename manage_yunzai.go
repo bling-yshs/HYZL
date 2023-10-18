@@ -228,7 +228,7 @@ func startSignApiAndYunzai() {
 
 	if !skipEditConfig {
 		//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:1539/sign?key=191539
-		_ = tools.AppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(port)+"/sign?key="+apiKey)
+		_ = tools.UpdateOrAppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(port)+"/sign?key="+apiKey)
 	}
 	//运行./API/start.bat
 	os.Chdir("./API")

@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"github.com/Masterminds/semver"
 	"github.com/bling-yshs/YzLauncher-windows/tools"
 	"os"
 	"path/filepath"
@@ -106,15 +108,41 @@ func puppeteerProblemFix() {
 	choice := ReadChoice("1", "2")
 	if choice == "1" {
 		executeCmd("pnpm install puppeteer -w")
-		printWithRedColor("如果你非常长时间未下载成功，请按以下步骤操作：\n1.下载最新版的edge 地址: https://www.microsoft.com/zh-cn/edge/download\n2.安装完成后，打开C:\\Program Files (x86)\\Microsoft\\Edge\\Application，然后进入某个110以上的版本号的文件夹，例如117.0.2045.36\n3.将地址栏的路径复制下载，也就是C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\117.0.2045.36\n4.重新进入本修复选项，但是选择2.通过edge修复")
+		printWithRedColor("如果你非常长时间未下载成功，请尝试通过edge修复")
 		executeCmd("node ./node_modules/puppeteer/install.js")
 		printWithEmptyLine("修复成功，大概")
 	}
 	if choice == "2" {
-		fmt.Print("请输入edge文件夹路径，例如C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\117.0.2045.36 :")
-		edgePath := readString()
-		quotedPath := fmt.Sprintf(`%s/msedge.exe`, strings.ReplaceAll(edgePath, `\`, `/`))
-		_ = tools.AppendToYaml("./config/config/bot.yaml", "chromium_path", quotedPath)
+		printWithEmptyLine("请按以下步骤操作：\n1.下载并安装最新版的edge 地址: https://www.microsoft.com/zh-cn/edge/download 安装完成后回车进入下一步")
+		//等待用户回车
+		_, _ = bufio.NewReader(os.Stdin).ReadString('\n')
+		//检查是否存在C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe
+		_, err := os.Stat(`C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe`)
+		edgePath := ""
+		if err != nil {
+			printWithRedColor("未识别到edge路径，请手动输入，例如C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe")
+			edgePath = readString()
+			edgePath = fmt.Sprintf(`%s/msedge.exe`, strings.ReplaceAll(edgePath, `\`, `/`))
+			_ = tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "chromium_path", edgePath)
+		} else {
+			edgePath = `C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`
+		}
+		_ = tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "chromium_path", edgePath)
+		//判断yunzaiName\node_modules\puppeteer\package.json内version的值是否小于21.1.1，是的话就执行pnpm install puppeteer -w
+		version, err := tools.GetValueFromJSONFile("./node_modules/puppeteer/package.json", "version")
+		if err != nil {
+			printWithRedColor("获取 puppeteer 版本号失败，是否需要重新安装？(是:y 返回菜单:n)")
+			choice := ReadChoice("y", "n")
+			if choice == "y" {
+				executeCmd("pnpm install puppeteer -w")
+			}
+			return
+		}
+		pupVersion, _ := semver.NewVersion(version.(string))
+		minVersion, _ := semver.NewVersion("21.1.1")
+		if pupVersion.LessThan(minVersion) {
+			executeCmd("pnpm install puppeteer -w")
+		}
 		printWithEmptyLine("修复成功")
 	}
 

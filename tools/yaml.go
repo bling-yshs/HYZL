@@ -26,7 +26,7 @@ func GetValueFromYAMLFile(filePath, key string) (interface{}, error) {
 	return value, nil
 }
 
-func AppendToYaml(filePath string, key string, value interface{}) error {
+func UpdateOrAppendToYaml(filePath string, key string, value interface{}) error {
 	// 读取 YAML 文件
 	yamlContent, err := os.ReadFile(filePath)
 	if err != nil {
