@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/Masterminds/semver"
 	"github.com/bling-yshs/YzLauncher-windows/tools"
 	"os"
 	"path/filepath"
@@ -104,7 +103,7 @@ func icqqProblemFix() {
 
 func puppeteerProblemFix() {
 	wd.changeToYunzai()
-	printWithEmptyLine("1.正常修复(推荐) 2.通过edge修复")
+	printWithEmptyLine("1.正常修复 2.通过edge修复(推荐)")
 	choice := ReadChoice("1", "2")
 	if choice == "1" {
 		executeCmd("pnpm install puppeteer -w")
@@ -113,7 +112,7 @@ func puppeteerProblemFix() {
 		printWithEmptyLine("修复成功，大概")
 	}
 	if choice == "2" {
-		printWithEmptyLine("请按以下步骤操作：\n1.下载并安装最新版的edge 地址: https://www.microsoft.com/zh-cn/edge/download 安装完成后回车进入下一步")
+		printWithEmptyLine("请按以下步骤操作：\n1.下载并安装最新版的 edge 地址: https://yshs.lanzouj.com/iBe9O1clqsdc\n官网地址:https://www.microsoft.com/zh-cn/edge/download\n安装完成后回车进入下一步")
 		//等待用户回车
 		_, _ = bufio.NewReader(os.Stdin).ReadString('\n')
 		//检查是否存在C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe
@@ -128,21 +127,7 @@ func puppeteerProblemFix() {
 			edgePath = `C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`
 		}
 		_ = tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "chromium_path", edgePath)
-		//判断yunzaiName\node_modules\puppeteer\package.json内version的值是否小于21.1.1，是的话就执行pnpm install puppeteer -w
-		version, err := tools.GetValueFromJSONFile("./node_modules/puppeteer/package.json", "version")
-		if err != nil {
-			printWithRedColor("获取 puppeteer 版本号失败，是否需要重新安装？(是:y 返回菜单:n)")
-			choice := ReadChoice("y", "n")
-			if choice == "y" {
-				executeCmd("pnpm install puppeteer -w")
-			}
-			return
-		}
-		pupVersion, _ := semver.NewVersion(version.(string))
-		minVersion, _ := semver.NewVersion("21.1.1")
-		if pupVersion.LessThan(minVersion) {
-			executeCmd("pnpm install puppeteer -w")
-		}
+		executeCmd("pnpm install puppeteer@21.1.1 -w")
 		printWithEmptyLine("修复成功")
 	}
 
