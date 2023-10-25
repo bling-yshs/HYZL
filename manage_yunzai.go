@@ -54,16 +54,16 @@ func startSignApiAndYunzai() {
 		printWithEmptyLine("当前目录下不存在API文件夹，是否需要自动开始下载?(前提是你能正常下载 gitee 的文件)(是:y 返回:n)")
 		c := ReadChoice("y", "n")
 		if c == "y" {
-			executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/unidbg-fetch-qsign.git")
-			_, err := os.Stat("unidbg-fetch-qsign")
+			executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/hyzl-sign-api.git")
+			_, err := os.Stat("hyzl-sign-api")
 			if err != nil {
 				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
 			}
-			_, err = os.Stat("unidbg-fetch-qsign/start.bat")
+			_, err = os.Stat("hyzl-sign-api/start.bat")
 			if err != nil {
 				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
 			}
-			os.Rename("unidbg-fetch-qsign", "API")
+			os.Rename("hyzl-sign-api", "API")
 		} else {
 			return
 		}
@@ -96,8 +96,8 @@ func startSignApiAndYunzai() {
 				if c == "y" {
 					wd.changeToRoot()
 					os.RemoveAll("API")
-					executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/unidbg-fetch-qsign.git")
-					os.Rename("unidbg-fetch-qsign", "API")
+					executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/hyzl-sign-api.git")
+					os.Rename("hyzl-sign-api", "API")
 				} else {
 					return
 				}
