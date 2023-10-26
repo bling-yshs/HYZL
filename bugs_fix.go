@@ -95,7 +95,7 @@ func icqqProblemFix() {
 		}
 	}
 	executeCmd("pnpm uninstall icqq")
-	executeCmd("pnpm install icqq@0.5.4 -w")
+	executeCmd("pnpm install icqq@0.6.1 -w")
 	//读取./config/config/qq.yaml
 	tools.UpdateValueYAML("./config/config/qq.yaml", "platform", 1)
 	printWithEmptyLine("修复成功！")

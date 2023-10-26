@@ -81,8 +81,8 @@ func startSignApiAndYunzai() {
 		}
 		return
 	}
-	//检查是否存在API/当前 API 版本 1.1.9文件
-	_, err = os.Stat("API/当前 API 版本 1.1.9")
+	//检查是否存在API/当前 API 版本 1.2.0文件
+	_, err = os.Stat("API/当前 API 版本 1.2.0")
 	if err != nil {
 		printWithEmptyLine("检查到新版API，是否需要自动更新？(如果旧版API可以正常使用那么请勿更新)(是:y 否:n)")
 		c := ReadChoice("y", "n")
@@ -121,21 +121,21 @@ func startSignApiAndYunzai() {
 	} else {
 		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽\n后续初始化时请注意一定要选择登录方式为 Android(安卓手机)。\n签名API地址请填入 http://127.0.0.1:1539/sign?key=191539 \n或者您重新登陆一次，启动器会自动帮您修改")
 	}
-	//检查node_modules/icqq/package.json里的version是否大于0.5.4
+	//检查node_modules/icqq/package.json里的version是否大于0.6.1
 	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
 	if err != nil {
 		printWithRedColor("读取 node_modules/icqq/package.json 值失败，初步判断为您的云崽依赖没有正常安装，请尝试使用 BUG修复->重装依赖，若还是无法解决，请到云崽仓库将安装依赖时的报错截图发 issue 反馈，地址 https://gitee.com/yoimiya-kokomi/Miao-Yunzai/issues")
 		return
 	}
 	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
-	minVersion, _ := semver.NewVersion("0.5.4")
+	minVersion, _ := semver.NewVersion("0.6.1")
 	if icqqVersion.LessThan(minVersion) {
-		printWithRedColor("当前 icqq 版本小于 0.5.4，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.5.4?(是:y 否:n)")
+		printWithRedColor("当前 icqq 版本小于 0.6.1，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.6.1?(是:y 否:n)")
 		choice := ReadChoice("y", "n")
 		if choice == "y" {
 			wd.changeToYunzai()
 			executeCmd("pnpm uninstall icqq")
-			executeCmd("pnpm install icqq@0.5.4 -w")
+			executeCmd("pnpm install icqq@0.6.1 -w")
 		}
 	}
 
