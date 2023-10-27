@@ -81,8 +81,8 @@ func startSignApiAndYunzai() {
 		}
 		return
 	}
-	//检查是否存在API/当前 API 版本 1.2.0文件
-	_, err = os.Stat("API/当前 API 版本 1.2.0")
+	//检查是否存在API/当前 API 版本 1.2.1文件
+	_, err = os.Stat("API/当前 API 版本 1.2.1")
 	if err != nil {
 		printWithEmptyLine("检查到新版API，是否需要自动更新？(如果旧版API可以正常使用那么请勿更新)(是:y 否:n)")
 		c := ReadChoice("y", "n")
