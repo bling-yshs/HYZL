@@ -127,7 +127,7 @@ func puppeteerProblemFix() {
 			edgePath = `C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe`
 		}
 		_ = tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "chromium_path", edgePath)
-		executeCmd("pnpm install puppeteer@21.1.1 -w")
+		executeCmd("pnpm install puppeteer@21.1.1 -w --ignore-scripts")
 		printWithEmptyLine("修复成功")
 	}
 

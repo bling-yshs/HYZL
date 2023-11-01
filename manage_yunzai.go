@@ -149,8 +149,8 @@ func startSignApiAndYunzai() {
 			apiPort = 1539
 			config.IsAPIPortSet = true
 			writeConfig(&config)
-			//写入到filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json")
-			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "server", "port", apiPort)
+			//写入到filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json")
+			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "server", "port", apiPort)
 			if err != nil {
 				return
 			}
@@ -158,22 +158,22 @@ func startSignApiAndYunzai() {
 			apiPort = i
 			config.IsAPIPortSet = true
 			writeConfig(&config)
-			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "server", "port", apiPort)
+			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "server", "port", apiPort)
 			if err != nil {
 				return
 			}
 		}
 	} else {
-		//从filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json")读取端口号
-		port, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "port")
+		//从filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json")读取端口号
+		port, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "port")
 		if err != nil {
 			skipEditConfig = true
 		} else {
 			apiPort = int(port.(float64))
 		}
 
-		//从filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json")读取key
-		key, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.80", "config.json"), "key")
+		//从filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json")读取key
+		key, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "key")
 		if err != nil {
 			skipEditConfig = true
 		} else {
