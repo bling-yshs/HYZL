@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	version = "v0.1.62"
+	version = "v0.1.63"
 )
 
 func main() {
@@ -55,6 +55,7 @@ func mainMenu() {
 		{"云崽管理", manageYunzaiMenu},
 		{"BUG修复", bugsFixMenu},
 		{"立即更新启动器", updateLauncherRightNow},
+		{"获取云崽连接QQNT进行登录的教程(100%不冻结，100%登陆成功)", getQQNTTutorials},
 	}
 
 	for {
@@ -64,6 +65,9 @@ func mainMenu() {
 			return
 		}
 	}
+}
+func getQQNTTutorials() {
+	executeCmd("start https://note.youdao.com/s/VGhP055W")
 }
 
 func createNormalConfig(config Config) {

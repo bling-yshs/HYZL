@@ -38,6 +38,7 @@ func manageYunzaiMenu() {
 			{"强制更新云崽", updateYunzaiToLatest},
 			{"从官方云崽切换为喵喵云崽", updateOfficialYunzaiToMiaoYunzai},
 			{"启动云崽", startYunzai},
+			{"以node apps方式启动", startQQNTYunzai},
 		}
 
 		choice := showMenu("云崽管理", options, false)
@@ -45,6 +46,41 @@ func manageYunzaiMenu() {
 			return
 		}
 	}
+}
+func startQQNTYunzai() {
+	if !isRedisRunning() {
+		_ = startRedis()
+		// 等待1秒
+		time.Sleep(1 * time.Second)
+	}
+	wd.changeToYunzai()
+	// 检查是否有node.exe在运行
+	processList, err := ps.Processes()
+	if err != nil {
+		printWithRedColor("无权限获取进程列表!")
+		return
+	}
+
+	isNodeRunning := false
+	for _, process := range processList {
+		if strings.ToLower(process.Executable()) == "node.exe" {
+			isNodeRunning = true
+			break
+		}
+	}
+
+	if isNodeRunning {
+		printWithEmptyLine("检测到后台存在 node 程序正在运行，可能为云崽的后台进程，是否关闭云崽并重新启动？(是:y 跳过:n)")
+		choice := ReadChoice("y", "n")
+		if choice == "y" {
+			closeYunzai()
+		}
+	}
+	printWithEmptyLine("正在启动云崽...")
+	dir, _ := os.Getwd()
+	cmd := exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node apps")
+	cmd.Start()
+	printWithEmptyLine("云崽启动成功！")
 }
 func startSignApiAndYunzai() {
 	wd.changeToRoot()
