@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	version = "v0.1.63"
+	version = "v0.1.64"
 )
 
 func main() {
@@ -67,7 +67,7 @@ func mainMenu() {
 	}
 }
 func getQQNTTutorials() {
-	executeCmd("start https://note.youdao.com/s/VGhP055W")
+	executeCmd("start https://gitee.com/bling_yshs/Yunzai-v3-Installation-Steps")
 }
 
 func createNormalConfig(config Config) {
