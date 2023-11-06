@@ -14,6 +14,7 @@ func installPluginsMenu() {
 			{"枫叶插件(小黑子插件)", installFengyePlugin},
 			{"原神/星铁图鉴插件", installAtlas},
 			{"土块插件(表情包制作)(#土块帮助)", installEarthKPlugin},
+			{"闲心插件(#闲心帮助)", installXianxinPlugin},
 			{"打开云崽插件库", openYunzaiPluginLibrary},
 		}
 
@@ -30,6 +31,12 @@ func openYunzaiPluginLibrary() {
 }
 
 // ↓插件安装函数
+
+// https://gitee.com/xianxincoder/xianxin-plugin
+func installXianxinPlugin() {
+	installPluginsTemplate("闲心插件 (https://gitee.com/xianxincoder/xianxin-plugin)", "xianxin-plugin", "git clone --depth=1 https://gitee.com/xianxincoder/xianxin-plugin ./plugins/xianxin-plugin/")
+
+}
 
 func installEarthKPlugin() {
 	installPluginsTemplate("土块插件 (https://gitee.com/diqiushengwu/earth-k-plugin)", "earth-k-plugin", "git clone --depth=1 https://gitee.com/diqiushengwu/earth-k-plugin ./plugins/earth-k-plugin/")
