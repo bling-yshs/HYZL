@@ -3,11 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/Masterminds/semver"
 	"github.com/bling-yshs/YzLauncher-windows/tools"
 	"github.com/mitchellh/go-ps"
-	"net"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -29,16 +26,15 @@ func manageYunzaiMenu() {
 	}
 	for {
 		options := []MenuOption{
-			{"启动签名API 并启动云崽", startSignApiAndYunzai},
+			{"启动云崽", startYunzai},
 			{"强制关闭云崽(强制关闭node程序)", closeYunzai},
 			{"自定义终端命令", customCommand},
 			{"安装插件", installPluginsMenu},
 			{"安装js插件", installJsPlugin},
 			{"修改云崽账号密码或者修改主人QQ", changeAccount},
 			{"强制更新云崽", updateYunzaiToLatest},
-			{"从官方云崽切换为喵喵云崽", updateOfficialYunzaiToMiaoYunzai},
-			{"启动云崽", startYunzai},
 			{"以node apps方式启动", startQQNTYunzai},
+			{"设置qsign.icu的签名API", setQsignAPI},
 		}
 
 		choice := showMenu("云崽管理", options, false)
@@ -47,6 +43,17 @@ func manageYunzaiMenu() {
 		}
 	}
 }
+
+func setQsignAPI() {
+	wd.changeToYunzai()
+	err := tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "sign_api_addr", "https://hlhs-nb.cn/signed/sign?key=114514&ver=9.0.17")
+	if err != nil {
+		printWithRedColor("设置签名API失败！")
+		return
+	}
+	printWithEmptyLine("设置签名API成功！")
+}
+
 func startQQNTYunzai() {
 	if !isRedisRunning() {
 		_ = startRedis()
@@ -81,229 +88,6 @@ func startQQNTYunzai() {
 	cmd := exec.Command("cmd", "/C", "start", "/d", dir, "cmd", "/k", "node apps")
 	cmd.Start()
 	printWithEmptyLine("云崽启动成功！")
-}
-func startSignApiAndYunzai() {
-	wd.changeToRoot()
-	//检测API文件夹是否存在
-	_, err := os.Stat("API")
-	if err != nil {
-		printWithEmptyLine("当前目录下不存在API文件夹，是否需要自动开始下载?(前提是你能正常下载 gitee 的文件)(是:y 返回:n)")
-		c := ReadChoice("y", "n")
-		if c == "y" {
-			executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/hyzl-sign-api.git")
-			_, err := os.Stat("hyzl-sign-api")
-			if err != nil {
-				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
-			}
-			_, err = os.Stat("hyzl-sign-api/start.bat")
-			if err != nil {
-				printWithEmptyLine("当前无法连接到 Gitee，请从网盘内下载签名API")
-			}
-			os.Rename("hyzl-sign-api", "API")
-		} else {
-			return
-		}
-	}
-	//检查是否存在API/start.bat
-	_, err = os.Stat("API/start.bat")
-	if err != nil {
-		//检查是否存在API/API/start.bat
-		_, err = os.Stat("API/API/start.bat")
-		if err != nil {
-			printWithRedColor("请确保 API 文件夹下的 start.bat 文件存在！")
-			fmt.Println(err)
-		} else {
-			printWithRedColor("检查到 API 文件夹下存在 API 文件夹嵌套，请将 API 文件夹下的 API 文件夹往上移动一层！")
-		}
-		return
-	}
-	//检查是否存在API/当前 API 版本 1.2.1文件
-	_, err = os.Stat("API/当前 API 版本 1.2.1")
-	if err != nil {
-		printWithEmptyLine("检查到新版API，是否需要自动更新？(如果旧版API可以正常使用那么请勿更新)(是:y 否:n)")
-		c := ReadChoice("y", "n")
-		if c == "y" {
-			os.Chdir("API")
-			//检查是否存在.git文件夹
-			_, err = os.Stat(".git")
-			if err != nil {
-				printWithRedColor("检测到当前 API 文件夹不是通过 Gitee 自动下载的，请问是否需要完全删除并重新下载 API ？(是:y 返回:n)")
-				c := ReadChoice("y", "n")
-				if c == "y" {
-					wd.changeToRoot()
-					os.RemoveAll("API")
-					executeCmd("git clone --depth 1 https://gitee.com/bling_yshs/hyzl-sign-api.git")
-					os.Rename("hyzl-sign-api", "API")
-				} else {
-					return
-				}
-			} else {
-				executeCmd("git pull")
-				executeCmd("git reset --hard origin/HEAD")
-			}
-		}
-	}
-	wd.changeToRoot()
-	//检查platform是否为1或者2
-	value, err := tools.GetValueFromYAMLFile(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform")
-	if err == nil {
-		if value != 1 {
-			printWithRedColor("当前配置文件中的 platform 值不为 1: Android(安卓手机) ，可能会导致登录失败，是否需要修改？(y/n)")
-			choice := ReadChoice("y", "n")
-			if choice == "y" {
-				tools.UpdateValueYAML(filepath.Join(yunzaiName, "config/config/qq.yaml"), "platform", 1)
-			}
-		}
-	} else {
-		printWithRedColor("检测到 config/config/qq.yaml 文件不存在，所以您可能是初次使用云崽\n后续初始化时请注意一定要选择登录方式为 Android(安卓手机)。\n签名API地址请填入 http://127.0.0.1:1539/sign?key=191539 \n或者您重新登陆一次，启动器会自动帮您修改")
-	}
-	//检查node_modules/icqq/package.json里的version是否大于0.6.1
-	icqqVersionStr, err := tools.GetValueFromJSONFile(filepath.Join(yunzaiName, "node_modules/icqq/package.json"), "version")
-	if err != nil {
-		printWithRedColor("读取 node_modules/icqq/package.json 值失败，初步判断为您的云崽依赖没有正常安装，请尝试使用 BUG修复->重装依赖，若还是无法解决，请到云崽仓库将安装依赖时的报错截图发 issue 反馈，地址 https://gitee.com/yoimiya-kokomi/Miao-Yunzai/issues")
-		return
-	}
-	icqqVersion, err := semver.NewVersion(icqqVersionStr.(string))
-	minVersion, _ := semver.NewVersion("0.6.1")
-	if icqqVersion.LessThan(minVersion) {
-		printWithRedColor("当前 icqq 版本小于 0.6.1，可能会导致签名 api 失效，是否需要自动将 icqq 更改到 0.6.1?(是:y 否:n)")
-		choice := ReadChoice("y", "n")
-		if choice == "y" {
-			wd.changeToYunzai()
-			executeCmd("pnpm uninstall icqq")
-			executeCmd("pnpm install icqq@0.6.1 -w")
-		}
-	}
-
-	skipEditConfig := false
-
-	wd.changeToRoot()
-	if config.IsAPIPortSet == false {
-		fmt.Print("请输入签名API端口，直接回车则使用默认端口1539：")
-		i := readInt(true)
-		if i == 0 {
-			apiPort = 1539
-			config.IsAPIPortSet = true
-			writeConfig(&config)
-			//写入到filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json")
-			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "server", "port", apiPort)
-			if err != nil {
-				return
-			}
-		} else {
-			apiPort = i
-			config.IsAPIPortSet = true
-			writeConfig(&config)
-			err := tools.UpdateValueInJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "server", "port", apiPort)
-			if err != nil {
-				return
-			}
-		}
-	} else {
-		//从filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json")读取端口号
-		port, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "port")
-		if err != nil {
-			skipEditConfig = true
-		} else {
-			apiPort = int(port.(float64))
-		}
-
-		//从filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json")读取key
-		key, err := tools.GetValueFromJSONFile(filepath.Join(programRunPath, "API", "txlib", "8.9.85", "config.json"), "key")
-		if err != nil {
-			skipEditConfig = true
-		} else {
-			apiKey = key.(string)
-		}
-	}
-
-	//检测1539端口是否被占用，并提示是否关闭
-
-	port := apiPort
-
-	// 获取当前系统上的所有网络连接
-	connections, err := net.Listen("tcp", ":"+strconv.Itoa(port))
-	if err != nil {
-		printWithRedColor("当前" + strconv.Itoa(port) + "端口被占用，是否需要关闭占用端口的进程?(是:y 否:n)")
-		choice := ReadChoice("y", "n")
-		if choice == "y" {
-			pid, err := portInUse(port)
-			if err != nil {
-				printWithRedColor("错误：监听端口失败，却无法正常关闭占用端口")
-				return
-			}
-			killCmd := exec.Command("taskkill", "/F", "/PID", strconv.Itoa(pid))
-			if err = killCmd.Run(); err != nil {
-				fmt.Println("无法终止进程:", err)
-				return
-			}
-		}
-	} else {
-		_ = connections.Close()
-	}
-	//检查是否存在JAVA_HOME环境变量
-	_, exists := os.LookupEnv("JAVA_HOME")
-	if !exists {
-		printWithEmptyLine("当前系统未设置 JAVA_HOME 环境变量，正在自动设置...")
-		JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
-		setJavaHomeCommand := "setx JAVA_HOME \"" + JavaHome + "\""
-		executeCmd(setJavaHomeCommand, "正在设置 JAVA_HOME 环境变量...", "设置 JAVA_HOME 环境变量成功！")
-		_ = os.Setenv("JAVA_HOME", JavaHome)
-	} else {
-		env := os.Getenv("JAVA_HOME")
-		_, err := os.Stat(env)
-		//如果环境变量不存在，就设置JAVA_HOME环境变量
-		if err != nil {
-			printWithEmptyLine("当前系统 JAVA_HOME 环境变量所在文件夹不存在，正在自动设置新的环境变量...")
-			JavaHome := filepath.Join(programRunPath, "API", "jre-11.0.19")
-			setJavaHomeCommand := "setx JAVA_HOME \"" + JavaHome + "\""
-			executeCmd(setJavaHomeCommand, "正在设置 JAVA_HOME 环境变量...", "设置 JAVA_HOME 环境变量成功！")
-			_ = os.Setenv("JAVA_HOME", JavaHome)
-		}
-	}
-
-	if !skipEditConfig {
-		//修改bot.yaml，添加sign_api_addr: http://127.0.0.1:1539/sign?key=191539
-		_ = tools.UpdateOrAppendToYaml(filepath.Join(yunzaiName, "config/config/bot.yaml"), "sign_api_addr", "http://127.0.0.1:"+strconv.Itoa(port)+"/sign?key="+apiKey)
-	}
-	//运行./API/start.bat
-	os.Chdir("./API")
-	cmd := exec.Command("cmd", "/c", "start", "start.bat")
-	cmd.Start()
-	wd.changeToRoot()
-	printWithEmptyLine("正在启动签名API，请勿关闭此窗口...")
-	//每隔五秒向http://127.0.0.1:1539/sign?key=191539发送一次get请求，直到返回200为止
-	for {
-		resp, err := http.Get("http://127.0.0.1:" + strconv.Itoa(port) + "/sign?key=" + apiKey)
-		if err != nil {
-			time.Sleep(5 * time.Second)
-			continue
-		}
-		if resp.StatusCode == 200 {
-			printWithEmptyLine("签名API启动成功！")
-			break
-		}
-	}
-	startYunzai()
-}
-
-func updateOfficialYunzaiToMiaoYunzai() {
-	wd.changeToYunzai()
-	printWithEmptyLine("请确认是否要切换为喵喵云崽，此操作不可逆！(y/n)")
-	userChoice := ReadChoice("y", "n")
-	if userChoice == "n" {
-		return
-	}
-	if userChoice == "y" {
-		executeCmd("git branch -m main master")
-		executeCmd("git remote rm origin")
-		executeCmd("git remote add origin https://gitee.com/yoimiya-kokomi/Miao-Yunzai.git")
-		executeCmd("git fetch")
-		executeCmd("git branch --set-upstream-to=origin/master master")
-		executeCmd("git reset --hard origin/master")
-		executeCmd("pnpm update")
-		executeCmd("pnpm install")
-	}
 }
 
 func updateYunzaiToLatest() {
