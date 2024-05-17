@@ -27,109 +27,95 @@ func GetValueFromYAMLFile(filePath, key string) (interface{}, error) {
 }
 
 func UpdateOrAppendToYaml(filePath string, key string, value interface{}) error {
-	// 读取 YAML 文件
-	yamlContent, err := os.ReadFile(filePath)
+	file, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
-
-	// 解析 YAML
 	node := &yaml.Node{}
-	err = yaml.Unmarshal(yamlContent, node)
+	err = yaml.Unmarshal(file, node)
 	if err != nil {
 		return err
 	}
-
-	// 处理值的类型
-	var newValueNode *yaml.Node
-	if strValue, ok := value.(string); ok && strValue == "" {
-		newValueNode = &yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: "",
-			Tag:   "!!str",
-		}
-	} else {
-		newValueNode = &yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: fmt.Sprintf("%v", value),
-		}
-	}
-
-	// 检查是否存在同名的键
-	found := false
-	for i := 0; i < len(node.Content[0].Content); i += 2 {
-		if node.Content[0].Content[i].Value == key {
-			// 修改键的值
-			node.Content[0].Content[i+1] = newValueNode
+	var found bool = false
+	for index, item := range node.Content[0].Content {
+		if item.Value == key {
 			found = true
-			break
+			// 如果value的类型是nil，则将tag设置为!!null，value设置为空字符串，style设置为0
+			if value == nil {
+				node.Content[0].Content[index+1].Tag = "!!null"
+				node.Content[0].Content[index+1].Value = ""
+				node.Content[0].Content[index+1].Style = 0
+				break
+			}
+			// 如果值是string，就将tag设置为!!str，value设置为传入的值
+			if strValue, ok := value.(string); ok {
+				node.Content[0].Content[index+1].Tag = "!!str"
+				node.Content[0].Content[index+1].Value = strValue
+				break
+			}
 		}
 	}
-
 	if !found {
-		// 在末尾添加新键和值
-		newKeyNode := &yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: key,
+		// 如果value的类型是nil，则将tag设置为!!null，value设置为空字符串，style设置为0
+		if value == nil {
+			node.Content[0].Content = append(node.Content[0].Content, &yaml.Node{
+				Kind:  yaml.ScalarNode,
+				Tag:   "!!str",
+				Value: key,
+			})
+			node.Content[0].Content = append(node.Content[0].Content, &yaml.Node{
+				Kind:  yaml.ScalarNode,
+				Tag:   "!!null",
+				Value: "",
+				Style: 0,
+			})
 		}
-
-		node.Content[0].Content = append(node.Content[0].Content, newKeyNode, newValueNode)
 	}
-
-	// 将修改后的 YAML 写回到 filePath
-	outputFile, err := os.Create(filePath)
+	file, err = yaml.Marshal(node)
 	if err != nil {
 		return err
 	}
-	defer outputFile.Close()
-	encoder := yaml.NewEncoder(outputFile)
-	encoder.SetIndent(2)
-	err = encoder.Encode(node)
+	err = os.WriteFile(filePath, file, os.ModePerm)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
 func UpdateValueYAML(filePath string, key string, value interface{}) error {
-	// 读取 YAML 文件
-	yamlContent, err := os.ReadFile(filePath)
+	file, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
-
-	// 解析 YAML
 	node := &yaml.Node{}
-	err = yaml.Unmarshal(yamlContent, node)
+	err = yaml.Unmarshal(file, node)
 	if err != nil {
 		return err
 	}
-
-	// 检查是否存在同名的键
-	found := false
-	for i := 0; i < len(node.Content[0].Content); i += 2 {
-		if node.Content[0].Content[i].Value == key {
-			// 修改键的值
-			node.Content[0].Content[i+1].Value = fmt.Sprintf("%v", value)
-			found = true
-			break
+	for index, item := range node.Content[0].Content {
+		if item.Value == key {
+			// 如果value的类型是nil，则将tag设置为!!null，value设置为空字符串，style设置为0
+			if value == nil {
+				node.Content[0].Content[index+1].Tag = "!!null"
+				node.Content[0].Content[index+1].Value = ""
+				node.Content[0].Content[index+1].Style = 0
+				break
+			}
+			// 如果值是string，就将tag设置为!!str，value设置为传入的值
+			if strValue, ok := value.(string); ok {
+				node.Content[0].Content[index+1].Tag = "!!str"
+				node.Content[0].Content[index+1].Value = strValue
+				break
+			}
 		}
 	}
-	if found {
-		// 将修改后的 YAML 写回到 filePath
-		outputFile, err := os.Create(filePath)
-		if err != nil {
-			return err
-		}
-		defer outputFile.Close()
-		encoder := yaml.NewEncoder(outputFile)
-		encoder.SetIndent(2)
-		err = encoder.Encode(node)
-		if err != nil {
-			return err
-		}
+	file, err = yaml.Marshal(node)
+	if err != nil {
+		return err
 	}
-
+	err = os.WriteFile(filePath, file, os.ModePerm)
+	if err != nil {
+		return err
+	}
 	return nil
 }
