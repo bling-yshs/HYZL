@@ -39,7 +39,7 @@ func installXianxinPlugin() {
 }
 
 func installEarthKPlugin() {
-	installPluginsTemplate("土块插件 (https://gitee.com/diqiushengwu/earth-k-plugin)", "earth-k-plugin", "git clone --depth=1 https://gitee.com/diqiushengwu/earth-k-plugin ./plugins/earth-k-plugin/")
+	installPluginsTemplate("土块插件 (https://gitee.com/SmallK111407/earth-k-plugin)", "earth-k-plugin", "git clone --depth=1 https://gitee.com/SmallK111407/earth-k-plugin ./plugins/earth-k-plugin/")
 }
 
 func installAtlas() {
