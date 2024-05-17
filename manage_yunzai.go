@@ -51,6 +51,12 @@ func setQsignAPI() {
 		printWithRedColor("设置签名API失败！")
 		return
 	}
+	err = tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "ver", "")
+	if err != nil {
+		printWithRedColor("设置签名API失败！")
+		return
+	}
+	tools.UpdateValueYAML("./config/config/qq.yaml", "platform", "2")
 	printWithEmptyLine("设置签名API成功！")
 }
 

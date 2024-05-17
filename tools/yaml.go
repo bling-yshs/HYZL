@@ -40,20 +40,27 @@ func UpdateOrAppendToYaml(filePath string, key string, value interface{}) error 
 		return err
 	}
 
+	// 处理值的类型
+	var newValueNode *yaml.Node
+	if strValue, ok := value.(string); ok && strValue == "" {
+		newValueNode = &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Value: "",
+			Tag:   "!!str",
+		}
+	} else {
+		newValueNode = &yaml.Node{
+			Kind:  yaml.ScalarNode,
+			Value: fmt.Sprintf("%v", value),
+		}
+	}
+
 	// 检查是否存在同名的键
 	found := false
 	for i := 0; i < len(node.Content[0].Content); i += 2 {
 		if node.Content[0].Content[i].Value == key {
 			// 修改键的值
-			if node.Content[0].Content[i+1].Tag == "!!null" {
-				// 如果是 null 类型，替换整个节点
-				node.Content[0].Content[i+1] = &yaml.Node{
-					Kind:  yaml.ScalarNode,
-					Value: fmt.Sprintf("%v", value),
-				}
-			} else {
-				node.Content[0].Content[i+1].Value = fmt.Sprintf("%v", value)
-			}
+			node.Content[0].Content[i+1] = newValueNode
 			found = true
 			break
 		}
@@ -61,16 +68,12 @@ func UpdateOrAppendToYaml(filePath string, key string, value interface{}) error 
 
 	if !found {
 		// 在末尾添加新键和值
-		newKeyValue := &yaml.Node{
+		newKeyNode := &yaml.Node{
 			Kind:  yaml.ScalarNode,
 			Value: key,
 		}
-		newValue := &yaml.Node{
-			Kind:  yaml.ScalarNode,
-			Value: fmt.Sprintf("%v", value),
-		}
 
-		node.Content[0].Content = append(node.Content[0].Content, newKeyValue, newValue)
+		node.Content[0].Content = append(node.Content[0].Content, newKeyNode, newValueNode)
 	}
 
 	// 将修改后的 YAML 写回到 filePath
