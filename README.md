@@ -2,7 +2,7 @@
 
 系统：仅支持 Windows
 
-环境：Golang v1.20
+环境：Golang v1.20 +
 
 编译：
 
