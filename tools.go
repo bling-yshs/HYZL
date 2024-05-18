@@ -237,7 +237,7 @@ func clearLog() {
 	executeCmd("cls")
 }
 
-// 比较版本号，如果需要更新返回true，否则返回false
+// 比较版本号，如果需要更新返回true，否则返回false，也就是第一个参数如果比第二个参数小，返回true
 func compareVersion(version string, latestVersion string) bool {
 	version = version[1:]                   // 去除前面的v
 	v1 := strings.Split(version, ".")       // 将版本号按 "." 分割成数组

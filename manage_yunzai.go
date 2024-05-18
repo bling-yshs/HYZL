@@ -46,7 +46,17 @@ func manageYunzaiMenu() {
 
 func setQsignAPI() {
 	wd.changeToYunzai()
-	err := tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "sign_api_addr", "https://hlhs-nb.cn/signed/sign?key=114514&ver=9.0.17")
+	// 读取package.json文件
+	icqqVersion, err := tools.GetValueFromJSONFile("node_modules/icqq/package.json", "version")
+	if err != nil {
+		return
+	}
+	// 如果小于0.6.10，则升级
+	if compareVersion(icqqVersion.(string), "0.6.10") {
+		// 升级icqq
+		executeCmd("pnpm install icqq@0.6.10 -w", "正在升级icqq...")
+	}
+	err = tools.UpdateOrAppendToYaml("./config/config/bot.yaml", "sign_api_addr", "https://hlhs-nb.cn/signed/sign?key=114514&ver=9.0.17")
 	if err != nil {
 		printWithRedColor("设置签名API失败！")
 		return
