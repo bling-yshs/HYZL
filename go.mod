@@ -1,6 +1,6 @@
 module github.com/bling-yshs/YzLauncher-windows
 
-go 1.20
+go 1.22.3
 
 require (
 	github.com/James-Ye/go-frame v0.0.0-20220311072033-c5af76840105

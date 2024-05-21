@@ -1,0 +1,25 @@
+name: auto-build
+run-name: '🛠️ 自动构建 (${{ github.event.head_commit.message }})'
+on:
+  push:
+  pull_request:
+jobs:
+  auto-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up golang
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Build windows version
+        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o "YzLauncher-windows.exe" ./src/cmd/main
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: YzLauncher-windows
+          path: YzLauncher-windows.exe
