@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -130,11 +131,13 @@ IF EXIST YzLauncher-windows-new.exe (
 	RENAME YzLauncher-windows-new.exe "%s"
 	REM 删除旧的启动器
 	DEL YzLauncher-windows-old.exe
+	Start "" "%s"
 ) ELSE (
 	REM 如果不存在，打印错误信息
 	echo 未找到更新文件，请重新下载
 )
-`, global.Global.ProgramName)
+`, global.Global.ProgramName, global.Global.ProgramName, global.Global.ProgramName)
+	batchContent = strings.ReplaceAll(batchContent, "\n", "\r\n")
 	data, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
 	os.WriteFile("update.bat", data, os.ModePerm)
 }

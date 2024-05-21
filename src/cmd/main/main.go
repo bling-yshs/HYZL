@@ -142,46 +142,6 @@ func checkProgramEnv() {
 	}
 }
 
-//func startRedis() error {
-//	err := wd.changeToRedis()
-//	if err != nil {
-//		//err则说明没有redis文件夹
-//		return err
-//	}
-//	print_utils.PrintWithEmptyLine("正在启动 Redis ...")
-//	dir, _ := os.Getwd()
-//	redisPath := filepath.Join(dir, "redis-server.exe")
-//	redisConfigPath := filepath.Join(dir, "redis.conf")
-//	cmd := exec.Command("cmd.exe", "/c", "start", redisPath, redisConfigPath)
-//	err = cmd.Start()
-//	if err != nil {
-//		printErr(err)
-//	}
-//	println("Redis 启动成功！")
-//	return nil
-//}
-
-//func isRedisRunning() bool {
-//	processList, err := ps.Processes()
-//	if err != nil {
-//		print_utils.PrintWithColor(ct.Red, true, "无权限获取进程列表!")
-//		return true
-//	}
-//
-//	isRedisRunning := false
-//	for _, process := range processList {
-//		if strings.Contains(process.Executable(), "redis") {
-//			isRedisRunning = true
-//			break
-//		}
-//	}
-//	if isRedisRunning {
-//		return true
-//	} else {
-//		return false
-//	}
-//}
-
 func checkYunzaiFileExist() bool {
 
 	if _, err := os.Stat("./package.json"); err == nil {
