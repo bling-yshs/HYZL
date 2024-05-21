@@ -9,6 +9,7 @@ import (
 	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"github.com/hashicorp/go-version"
+	"golang.org/x/text/encoding/simplifiedchinese"
 	"net/http"
 	"os"
 	"os/exec"
@@ -28,6 +29,13 @@ var Updater = updater{}
 var updaters = []updater{}
 
 const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-yshs/YzLauncher-windows-updater/main/updater.json"
+
+func ClearUpdater() {
+	// 如果当前目录下存在更新脚本，删除
+	if _, err := os.Stat("update.bat"); os.IsExist(err) {
+		os.Remove("update.bat")
+	}
+}
 
 // 如果有更新，返回true，否则返回false
 func CheckUpdate() bool {
@@ -110,7 +118,7 @@ func UpdateRightNow() {
 
 func generateUpdateBat() {
 	// 生成更新脚本
-	str := fmt.Sprintf(`
+	batchContent := fmt.Sprintf(`
 @echo off
 echo 正在更新启动器
 REM 延迟一下，等待启动器关闭
@@ -127,7 +135,8 @@ IF EXIST YzLauncher-windows-new.exe (
 	echo 未找到更新文件，请重新下载
 )
 `, global.Global.ProgramName)
-	os.WriteFile("update.bat", []byte(str), os.ModePerm)
+	data, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
+	os.WriteFile("update.bat", data, os.ModePerm)
 }
 
 func runUpdateBat() {

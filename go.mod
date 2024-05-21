@@ -4,7 +4,7 @@ go 1.22.3
 
 require (
 	github.com/James-Ye/go-frame v0.0.0-20220311072033-c5af76840105
-	golang.org/x/text v0.11.0
+	golang.org/x/text v0.15.0
 )
 
 require gopkg.in/yaml.v3 v3.0.1

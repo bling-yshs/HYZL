@@ -52,6 +52,8 @@ func checkBeforeRun() {
 	readConfig()
 	// 检查redis是否存在
 	checkRedisExist()
+	// 清理更新脚本
+	updater.ClearUpdater()
 }
 
 func checkRedisExist() {
