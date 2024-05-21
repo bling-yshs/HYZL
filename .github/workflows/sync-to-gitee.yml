@@ -7,7 +7,7 @@ jobs:
   sync-to-gitee:
     runs-on: ubuntu-latest
     steps:
-      - name: sync to gitee
+      - name: Sync to gitee
         uses: Yikun/hub-mirror-action@master
         with:
           src: github/bling-yshs
