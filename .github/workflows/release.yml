@@ -7,8 +7,11 @@ on:
       - 'v*.*.*'
 
 jobs:
-  auto-build:
+  release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ github.ref_name }}
+      changelog: ${{ steps.changelog.outputs.changelog }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,3 +45,25 @@ jobs:
             ${{ steps.changelog.outputs.compareurl }}
             ${{ steps.changelog.outputs.changelog }}
           artifacts: YzLauncher-windows.exe
+
+
+  update-updater-json:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Update updater.json
+        uses: actions/github-script@v6
+        with:
+          result-encoding: string
+          script: |
+            await github.rest.actions.createWorkflowDispatch
+            ({
+            ref: 'main',
+            owner: context.repo.owner,
+            repo: 'YzLauncher-windows-updater',
+            workflow_id: 'release.yml',
+            inputs: {
+              version: '${{ needs.release.outputs.version }}',
+              changelog: '${{ needs.release.outputs.changelog }}'
+            }
+            });
