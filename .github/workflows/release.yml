@@ -29,8 +29,8 @@ jobs:
         uses: jaywcjlove/changelog-generator@main
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-#          filter-author: (jaywcjlove|小弟调调™|dependabot|renovate\\[bot\\]|dependabot\\[bot\\]|Renovate Bot)
-#          filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+      #          filter-author: (jaywcjlove|小弟调调™|dependabot|renovate\\[bot\\]|dependabot\\[bot\\]|Renovate Bot)
+      #          filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
 
       - name: Get the changelog
         run: echo "${{ steps.changelog.outputs.changelog }}"
@@ -55,6 +55,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           result-encoding: string
+          github-token: ${{ secrets.GH_PERSONAL_TOKEN }}
           script: |
             await github.rest.actions.createWorkflowDispatch
             ({
