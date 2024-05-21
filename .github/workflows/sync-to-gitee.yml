@@ -3,6 +3,8 @@ run-name: '🔁 同步到 Gitee (${{ github.event.head_commit.message }})'
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
 jobs:
   sync-to-gitee:
     runs-on: ubuntu-latest
