@@ -123,14 +123,18 @@ func generateUpdateBat() {
 @echo off
 echo 正在更新启动器
 REM 延迟一下，等待启动器关闭
-ping 127.0.0.1 -n 4 > nul
+ping 127.0.0.1 -n 3 > nul
 REM 检查当前目录下是否存在 YzLauncher-windows-new.exe
+echo 正在检查是否存在更新文件
 IF EXIST YzLauncher-windows-new.exe (
 	REM 如果存在，替换掉旧的启动器
+	echo 更新文件存在，正在替换启动器
 	RENAME "%s" YzLauncher-windows-old.exe
 	RENAME YzLauncher-windows-new.exe "%s"
 	REM 删除旧的启动器
+	echo 正在删除旧的启动器
 	DEL YzLauncher-windows-old.exe
+	echo 更新完成，正在重新启动启动器
 	Start "" "%s"
 ) ELSE (
 	REM 如果不存在，打印错误信息

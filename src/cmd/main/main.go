@@ -115,7 +115,6 @@ func readConfig() {
 }
 
 func checkProgramPermission() {
-
 	if !cmd_utils.CheckCommandExist("dir") {
 		print_utils.PrintWithEmptyLine("当前软件权限不足，请用管理员权限运行，若使用管理员权限依然无效，那么我也没有办法")
 		global_utils.ShutDownProgram()
