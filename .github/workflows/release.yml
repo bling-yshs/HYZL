@@ -1,0 +1,44 @@
+name: release
+run-name: '🚀 发布新版本 (${{ github.ref_name }})'
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  auto-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up golang
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Build windows version
+        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o "YzLauncher-windows.exe" ./src/cmd/main
+
+      - name: Generate changelog
+        id: changelog
+        uses: jaywcjlove/changelog-generator@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+#          filter-author: (jaywcjlove|小弟调调™|dependabot|renovate\\[bot\\]|dependabot\\[bot\\]|Renovate Bot)
+#          filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+
+      - name: Get the changelog
+        run: echo "${{ steps.changelog.outputs.changelog }}"
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ github.ref_name }}
+          tag: ${{ github.ref_name }}
+          body: |
+            ${{ steps.changelog.outputs.compareurl }}
+            ${{ steps.changelog.outputs.changelog }}
+          artifacts: YzLauncher-windows.exe
