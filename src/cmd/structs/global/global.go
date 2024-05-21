@@ -1,6 +1,7 @@
 package global
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 )
@@ -10,6 +11,7 @@ type config struct {
 	NodeInstalled           bool  `json:"node_installed"`
 	NpmInstalled            bool  `json:"npm_installed"`
 	LastAnnouncementVersion int32 `json:"last_announcement_version"`
+	JustFinishedUpdating    bool  `json:"just_finished_updating"`
 }
 
 var Config = config{
@@ -17,6 +19,7 @@ var Config = config{
 	NodeInstalled:           false,
 	NpmInstalled:            false,
 	LastAnnouncementVersion: 0,
+	JustFinishedUpdating:    false,
 }
 
 type global struct {
@@ -53,4 +56,10 @@ func programName() string {
 	// 获取程序名
 	exePath, _ := os.Executable()
 	return filepath.Base(exePath)
+}
+
+func WriteConfig() {
+	// 写入./config/config.json
+	bytes, _ := json.MarshalIndent(Config, "", "    ")
+	_ = os.WriteFile("./config/config.json", bytes, os.ModePerm)
 }

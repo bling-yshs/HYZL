@@ -53,11 +53,13 @@ func CheckUpdate() bool {
 		print_utils.PrintError(err)
 		return false
 	}
-	var latestVersionStr string
 	// 得到第一个没有废弃的版本
+	var latestVersionStr string
+	var latestVersionIndex int
 	for index, item := range updaters {
 		if !item.Deprecated {
 			latestVersionStr = item.Version
+			latestVersionIndex = index
 			break
 		}
 		if index == len(updaters)-1 {
@@ -70,9 +72,9 @@ func CheckUpdate() bool {
 		print_utils.PrintError(err)
 		return false
 	}
+	Updater = updaters[latestVersionIndex]
 	// 如果第一个版本大于当前版本，说明有更新
 	if latest.GreaterThan(current) {
-		Updater = updaters[0]
 		return true
 	}
 	return false
@@ -100,6 +102,8 @@ func UpdateRightNow() {
 		print_utils.PrintError(err)
 		return
 	}
+	global.Config.JustFinishedUpdating = true
+	global.WriteConfig()
 	generateUpdateBat()
 	runUpdateBat()
 }
@@ -136,4 +140,16 @@ func runUpdateBat() {
 	print_utils.PrintWithColor(ct.Yellow, true, "正在执行更新脚本...")
 	exec.Command("cmd", "/c", "start", "", "update.bat").Start()
 	os.Exit(0)
+}
+
+func ShowChangelog() {
+	// 检查是不是刚刚更新完
+	if !global.Config.JustFinishedUpdating {
+		return
+	}
+	global.Config.JustFinishedUpdating = false
+	global.WriteConfig()
+	// 显示更新日志
+	print_utils.PrintWithColor(ct.Magenta, true, "更新日志：")
+	fmt.Println(Updater.Changelog)
 }

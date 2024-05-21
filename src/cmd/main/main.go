@@ -19,7 +19,6 @@ import (
 )
 
 func main() {
-
 	// 前置检查
 	checkBeforeRun()
 	// 显示公告
@@ -32,6 +31,8 @@ func main() {
 			updater.UpdateRightNow()
 		}
 	}
+	// 显示更新日志
+	updater.ShowChangelog()
 	// 初始化定时任务
 	schedule.InitSchedule()
 	// 显示主菜单
