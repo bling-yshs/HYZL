@@ -33,7 +33,7 @@ const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-
 
 func ClearUpdater() {
 	// 如果当前目录下存在更新脚本，删除
-	if _, err := os.Stat("update.bat"); os.IsExist(err) {
+	if _, err := os.Stat("update.bat"); err == nil {
 		os.Remove("update.bat")
 	}
 }
