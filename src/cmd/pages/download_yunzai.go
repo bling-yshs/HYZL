@@ -1,12 +1,12 @@
 package pages
 
 import (
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/structs/global"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/cmd_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/git_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/global_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/input_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/git_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/global_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"os"
 )

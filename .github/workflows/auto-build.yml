@@ -16,10 +16,10 @@ jobs:
           go-version-file: 'go.mod'
 
       - name: Build windows version
-        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o "YzLauncher-windows.exe" ./src/cmd/main
+        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o "HYZL.exe" ./src/cmd/main
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: YzLauncher-windows
-          path: YzLauncher-windows.exe
+          name: HYZL
+          path: HYZL.exe

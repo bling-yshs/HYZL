@@ -1,4 +1,4 @@
-module github.com/bling-yshs/YzLauncher-windows
+module github.com/bling-yshs/HYZL
 
 go 1.22.3
 

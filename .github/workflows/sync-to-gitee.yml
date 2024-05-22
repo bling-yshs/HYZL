@@ -17,5 +17,5 @@ jobs:
           force_update: true
           dst_key: ${{ secrets.SSH_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_PERSIONAL_TOKEN }}
-          static_list: "YzLauncher-windows"
+          static_list: "HYZL"
 
