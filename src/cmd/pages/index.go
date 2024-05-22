@@ -1,13 +1,13 @@
 package pages
 
 import (
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/structs/global"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/structs/menu_option"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/structs/updater"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/cmd_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/input_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/menu_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/updater"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/menu_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 )
 
 func IndexMenu() {

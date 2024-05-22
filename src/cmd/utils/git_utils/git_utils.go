@@ -2,7 +2,7 @@ package git_utils
 
 import (
 	"fmt"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/cmd_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
 )
 
 func Clone(url string, dir string, beforeMsg string, afterMsg string) {

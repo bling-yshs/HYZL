@@ -1,9 +1,9 @@
 package redis_utils
 
 import (
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/structs/global"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/windows_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/windows_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"os/exec"
 	"path"

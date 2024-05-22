@@ -4,8 +4,8 @@ package pages
 //
 //	"bufio"
 //	"fmt"
-//	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
-//	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/wd_utils"
+//	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
+//	"github.com/bling-yshs/HYZL/src/cmd/utils/wd_utils"
 //	ct "github.com/daviddengcn/go-colortext"
 //	"os"
 //	"path/filepath"

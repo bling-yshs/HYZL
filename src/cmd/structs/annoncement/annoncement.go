@@ -3,8 +3,8 @@ package annoncement
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/structs/global"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"net/http"
 	"os"
@@ -20,7 +20,7 @@ type announcement struct {
 
 var Announcements = []announcement{}
 
-const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-yshs/YzLauncher-windows-announcement/main/announcement.json"
+const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-yshs/HYZL-announcement/main/announcement.json"
 
 func ShowAnnouncement() {
 	client := &http.Client{

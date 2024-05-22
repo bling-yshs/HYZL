@@ -1,10 +1,10 @@
 <p align="center"><img src="https://cdn.jsdelivr.net/gh/bling-yshs/ys-image-host@main/img/hyzl-icon.jpg" width="300" alt="icon" /></p>
 <p align="center"><b>基于 Golang 的 <a href="https://github.com/yoimiya-kokomi/Miao-Yunzai">云崽</a> 启动器</b></p>
 <p align="center">
-  <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://shields.io/github/license/bling-yshs/YzLauncher-windows?color=%231890FF" alt="License"></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://shields.io/github/license/bling-yshs/HYZL?color=%231890FF" alt="License"></a>
   <a href="https://gitee.com/bling_yshs/Yunzai-v3-Installation-Steps"><img src="https://gitee.com/bling_yshs/Yunzai-v3-Installation-Steps/badge/star.svg?theme=dark" alt="Stars"></a>
-  <a href="https://github.com/badges/shields/pulse"><img src="https://img.shields.io/github/commit-activity/m/bling-yshs/YzLauncher-windows" alt="Activity"/></a>
-  <a href="https://github.com/bling-yshs/YzLauncher-windows/releases"><img src="https://img.shields.io/github/v/release/bling-yshs/YzLauncher-windows" alt="GitHub release"></a>
+  <a href="https://github.com/badges/shields/pulse"><img src="https://img.shields.io/github/commit-activity/m/bling-yshs/HYZL" alt="Activity"/></a>
+  <a href="https://github.com/bling-yshs/HYZL/releases"><img src="https://img.shields.io/github/v/release/bling-yshs/HYZL" alt="GitHub release"></a>
 </p>
 
 ------------------------------
@@ -29,7 +29,7 @@ HYZL 仅支持 Windows (Windows 10+，Windows Server 2016+) ，Windows 7，Windo
 
 ### 下载
 
-从 [Github release](https://github.com/bling-yshs/YzLauncher-windows/releases/latest) 或 [Gitee release](https://gitee.com/bling_yshs/Yunzai-v3-Installation-Steps/releases/latest) 下载最新版本的 HYZL
+从 [Github release](https://github.com/bling-yshs/HYZL/releases/latest) 或 [Gitee release](https://gitee.com/bling_yshs/Yunzai-v3-Installation-Steps/releases/latest) 下载最新版本的 HYZL
 
 ### 依赖
 

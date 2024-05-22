@@ -3,10 +3,10 @@ package updater
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/structs/global"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/http_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/input_utils"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/http_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"github.com/hashicorp/go-version"
 	"golang.org/x/text/encoding/simplifiedchinese"
@@ -29,7 +29,7 @@ var Updater = updater{}
 
 var updaters = []updater{}
 
-const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-yshs/YzLauncher-windows-updater/main/updater.json"
+const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-yshs/HYZL-updater/main/updater.json"
 
 func ClearUpdater() {
 	// 如果当前目录下存在更新脚本，删除
@@ -106,7 +106,7 @@ func UpdateRightNow() {
 	}
 	// 下载更新
 	print_utils.PrintWithColor(ct.Yellow, true, "正在下载更新...")
-	err := http_utils.DownloadFile(Updater.Url, "YzLauncher-windows-new.exe")
+	err := http_utils.DownloadFile(Updater.Url, "HYZL-new.exe")
 	if err != nil {
 		print_utils.PrintError(err)
 		return
@@ -124,16 +124,16 @@ func generateUpdateBat() {
 echo 正在更新启动器
 REM 延迟一下，等待启动器关闭
 ping 127.0.0.1 -n 3 > nul
-REM 检查当前目录下是否存在 YzLauncher-windows-new.exe
+REM 检查当前目录下是否存在 HYZL-new.exe
 echo 正在检查是否存在更新文件
-IF EXIST YzLauncher-windows-new.exe (
+IF EXIST HYZL-new.exe (
 	REM 如果存在，替换掉旧的启动器
 	echo 更新文件存在，正在替换启动器
-	RENAME "%s" YzLauncher-windows-old.exe
-	RENAME YzLauncher-windows-new.exe "%s"
+	RENAME "%s" HYZL-old.exe
+	RENAME HYZL-new.exe "%s"
 	REM 删除旧的启动器
 	echo 正在删除旧的启动器
-	DEL YzLauncher-windows-old.exe
+	DEL HYZL-old.exe
 	echo 更新完成，正在重新启动启动器
 	START "" "%s"
 ) ELSE (

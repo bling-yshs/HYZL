@@ -2,7 +2,7 @@ package cmd_utils
 
 import (
 	"fmt"
-	"github.com/bling-yshs/YzLauncher-windows/src/cmd/utils/print_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"os"
 	"os/exec"

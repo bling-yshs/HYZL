@@ -22,7 +22,7 @@ jobs:
           go-version-file: 'go.mod'
 
       - name: Build windows version
-        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o "YzLauncher-windows.exe" ./src/cmd/main
+        run: CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o "HYZL.exe" ./src/cmd/main
 
       - name: Generate changelog
         id: changelog
@@ -44,7 +44,7 @@ jobs:
           body: |
             ${{ steps.changelog.outputs.compareurl }}
             ${{ steps.changelog.outputs.changelog }}
-          artifacts: YzLauncher-windows.exe
+          artifacts: HYZL.exe
 
 
   update-updater-json:
@@ -61,7 +61,7 @@ jobs:
             ({
             ref: 'main',
             owner: context.repo.owner,
-            repo: 'YzLauncher-windows-updater',
+            repo: 'HYZL-updater',
             workflow_id: 'release.yml',
             inputs: {
               version: '${{ needs.release.outputs.version }}',
