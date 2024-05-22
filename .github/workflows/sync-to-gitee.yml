@@ -18,3 +18,4 @@ jobs:
           dst_key: ${{ secrets.SSH_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_PERSIONAL_TOKEN }}
           static_list: "YzLauncher-windows"
+
