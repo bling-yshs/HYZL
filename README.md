@@ -1,6 +1,6 @@
-<p style="text-align: center;"><img src="https://cdn.jsdelivr.net/gh/bling-yshs/ys-image-host@main/img/hyzl-icon.jpg" width="300" alt="icon" /></p>
-<p style="text-align: center;"><b>基于 Golang 的 <a href="https://github.com/yoimiya-kokomi/Miao-Yunzai">云崽</a> 启动器</b></p>
-<p style="text-align: center;">
+<p align="center"><img src="https://cdn.jsdelivr.net/gh/bling-yshs/ys-image-host@main/img/hyzl-icon.jpg" width="300" alt="icon" /></p>
+<p align="center"><b>基于 Golang 的 <a href="https://github.com/yoimiya-kokomi/Miao-Yunzai">云崽</a> 启动器</b></p>
+<p align="center">
   <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://shields.io/github/license/bling-yshs/YzLauncher-windows?color=%231890FF" alt="License"></a>
   <a href="https://gitee.com/bling_yshs/Yunzai-v3-Installation-Steps"><img src="https://gitee.com/bling_yshs/Yunzai-v3-Installation-Steps/badge/star.svg?theme=dark" alt="Stars"></a>
   <a href="https://github.com/badges/shields/pulse"><img src="https://img.shields.io/github/commit-activity/m/bling-yshs/YzLauncher-windows" alt="Activity"/></a>
