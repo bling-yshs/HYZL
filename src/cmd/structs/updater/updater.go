@@ -135,7 +135,7 @@ IF EXIST YzLauncher-windows-new.exe (
 	echo 正在删除旧的启动器
 	DEL YzLauncher-windows-old.exe
 	echo 更新完成，正在重新启动启动器
-	Start "" "%s"
+	START "" "%s"
 ) ELSE (
 	REM 如果不存在，打印错误信息
 	echo 未找到更新文件，请重新下载
