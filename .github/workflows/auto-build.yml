@@ -1,7 +1,8 @@
-name: auto-build
-run-name: '🛠️ 自动构建 (${{ github.event.head_commit.message }})'
+name: 🛠️ 自动构建
 on:
   push:
+    branches:
+      - master
   pull_request:
 jobs:
   auto-build:
