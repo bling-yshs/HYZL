@@ -1,5 +1,4 @@
-name: release
-run-name: '🚀 发布新版本 (${{ github.ref_name }})'
+name: 🚀 发布新版本
 on:
   workflow_dispatch:
   push:

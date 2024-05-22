@@ -1,5 +1,4 @@
-name: sync-to-gitee
-run-name: '🔁 同步到 Gitee (${{ github.event.head_commit.message }})'
+name: 🔁 同步到 Gitee
 on:
   workflow_dispatch:
   push:
