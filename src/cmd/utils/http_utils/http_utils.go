@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func DownloadFile(url string, filePath string) error {
+func DownloadFile(url string, filePath string, showProgress bool) error {
 	// 创建HTTP请求
 	resp, err := http.Get(url)
 	if err != nil {
@@ -22,6 +22,10 @@ func DownloadFile(url string, filePath string) error {
 		return err
 	}
 
+	// 如果文件已经存在，先删除
+	if _, err := os.Stat(filePath); err == nil {
+		os.Remove(filePath)
+	}
 	// 创建文件
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -29,21 +33,26 @@ func DownloadFile(url string, filePath string) error {
 	}
 	defer out.Close()
 
-	// 创建一个带进度条的读者
-	progressReader := &ProgressReader{
-		Reader:       resp.Body,
-		Total:        int64(size),
-		Downloaded:   0,
-		LastProgress: 0,
+	// 根据showProgress参数决定是否使用带进度条的读者
+	var reader io.Reader = resp.Body
+	if showProgress {
+		reader = &ProgressReader{
+			Reader:       resp.Body,
+			Total:        int64(size),
+			Downloaded:   0,
+			LastProgress: 0,
+		}
 	}
 
 	// 将HTTP响应的内容写入文件
-	_, err = io.Copy(out, progressReader)
+	_, err = io.Copy(out, reader)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("\n下载完成!")
+	if showProgress {
+		fmt.Println("\n下载完成!")
+	}
 	return nil
 }
 

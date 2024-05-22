@@ -116,7 +116,7 @@ func installJsPlugin() {
 			print_utils.PrintError(err)
 			return
 		}
-		err = http_utils.DownloadFile(jsPluginUrl, path.Join(jsPluginDir, unescapeFileName))
+		err = http_utils.DownloadFile(jsPluginUrl, path.Join(jsPluginDir, unescapeFileName), true)
 		if err != nil {
 			print_utils.PrintError(err)
 			return
