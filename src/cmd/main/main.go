@@ -24,10 +24,8 @@ func main() {
 	// 显示公告
 	annoncement.ShowAnnouncement()
 	// 检查更新
-	if updater.CheckUpdate() {
-		// 询问是否更新
+	if updater.UpdateTempExist() {
 		if updater.AskUpdate() {
-			// 更新启动器
 			updater.UpdateRightNow()
 		}
 	}
@@ -53,7 +51,7 @@ func checkBeforeRun() {
 	// 检查redis是否存在
 	checkRedisExist()
 	// 清理更新脚本
-	updater.ClearUpdater()
+	updater.CleanUpdater()
 }
 
 func checkRedisExist() {
