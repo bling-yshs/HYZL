@@ -64,6 +64,6 @@ jobs:
             workflow_id: 'release.yml',
             inputs: {
               version: '${{ needs.release.outputs.version }}',
-              changelog: `${{ needs.release.outputs.changelog }}`
+              changelog: `${{ needs.release.outputs.changelog || '无' }}`
             }
             });
