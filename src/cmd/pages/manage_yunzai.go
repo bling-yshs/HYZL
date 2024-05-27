@@ -164,7 +164,7 @@ func updateYunzaiToLatest() {
 }
 
 func setQsignAPI() {
-	err := yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/sign?key=114514&ver=9.0.17")
+	err := yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
 	if err != nil {
 		print_utils.PrintError(err)
 		return
