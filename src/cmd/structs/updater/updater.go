@@ -279,5 +279,16 @@ func ShowChangelog() {
 	global.WriteConfig()
 	// 显示更新日志
 	print_utils.PrintWithColor(ct.Magenta, true, "更新日志：")
+	// 从json中读取更新文件信息，写入到updaterInstance
+	bytes, err := os.ReadFile("./config/updater.json")
+	if err != nil {
+		print_utils.PrintError(err)
+		return
+	}
+	err = json.Unmarshal(bytes, &updaterInstance)
+	if err != nil {
+		print_utils.PrintError(err)
+		return
+	}
 	fmt.Println(updaterInstance.Changelog)
 }
