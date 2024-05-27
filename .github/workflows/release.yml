@@ -1,15 +1,16 @@
-name: 🚀 发布新版本
+name: 🚀 发布新版本 ${{ inputs.version }}
 on:
   workflow_dispatch:
-  push:
-    tags:
-      - 'v*'
+    inputs:
+      version:
+        description: 'The version of the release'
+        required: true
 
 jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ github.ref_name }}
+      version: ${{ inputs.version }}
       changelog: ${{ steps.changelog.outputs.changelog }}
     steps:
       - name: Checkout
@@ -38,13 +39,12 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: ${{ github.ref_name }}
-          tag: ${{ github.ref_name }}
+          name: ${{ inputs.version }}
+          tag: ${{ inputs.version }}
           body: |
             ${{ steps.changelog.outputs.compareurl }}
             ${{ steps.changelog.outputs.changelog }}
           artifacts: HYZL.exe
-
 
   update-updater-json:
     runs-on: ubuntu-latest

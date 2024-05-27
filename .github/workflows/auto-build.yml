@@ -24,3 +24,19 @@ jobs:
         with:
           name: HYZL
           path: HYZL.exe
+
+  check-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Tag
+        id: create-tag
+        uses: jaywcjlove/create-tag-action@main
+        with:
+          test: '^release:'
+
+      - name: Trigger release
+        if: steps.create-tag.outputs.successful == 'true'
+        uses: benc-uk/workflow-dispatch@v1.2.3
+        with:
+          workflow: release.yml
+          inputs: '{ "version": "${{steps.create-tag.outputs.version}}" }'
