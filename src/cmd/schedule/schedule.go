@@ -26,8 +26,6 @@ func InitSchedule() {
 	}
 	// 每三小时执行一次
 	startTicker(time.Hour*3, update)
-	// 立刻执行一次
-	go update()
 }
 
 // 定时任务函数，传入时间间隔和需要定时执行的函数
