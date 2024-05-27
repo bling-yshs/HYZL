@@ -1,4 +1,4 @@
-name: 🚀 发布新版本 ${{ inputs.version }}
+name: 🚀 发布新版本
 on:
   workflow_dispatch:
     inputs:
