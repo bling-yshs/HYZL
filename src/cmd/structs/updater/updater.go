@@ -173,8 +173,8 @@ func AskUpdate() bool {
 	return true
 }
 
-func DownloadUpdate() {
-	err := http_utils.DownloadFile(updaterInstance.Url, "./config/HYZL-new.exe", false)
+func DownloadUpdate(showProgress bool) {
+	err := http_utils.DownloadFile(updaterInstance.Url, "./config/HYZL-new.exe", showProgress)
 	if err != nil {
 		print_utils.PrintError(err)
 		return
@@ -184,7 +184,7 @@ func DownloadUpdate() {
 func ScheduleUpdateRightNow() {
 	if !UpdateTempExist() {
 		if CheckForUpdate() {
-			DownloadUpdate()
+			DownloadUpdate(false)
 		} else {
 			fmt.Println("当前已经是最新版本")
 			return
@@ -211,7 +211,7 @@ func ScheduleUpdateRightNow() {
 	if configMD5 != fileMd5 {
 		fmt.Println("文件MD5不一致，正在重新下载...")
 		if CheckForUpdate() {
-			DownloadUpdate()
+			DownloadUpdate(true)
 		} else {
 			fmt.Println("当前已经是最新版本")
 			return
@@ -296,7 +296,7 @@ func ShowChangelog() {
 // 不管本地有没有缓存直接先请求获取最新版本再说
 func MenuUpdateRightNow() {
 	if CheckForUpdate() {
-		DownloadUpdate()
+		DownloadUpdate(true)
 	}
 	ScheduleUpdateRightNow()
 }

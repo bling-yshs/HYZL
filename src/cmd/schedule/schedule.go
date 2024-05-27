@@ -16,11 +16,11 @@ func InitSchedule() {
 				// 如果版本号不是最新
 				if !updater.IsUpdateTempNew() {
 					updater.WriteUpdaterJson()
-					updater.DownloadUpdate()
+					updater.DownloadUpdate(false)
 				}
 			} else {
 				updater.WriteUpdaterJson()
-				updater.DownloadUpdate()
+				updater.DownloadUpdate(false)
 			}
 		}
 	}
