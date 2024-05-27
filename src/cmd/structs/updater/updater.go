@@ -181,7 +181,7 @@ func DownloadUpdate() {
 	}
 }
 
-func UpdateRightNow() {
+func ScheduleUpdateRightNow() {
 	if !UpdateTempExist() {
 		if CheckForUpdate() {
 			DownloadUpdate()
@@ -291,4 +291,12 @@ func ShowChangelog() {
 		return
 	}
 	fmt.Println(updaterInstance.Changelog)
+}
+
+// 不管本地有没有缓存直接先请求获取最新版本再说
+func MenuUpdateRightNow() {
+	if CheckForUpdate() {
+		DownloadUpdate()
+	}
+	ScheduleUpdateRightNow()
 }

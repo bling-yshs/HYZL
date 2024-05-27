@@ -26,7 +26,7 @@ func main() {
 	// 检查更新
 	if updater.UpdateTempExist() {
 		if updater.AskUpdate() {
-			updater.UpdateRightNow()
+			updater.ScheduleUpdateRightNow()
 		}
 	}
 	// 显示更新日志

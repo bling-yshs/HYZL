@@ -16,7 +16,7 @@ func IndexMenu() {
 		{"安装云崽", DownloadYunzaiMenu},
 		{"云崽管理", ManageYunzaiMenu},
 		{"BUG修复", BugsFixMenu},
-		{"立即更新启动器", updater.UpdateRightNow},
+		{"立即更新启动器", updater.ScheduleUpdateRightNow},
 	}
 	for {
 		menu_utils.PrintMenu("主菜单", options, true)
