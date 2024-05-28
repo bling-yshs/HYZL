@@ -8,19 +8,18 @@ import (
 func InitSchedule() {
 	update := func() {
 		// 如果有更新
-		if updater.CheckForUpdate() {
+		b, instance := updater.CheckForUpdate()
+		if b {
 			// 先检查是否存在已经下载的更新文件
 			// 如果有的话
 			if updater.UpdateTempExist() {
 				// 比较版本号
 				// 如果版本号不是最新
 				if !updater.IsUpdateTempNew() {
-					updater.WriteUpdaterJson()
-					updater.DownloadUpdate(false)
+					updater.DownloadUpdate(instance.Url, false)
 				}
 			} else {
-				updater.WriteUpdaterJson()
-				updater.DownloadUpdate(false)
+				updater.DownloadUpdate(instance.Url, false)
 			}
 		}
 	}
