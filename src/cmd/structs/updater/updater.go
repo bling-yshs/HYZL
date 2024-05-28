@@ -27,29 +27,52 @@ type updater struct {
 	Deprecated bool   `json:"deprecated"`
 }
 
-var updaterInstance = updater{}
-
-var updaters = []updater{}
+//var updaterInstance = updater{}
+//
+//var updaters = []updater{}
 
 const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-yshs/HYZL-updater/main/updater.json"
+
+// 得到最后一个没有废弃的版本的实例
+func getLatestUpdater() updater {
+	var updaterList []updater
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+	response, err := client.Get(url)
+	if err != nil {
+		print_utils.PrintError(err)
+		return updater{}
+	}
+	defer response.Body.Close()
+	// 解析json
+	err = json.NewDecoder(response.Body).Decode(&updaterList)
+	if err != nil {
+		print_utils.PrintError(err)
+		return updater{}
+	}
+	// 得到最后一个没有废弃的版本，从前往后遍历
+	for _, item := range updaterList {
+		if !item.Deprecated {
+			return item
+		}
+	}
+	return updater{}
+}
 
 // 判断缓存的更新文件是否是最新的
 func IsUpdateTempNew() bool {
 	// 从json中读取更新文件信息
-	bytes, err := os.ReadFile("./config/updater.json")
+	instance, err := readConfig()
 	if err != nil {
 		print_utils.PrintError(err)
 		return false
 	}
-	var updaterJson updater
-	err = json.Unmarshal(bytes, &updaterJson)
-	if err != nil {
-		print_utils.PrintError(err)
-		return false
-	}
-	tempStr := updaterJson.Version
+	// 获取缓存的版本号
+	tempStr := instance.Version
 	// 获取最新版本号
-	latestStr := updaterInstance.Version
+	latestUpdater := getLatestUpdater()
+	latestStr := latestUpdater.Version
 	// 比较版本号
 	tempVersion, err := version.NewVersion(tempStr)
 	if err != nil {
@@ -62,29 +85,6 @@ func IsUpdateTempNew() bool {
 		return false
 	}
 	return tempVersion.GreaterThanOrEqual(latestVersion)
-}
-
-// 写入config/updater.json
-func WriteUpdaterJson() {
-	// 检查如果不存在updater.json，则创建
-	if _, err := os.Stat("./config/updater.json"); os.IsNotExist(err) {
-		_, err := os.Create("./config/updater.json")
-		if err != nil {
-			print_utils.PrintError(err)
-			return
-		}
-	}
-	// 将updaterInstance写入updater.json
-	jsonBytes, err := json.Marshal(updaterInstance)
-	if err != nil {
-		print_utils.PrintError(err)
-		return
-	}
-	err = os.WriteFile("./config/updater.json", jsonBytes, os.ModePerm)
-	if err != nil {
-		print_utils.PrintError(err)
-		return
-	}
 }
 
 // 检查config文件夹下是否存在更新文件，有则返回true，否则返回false
@@ -113,12 +113,12 @@ func CleanUpdater() {
 }
 
 // 如果有更新，返回true，否则返回false
-func CheckForUpdate() bool {
+func CheckForUpdate() (bool, updater) {
 	// 当前版本
 	current, err := version.NewVersion(global.Global.ProgramVersion)
 	if err != nil {
 		print_utils.PrintError(err)
-		return false
+		return false, updater{}
 	}
 	// 获取最新版本
 	client := &http.Client{
@@ -127,40 +127,35 @@ func CheckForUpdate() bool {
 	response, err := client.Get(url)
 	if err != nil {
 		print_utils.PrintError(err)
-		return false
+		return false, updater{}
 	}
 	defer response.Body.Close()
 	// 解析json
+	var updaters []updater
 	err = json.NewDecoder(response.Body).Decode(&updaters)
 	if err != nil {
 		print_utils.PrintError(err)
-		return false
+		return false, updater{}
 	}
 	// 得到第一个没有废弃的版本
-	var latestVersionStr string
-	var latestVersionIndex int
-	for index, item := range updaters {
+	var updaterInstance updater
+	for _, item := range updaters {
 		if !item.Deprecated {
-			latestVersionStr = item.Version
-			latestVersionIndex = index
+			updaterInstance = item
 			break
 		}
-		if index == len(updaters)-1 {
-			// 如果所有版本都被废弃，返回false
-			return false
-		}
 	}
+	latestVersionStr := updaterInstance.Version
 	latest, err := version.NewVersion(latestVersionStr)
 	if err != nil {
 		print_utils.PrintError(err)
-		return false
+		return false, updater{}
 	}
-	updaterInstance = updaters[latestVersionIndex]
 	// 如果第一个版本大于当前版本，说明有更新
 	if latest.GreaterThan(current) {
-		return true
+		return true, updaterInstance
 	}
-	return false
+	return false, updaterInstance
 }
 
 func AskUpdate() bool {
@@ -173,49 +168,31 @@ func AskUpdate() bool {
 	return true
 }
 
-func DownloadUpdate(showProgress bool) {
-	err := http_utils.DownloadFile(updaterInstance.Url, "./config/HYZL-new.exe", showProgress)
+func DownloadUpdate(url string, showProgress bool) {
+	err := http_utils.DownloadFile(url, "./config/HYZL-new.exe", showProgress)
 	if err != nil {
 		print_utils.PrintError(err)
 		return
 	}
 }
 
-func ScheduleUpdateRightNow() {
-	if !UpdateTempExist() {
-		if CheckForUpdate() {
-			DownloadUpdate(false)
-		} else {
-			fmt.Println("当前已经是最新版本")
-			return
-		}
-	}
+func ScheduleUpdate() {
 	// 检查文件MD5是否一致
-	bytes, err := os.ReadFile("./config/updater.json")
+	instance, err := readConfig()
 	if err != nil {
 		print_utils.PrintError(err)
 		return
 	}
-	var configUpdater updater
-	err = json.Unmarshal(bytes, &configUpdater)
-	if err != nil {
-		print_utils.PrintError(err)
-		return
-	}
-	configMD5 := configUpdater.MD5
+	configMD5 := instance.MD5
 	fileMd5, err := io_utils.CalcMD5("./config/HYZL-new.exe")
+
 	if err != nil {
 		print_utils.PrintError(err)
 		return
 	}
 	if configMD5 != fileMd5 {
 		fmt.Println("文件MD5不一致，正在重新下载...")
-		if CheckForUpdate() {
-			DownloadUpdate(true)
-		} else {
-			fmt.Println("当前已经是最新版本")
-			return
-		}
+		DownloadUpdate(getLatestUpdater().Url, true)
 	}
 	// 将config里的启动器复制到当前目录
 	err = io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
@@ -279,24 +256,73 @@ func ShowChangelog() {
 	global.WriteConfig()
 	// 显示更新日志
 	print_utils.PrintWithColor(ct.Magenta, true, "更新日志：")
-	// 从json中读取更新文件信息，写入到updaterInstance
-	bytes, err := os.ReadFile("./config/updater.json")
+	instance, err := readConfig()
 	if err != nil {
 		print_utils.PrintError(err)
 		return
 	}
-	err = json.Unmarshal(bytes, &updaterInstance)
-	if err != nil {
-		print_utils.PrintError(err)
-		return
-	}
-	fmt.Println(updaterInstance.Changelog)
+	fmt.Println(instance.Changelog)
 }
 
-// 不管本地有没有缓存直接先请求获取最新版本再说
+// 立即更新启动器
 func MenuUpdateRightNow() {
-	if CheckForUpdate() {
-		DownloadUpdate(true)
+	b := IsUpdateTempNew()
+	if !b {
+		DownloadUpdate(getLatestUpdater().Url, true)
 	}
-	ScheduleUpdateRightNow()
+	// 检查文件MD5是否一致
+	instance, err := readConfig()
+	if err != nil {
+		print_utils.PrintError(err)
+		return
+	}
+	configMD5 := instance.MD5
+	fileMd5, err := io_utils.CalcMD5("./config/HYZL-new.exe")
+
+	if err != nil {
+		print_utils.PrintError(err)
+		return
+	}
+	if configMD5 != fileMd5 {
+		fmt.Println("文件MD5不一致，正在重新下载...")
+		DownloadUpdate(getLatestUpdater().Url, true)
+	}
+	// 将config里的启动器复制到当前目录
+	err = io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
+	if err != nil {
+		print_utils.PrintError(err)
+		return
+	}
+	global.Config.JustFinishedUpdating = true
+	global.WriteConfig()
+	generateUpdateBat()
+	runUpdateBat()
+}
+
+// 从json中读取更新文件信息
+func readConfig() (updater, error) {
+	// 读取本地配置
+	bytes, err := os.ReadFile("./config/updater.json")
+	if err != nil {
+		return updater{}, err
+	}
+	var instance updater
+	err = json.Unmarshal(bytes, &instance)
+	if err != nil {
+		return updater{}, err
+	}
+	return instance, nil
+}
+
+func writeConfig(instance updater) error {
+	// 解析并写入到本地配置
+	bytes, err := json.Marshal(instance)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile("./config/updater.json", bytes, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
 }
