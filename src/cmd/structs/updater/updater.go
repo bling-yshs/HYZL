@@ -27,11 +27,7 @@ type updater struct {
 	Deprecated bool   `json:"deprecated"`
 }
 
-//var updaterInstance = updater{}
-//
-//var updaters = []updater{}
-
-const url = "https://mirror.ghproxy.com/https://raw.githubusercontent.com/bling-yshs/HYZL-updater/main/updater.json"
+const url = "https://gh.api.99988866.xyz/https://raw.githubusercontent.com/bling-yshs/HYZL-updater/main/updater.json"
 
 // 得到最后一个没有废弃的版本的实例
 func getLatestUpdater() updater {
