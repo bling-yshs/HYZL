@@ -265,26 +265,27 @@ func MenuUpdateRightNow() {
 	b := IsUpdateTempNew()
 	if !b {
 		DownloadUpdate(getLatestUpdater().Url, true)
-	}
-	// 检查文件MD5是否一致
-	instance, err := readConfig()
-	if err != nil {
-		print_utils.PrintError(err)
-		return
-	}
-	configMD5 := instance.MD5
-	fileMd5, err := io_utils.CalcMD5("./config/HYZL-new.exe")
+	} else {
+		// 检查文件MD5是否一致
+		instance, err := readConfig()
+		if err != nil {
+			print_utils.PrintError(err)
+			return
+		}
+		configMD5 := instance.MD5
+		fileMd5, err := io_utils.CalcMD5("./config/HYZL-new.exe")
 
-	if err != nil {
-		print_utils.PrintError(err)
-		return
-	}
-	if configMD5 != fileMd5 {
-		fmt.Println("文件MD5不一致，正在重新下载...")
-		DownloadUpdate(getLatestUpdater().Url, true)
+		if err != nil {
+			print_utils.PrintError(err)
+			return
+		}
+		if configMD5 != fileMd5 {
+			fmt.Println("文件MD5不一致，正在重新下载...")
+			DownloadUpdate(getLatestUpdater().Url, true)
+		}
 	}
 	// 将config里的启动器复制到当前目录
-	err = io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
+	err := io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
 	if err != nil {
 		print_utils.PrintError(err)
 		return
