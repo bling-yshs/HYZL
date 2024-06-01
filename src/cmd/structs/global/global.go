@@ -33,7 +33,7 @@ var Global = global{
 	YunzaiName:     yunzaiName(),
 	ProgramName:    programName(),
 	ProgramRunPath: programRunPath(),
-	ProgramVersion: "v0.2.50",
+	ProgramVersion: "v0.2.51",
 }
 
 func yunzaiName() string {
