@@ -19,6 +19,18 @@ func CheckCommandExist(command string) bool {
 	}
 }
 
+// 检查命令是否存在，如果存在返回cmd的返回值，否则返回错误
+func CheckCommand(command string) (string, error) {
+	cmd := exec.Command("cmd", "/c", command)
+	output, err := cmd.Output()
+	if err != nil {
+		return "", err
+	} else {
+		return string(output), nil
+	}
+
+}
+
 func ClearLog() {
 	ExecuteCmd("cls", "", "", "")
 }

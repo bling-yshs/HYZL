@@ -3,6 +3,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/bling-yshs/HYZL/src/cmd/pages"
 	"github.com/bling-yshs/HYZL/src/cmd/schedule"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/annoncement"
@@ -13,6 +14,7 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/global_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
+	"github.com/hashicorp/go-version"
 	"os"
 	"path/filepath"
 	"strings"
@@ -87,13 +89,21 @@ func readConfig() {
 	}
 	if global.Config.NodeInstalled == false {
 		// 检查是否安装了node
-		if !cmd_utils.CheckCommandExist("node -v") {
+		ret, err := cmd_utils.CheckCommand("node -v")
+		if err != nil {
 			print_utils.PrintWithEmptyLine("检测到未安装 Node.js ，请安装后继续")
 			global_utils.ShutDownProgram()
-		} else {
-			global.Config.NodeInstalled = true
-			needWrite = true
+			return
 		}
+		// 然后检查版本是否大于18，小于18的话，不让运行
+		current, _ := version.NewVersion(ret)
+		target, _ := version.NewVersion("18.0.0")
+		if current.LessThan(target) {
+			print_utils.PrintWithEmptyLine(fmt.Sprintf("检测到当前 Node.js 版本过低，为 %s ，请安装 Node20 及以上版本后继续", ret))
+			global_utils.ShutDownProgram()
+		}
+		global.Config.NodeInstalled = true
+		needWrite = true
 	}
 	if global.Config.NpmInstalled == false {
 		// 检查是否安装了npm
