@@ -16,10 +16,13 @@ func DownloadFile(url string, filePath string, showProgress bool) error {
 	}
 	defer resp.Body.Close()
 
-	// 获取文件总大小
-	size, err := strconv.Atoi(resp.Header.Get("Content-Length"))
-	if err != nil {
-		return err
+	var size int
+	if showProgress {
+		// 获取文件总大小
+		size, err = strconv.Atoi(resp.Header.Get("Content-Length"))
+		if err != nil {
+			return err
+		}
 	}
 
 	// 如果文件已经存在，先删除
