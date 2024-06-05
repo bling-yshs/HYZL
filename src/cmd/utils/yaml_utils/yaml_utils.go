@@ -103,8 +103,15 @@ func UpdateValueYAML(filePath string, key string, value interface{}) error {
 			}
 			// 如果值是string，就将tag设置为!!str，value设置为传入的值
 			if strValue, ok := value.(string); ok {
+				node.Content[0].Content[index+1].Style = yaml.SingleQuotedStyle
 				node.Content[0].Content[index+1].Tag = "!!str"
 				node.Content[0].Content[index+1].Value = strValue
+				break
+			}
+			// 如果值是int，就将tag设置为!!int，value设置为传入的值
+			if uintValue, ok := value.(uint32); ok {
+				node.Content[0].Content[index+1].Tag = "!!int"
+				node.Content[0].Content[index+1].Value = fmt.Sprintf("%d", uintValue)
 				break
 			}
 		}
