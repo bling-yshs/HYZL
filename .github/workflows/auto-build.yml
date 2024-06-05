@@ -6,6 +6,7 @@ on:
   pull_request:
 jobs:
   auto-build:
+    name: 🛠️ 自动构建
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

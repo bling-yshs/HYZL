@@ -9,6 +9,7 @@ on:
 
 jobs:
   release:
+    name: 🚀 发布新版本
     runs-on: ubuntu-latest
     outputs:
       version: ${{ inputs.version }}
