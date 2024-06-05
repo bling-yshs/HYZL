@@ -27,7 +27,7 @@ type updater struct {
 	Deprecated bool   `json:"deprecated"`
 }
 
-const url = "https://gh.api.99988866.xyz/https://raw.githubusercontent.com/bling-yshs/HYZL-updater/main/updater.json"
+const url = "https://hyzl.r2.yshs.fun/updater/updater.json"
 
 // 得到最后一个没有废弃的版本的实例
 func getLatestUpdater() updater {

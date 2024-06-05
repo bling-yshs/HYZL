@@ -20,7 +20,7 @@ type announcement struct {
 
 var Announcements = []announcement{}
 
-const url = "https://gh.api.99988866.xyz/https://raw.githubusercontent.com/bling-yshs/HYZL-announcement/main/announcement.json"
+const url = "https://hyzl.r2.yshs.fun/announcement/announcement.json"
 
 func ShowAnnouncement() {
 	client := &http.Client{
