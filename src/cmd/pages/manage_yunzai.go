@@ -15,6 +15,7 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/redis_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/windows_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/yaml_utils"
+	ct "github.com/daviddengcn/go-colortext"
 	"github.com/pkg/errors"
 	"net/url"
 	"os"
@@ -165,7 +166,19 @@ func updateYunzaiToLatest() {
 }
 
 func setQsignAPI() {
-	err := yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
+	// 先检查是否存在config/config/bot.yaml
+	_, err := os.Stat(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"))
+	if os.IsNotExist(err) {
+		print_utils.PrintWithColor(ct.Red, true, "未检测到 bot.yaml 文件，如果您是第一次下载云崽，请先启动一次再运行此选项！")
+		return
+	}
+	// 再检查是否存在config/config/qq.yaml
+	_, err = os.Stat(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/qq.yaml"))
+	if os.IsNotExist(err) {
+		print_utils.PrintWithColor(ct.Red, true, "未检测到 qq.yaml 文件，如果您是第一次下载云崽，请先启动一次再运行此选项！")
+		return
+	}
+	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
