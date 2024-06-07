@@ -95,6 +95,8 @@ func readConfig() {
 			global_utils.ShutDownProgram()
 			return
 		}
+		ret = strings.ReplaceAll(ret, "\r", "")
+		ret = strings.ReplaceAll(ret, "\n", "")
 		// 然后检查版本是否大于18，小于18的话，不让运行
 		current, _ := version.NewVersion(ret)
 		target, _ := version.NewVersion("18.0.0")
