@@ -38,15 +38,7 @@ func BugsFixMenu() {
 
 }
 func sqliteFix() {
-	_, err := os.Stat(path.Join(global.Global.YunzaiName, "plugins/miao-plugin"))
-	if os.IsNotExist(err) {
-		print_utils.PrintWithEmptyLine("检测到未安装喵喵插件，是否安装?(是:y 否:n)")
-		choice := input_utils.ReadChoice([]string{"y", "n"})
-		if choice == "y" {
-
-		}
-	}
-	_, err = os.Stat(path.Join(global.Global.YunzaiName, "plugins/miao-plugin/index.js"))
+	_, err := os.Stat(path.Join(global.Global.YunzaiName, "plugins/miao-plugin/index.js"))
 	if os.IsNotExist(err) {
 		print_utils.PrintWithEmptyLine("检测到喵喵插件不完整，是否重新安装?(是:y 否:n)")
 		choice := input_utils.ReadChoice([]string{"y", "n"})
