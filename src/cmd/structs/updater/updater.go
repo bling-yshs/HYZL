@@ -10,6 +10,7 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"github.com/hashicorp/go-version"
+	"github.com/pkg/errors"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"net/http"
 	"os"
@@ -37,14 +38,14 @@ func getLatestUpdater() updater {
 	}
 	response, err := client.Get(url)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：获取更新文件失败"))
 		return updater{}
 	}
 	defer response.Body.Close()
 	// 解析json
 	err = json.NewDecoder(response.Body).Decode(&updaterList)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：解析更新文件失败"))
 		return updater{}
 	}
 	// 得到最后一个没有废弃的版本，从前往后遍历
@@ -61,7 +62,7 @@ func IsUpdateTempNew() bool {
 	// 从json中读取更新文件信息
 	instance, err := readConfig()
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：读取更新文件失败"))
 		return false
 	}
 	// 获取缓存的版本号
@@ -72,12 +73,12 @@ func IsUpdateTempNew() bool {
 	// 比较版本号
 	tempVersion, err := version.NewVersion(tempStr)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：解析缓存版本号失败"))
 		return false
 	}
 	latestVersion, err := version.NewVersion(latestStr)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：解析最新版本号失败"))
 		return false
 	}
 	return tempVersion.GreaterThanOrEqual(latestVersion)
@@ -113,7 +114,7 @@ func CheckForUpdate() (bool, updater) {
 	// 当前版本
 	current, err := version.NewVersion(global.Global.ProgramVersion)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：解析当前版本失败"))
 		return false, updater{}
 	}
 	// 获取最新版本
@@ -122,7 +123,7 @@ func CheckForUpdate() (bool, updater) {
 	}
 	response, err := client.Get(url)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：获取更新文件失败"))
 		return false, updater{}
 	}
 	defer response.Body.Close()
@@ -130,7 +131,7 @@ func CheckForUpdate() (bool, updater) {
 	var updaters []updater
 	err = json.NewDecoder(response.Body).Decode(&updaters)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：解析更新文件失败"))
 		return false, updater{}
 	}
 	// 得到第一个没有废弃的版本
@@ -144,7 +145,7 @@ func CheckForUpdate() (bool, updater) {
 	latestVersionStr := updaterInstance.Version
 	latest, err := version.NewVersion(latestVersionStr)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：解析最新版本失败"))
 		return false, updater{}
 	}
 	// 如果第一个版本大于当前版本，说明有更新
@@ -167,7 +168,7 @@ func AskUpdate() bool {
 func DownloadUpdate(url string, showProgress bool) {
 	err := http_utils.DownloadFile(url, "./config/HYZL-new.exe", showProgress)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：下载更新文件失败"))
 		return
 	}
 }
@@ -176,14 +177,14 @@ func ScheduleUpdate() {
 	// 检查文件MD5是否一致
 	instance, err := readConfig()
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：读取更新文件失败"))
 		return
 	}
 	configMD5 := instance.MD5
 	fileMd5, err := io_utils.CalcMD5("./config/HYZL-new.exe")
 
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：计算MD5失败"))
 		return
 	}
 	if configMD5 != fileMd5 {
@@ -193,7 +194,7 @@ func ScheduleUpdate() {
 	// 将config里的启动器复制到当前目录
 	err = io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：移动文件失败"))
 		return
 	}
 	global.Config.JustFinishedUpdating = true
@@ -254,7 +255,7 @@ func ShowChangelog() {
 	print_utils.PrintWithColor(ct.Magenta, true, "更新日志：")
 	instance, err := readConfig()
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：读取更新文件失败"))
 		return
 	}
 	fmt.Println(instance.Changelog)
@@ -269,14 +270,14 @@ func MenuUpdateRightNow() {
 		// 检查文件MD5是否一致
 		instance, err := readConfig()
 		if err != nil {
-			print_utils.PrintError(err)
+			print_utils.PrintError(errors.Wrap(err, "原因：读取更新文件失败"))
 			return
 		}
 		configMD5 := instance.MD5
 		fileMd5, err := io_utils.CalcMD5("./config/HYZL-new.exe")
 
 		if err != nil {
-			print_utils.PrintError(err)
+			print_utils.PrintError(errors.Wrap(err, "原因：计算MD5失败"))
 			return
 		}
 		if configMD5 != fileMd5 {
@@ -287,7 +288,7 @@ func MenuUpdateRightNow() {
 	// 将config里的启动器复制到当前目录
 	err := io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：移动文件失败"))
 		return
 	}
 	global.Config.JustFinishedUpdating = true

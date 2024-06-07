@@ -6,6 +6,7 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
+	"github.com/pkg/errors"
 	"net/http"
 	"os"
 	"time"
@@ -29,14 +30,14 @@ func ShowAnnouncement() {
 	// 展示公告
 	response, err := client.Get(url)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：获取公告失败"))
 		return
 	}
 	defer response.Body.Close()
 	// 解析json
 	err = json.NewDecoder(response.Body).Decode(&Announcements)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：解析公告失败"))
 		return
 	}
 	if global.Config.LastAnnouncementVersion >= Announcements[0].Version {

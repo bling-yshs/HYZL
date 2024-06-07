@@ -2,6 +2,7 @@ package yaml_utils
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 	"os"
 )
@@ -9,18 +10,18 @@ import (
 func GetValueFromYAMLFile(filePath, key string) (interface{}, error) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
-		return "", fmt.Errorf("读取文件失败: %v", err)
+		return "", errors.Wrap(err, "原因：读取文件失败")
 	}
 
 	data := make(map[string]interface{})
 	err = yaml.Unmarshal(file, &data)
 	if err != nil {
-		return "", fmt.Errorf("解析YAML失败: %v", err)
+		return "", errors.Wrap(err, "原因：解析YAML失败")
 	}
 
 	value, ok := data[key]
 	if !ok {
-		return "", fmt.Errorf("键 '%s' 不存在", key)
+		return "", errors.Wrapf(err, "键 '%s' 不存在", key)
 	}
 
 	return value, nil

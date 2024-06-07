@@ -15,6 +15,7 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/redis_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/windows_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/yaml_utils"
+	"github.com/pkg/errors"
 	"net/url"
 	"os"
 	"os/exec"
@@ -113,19 +114,19 @@ func installJsPlugin() {
 		fileName := filepath.Base(jsPluginUrl)
 		unescapeFileName, err := url.QueryUnescape(fileName)
 		if err != nil {
-			print_utils.PrintError(err)
+			print_utils.PrintError(errors.Wrap(err, "原因：解析文件名失败！"))
 			return
 		}
 		err = http_utils.DownloadFile(jsPluginUrl, path.Join(jsPluginDir, unescapeFileName), false)
 		if err != nil {
-			print_utils.PrintError(err)
+			print_utils.PrintError(errors.Wrap(err, "原因：下载失败！"))
 			return
 		}
 		print_utils.PrintWithEmptyLine("下载成功！")
 	} else if filepath.IsAbs(jsPluginUrl) && strings.HasSuffix(jsPluginUrl, ".js") {
 		err := io_utils.CopyFile(jsPluginUrl, filepath.Join(jsPluginDir, filepath.Base(jsPluginUrl)))
 		if err != nil {
-			print_utils.PrintError(err)
+			print_utils.PrintError(errors.Wrap(err, "原因：复制失败！"))
 			return
 		}
 		fmt.Println("复制成功！")
@@ -147,12 +148,12 @@ func changeAccount() {
 	}
 	err := yaml_utils.UpdateValueYAML(filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config", "config", "qq.yaml"), "qq", qq)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：更新qq失败"))
 		return
 	}
 	err = yaml_utils.UpdateValueYAML(filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config", "config", "qq.yaml"), "pwd", pwd)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：更新密码失败"))
 		return
 	}
 	print_utils.PrintWithEmptyLine("切换账号成功！")
@@ -166,17 +167,17 @@ func updateYunzaiToLatest() {
 func setQsignAPI() {
 	err := yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
 	}
 	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "ver", nil)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
 	}
 	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/qq.yaml"), "platform", "2")
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
 	}
 	print_utils.PrintWithEmptyLine("设置签名API成功！")

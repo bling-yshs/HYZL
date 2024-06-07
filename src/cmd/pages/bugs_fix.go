@@ -9,6 +9,7 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/menu_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
+	"github.com/pkg/errors"
 	"os"
 	"path"
 )
@@ -56,7 +57,7 @@ func cookieRedisFix() {
 	}
 	err = http_utils.DownloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "redis-windows-7.0.4", true)
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "原因：下载 redis.conf 失败！"))
 		return
 	}
 	print_utils.PrintWithEmptyLine("修复成功！")
