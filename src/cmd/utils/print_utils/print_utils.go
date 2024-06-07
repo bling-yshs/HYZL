@@ -8,7 +8,7 @@ import (
 func PrintError(err error) {
 	ct.Foreground(ct.Red, true)
 	fmt.Printf("发生了以下错误，如有疑问，请将此界面截图并反馈给作者：")
-	fmt.Printf("%+v", err)
+	fmt.Printf("%+v\n", err)
 	ct.ResetColor()
 }
 
