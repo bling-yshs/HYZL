@@ -98,8 +98,16 @@ func readConfig() {
 		ret = strings.ReplaceAll(ret, "\r", "")
 		ret = strings.ReplaceAll(ret, "\n", "")
 		// 然后检查版本是否大于18，小于18的话，不让运行
-		current, _ := version.NewVersion(ret)
-		target, _ := version.NewVersion("18.0.0")
+		current, err := version.NewVersion(ret)
+		if err != nil {
+			print_utils.PrintError(err)
+			global_utils.ShutDownProgram()
+		}
+		target, err := version.NewVersion("18.0.0")
+		if err != nil {
+			print_utils.PrintError(err)
+			global_utils.ShutDownProgram()
+		}
 		if current.LessThan(target) {
 			print_utils.PrintWithEmptyLine(fmt.Sprintf("检测到当前 Node.js 版本过低，为 %s ，请安装 Node20 及以上版本后继续", ret))
 			global_utils.ShutDownProgram()
