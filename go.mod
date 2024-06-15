@@ -12,7 +12,6 @@ require (
 )
 
 require (
-	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/akavel/rsrc v0.10.2 // indirect
 	github.com/josephspurrier/goversioninfo v1.4.0 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
