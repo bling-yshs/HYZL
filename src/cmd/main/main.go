@@ -25,12 +25,6 @@ func main() {
 	checkBeforeRun()
 	// 显示公告
 	annoncement.ShowAnnouncement()
-	// 检查更新
-	if updater.UpdateTempExist() {
-		if updater.AskUpdate() {
-			updater.ScheduleUpdate()
-		}
-	}
 	// 显示更新日志
 	updater.ShowChangelog()
 	// 初始化定时任务
