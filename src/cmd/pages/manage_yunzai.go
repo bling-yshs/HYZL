@@ -10,12 +10,14 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/http_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/io_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/json_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/menu_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/redis_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/windows_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/yaml_utils"
 	ct "github.com/daviddengcn/go-colortext"
+	"github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
 	"net/url"
 	"os"
@@ -177,6 +179,31 @@ func setQsignAPI() {
 	if os.IsNotExist(err) {
 		print_utils.PrintWithColor(ct.Red, true, "未检测到 qq.yaml 文件，如果您是第一次下载云崽，请先启动一次再运行此选项！")
 		return
+	}
+	// 检查node_modules/icqq/package.json里的version字段的版本是否大于0.6.10
+	currentVersionStr, err := json_utils.GetValueFromJSONFile(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "node_modules/icqq/package.json"), "version")
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "原因：读取 icqq 版本失败"))
+		return
+	}
+	currentVersion, err := version.NewVersion(currentVersionStr.(string))
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "原因：解析 icqq 版本失败"))
+		return
+	}
+	targetVersion, err := version.NewVersion("0.6.10")
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "原因：解析目标版本失败"))
+		return
+	}
+	if currentVersion.LessThan(targetVersion) {
+		print_utils.PrintWithColor(ct.Red, true, "检测到 icqq 版本过低，是否更新？(是:y 否:n)")
+		choice := input_utils.ReadChoice([]string{"y", "n"})
+		if choice == "y" {
+			cmd_utils.ExecuteCmd("pnpm install icqq@latest -w", global.Global.YunzaiName, "正在更新 icqq...", "更新 icqq 成功！")
+		} else {
+			return
+		}
 	}
 	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
 	if err != nil {
