@@ -62,7 +62,6 @@ func IsUpdateTempNew() bool {
 	// 从json中读取更新文件信息
 	instance, err := readConfig()
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：读取更新文件失败"))
 		return false
 	}
 	// 获取缓存的版本号
