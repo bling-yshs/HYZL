@@ -103,7 +103,7 @@ func readConfig() {
 			global_utils.ShutDownProgram()
 		}
 		if current.LessThan(target) {
-			print_utils.PrintWithEmptyLine(fmt.Sprintf("检测到当前 Node.js 版本过低，为 %s ，请安装 Node20 及以上版本后继续", ret))
+			print_utils.PrintWithEmptyLine(fmt.Sprintf("检测到当前 Node.js 版本过低，为 %s ，请安装 Node18 及以上版本后继续", ret))
 			global_utils.ShutDownProgram()
 		}
 		global.Config.NodeInstalled = true
