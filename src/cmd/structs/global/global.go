@@ -8,7 +8,7 @@ import (
 
 type config struct {
 	GitInstalled            bool  `json:"git_installed"`
-	NodeInstalled           bool  `json:"node_installed"`
+	NodeInstalled           bool  `json:"nodejs_installed"`
 	NpmInstalled            bool  `json:"npm_installed"`
 	LastAnnouncementVersion int32 `json:"last_announcement_version"`
 	JustFinishedUpdating    bool  `json:"just_finished_updating"`
