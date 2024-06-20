@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
@@ -28,6 +29,11 @@ func DownloadFile(url string, filePath string, showProgress bool) error {
 	// 如果文件已经存在，先删除
 	if _, err := os.Stat(filePath); err == nil {
 		os.Remove(filePath)
+	}
+
+	// 创建文件夹
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return err
 	}
 	// 创建文件
 	out, err := os.Create(filePath)
