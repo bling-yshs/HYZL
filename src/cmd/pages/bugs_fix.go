@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"fmt"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
@@ -12,6 +13,8 @@ import (
 	"github.com/pkg/errors"
 	"os"
 	"path"
+	"path/filepath"
+	"strings"
 )
 
 func BugsFixMenu() {
@@ -25,6 +28,7 @@ func BugsFixMenu() {
 		{"修复 #重启 失败(也就是pnpm start pm2报错)", pm2Fix},
 		{"修复 cookie 总是失效过期(Redis启动参数错误导致)", cookieRedisFix},
 		{"修复 喵喵云崽监听报错(也就是sqlite3问题)", sqliteFix},
+		{"修复 ffmpeg 未安装", ffmpegFix},
 	}
 
 	for {
@@ -38,6 +42,21 @@ func BugsFixMenu() {
 	}
 
 }
+
+func ffmpegFix() {
+	// https://hyzl.r2.yshs.fun/resources/ffmpeg.exe 下载
+	ffmpegPath := path.Join(global.Global.ProgramRunPath, "ffmpeg", "ffmpeg.exe")
+	err := http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/ffmpeg.exe", ffmpegPath, true)
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "原因：下载 ffmpeg.exe 失败！"))
+		return
+	}
+	cmd := fmt.Sprintf(`setx PATH "%%PATH%%;%s"`, strings.ReplaceAll(filepath.Dir(ffmpegPath), "/", `\`))
+	// setx PATH "%PATH%;ffmpeg的路径"
+	cmd_utils.ExecuteCmd(cmd, "", "正在设置环境变量...", "设置环境变量成功！")
+	print_utils.PrintWithColor(ct.Red, true, "请务必重新启动一次云崽！")
+}
+
 func sqliteFix() {
 	_, err := os.Stat(path.Join(global.Global.YunzaiName, "plugins/miao-plugin/index.js"))
 	if os.IsNotExist(err) {
