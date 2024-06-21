@@ -74,7 +74,7 @@ func cookieRedisFix() {
 		print_utils.PrintWithColor(ct.Red, true, "未检测到 redis-windows-7.0.4 文件夹，请先下载 redis！")
 		return
 	}
-	err = http_utils.DownloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "redis-windows-7.0.4", true)
+	err = http_utils.DownloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "redis-windows-7.0.4/redis.conf", true)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：下载 redis.conf 失败！"))
 		return
