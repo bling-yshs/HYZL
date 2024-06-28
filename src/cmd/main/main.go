@@ -103,7 +103,7 @@ func readConfig() {
 			global_utils.ShutDownProgram()
 		}
 		if current.LessThan(target) {
-			print_utils.PrintWithEmptyLine(fmt.Sprintf("检测到当前 Node.js 版本过低，为 %s ，请安装 Node18 及以上版本后继续", ret))
+			print_utils.PrintWithEmptyLine(fmt.Sprintf("检测到当前 Node.js 版本过低，为 %s ，请安装 Node18 及以上版本后继续。下载地址 https://hyzl.r2.yshs.fun/resources/node-v20.15.0-x64.msi", ret))
 			global_utils.ShutDownProgram()
 		}
 		global.Config.NodeInstalled = true
