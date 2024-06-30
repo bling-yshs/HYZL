@@ -205,12 +205,20 @@ func setQsignAPI() {
 			return
 		}
 	}
+	// 下载 https://hyzl.r2.yshs.fun/resources/device.js node_modules/icqq/lib/core/device.js
+	//http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/device.js","")
+	print_utils.PrintWithColor(ct.Yellow, true, "正在下载 device.js...")
+	err = http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/device.js", path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "node_modules/icqq/lib/core/device.js"), true)
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "原因：下载 device.js 失败"))
+		return
+	}
 	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
 	}
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "ver", nil)
+	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "ver", "9.0.55")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
