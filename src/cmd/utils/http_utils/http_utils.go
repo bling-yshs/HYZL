@@ -22,7 +22,7 @@ func DownloadFile(url string, filePath string, showProgress bool) error {
 		// 获取文件总大小
 		size, err = strconv.Atoi(resp.Header.Get("Content-Length"))
 		if err != nil {
-			return err
+			showProgress = false
 		}
 	}
 
