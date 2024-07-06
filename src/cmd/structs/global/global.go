@@ -6,12 +6,16 @@ import (
 	"path/filepath"
 )
 
+const UPDATE_URL = "https://hyzl.r2.yshs.fun/updater/updater.json"
+const ANNOUNCEMENT_URL = "https://hyzl.r2.yshs.fun/announcement/announcement.json"
+
 type config struct {
 	GitInstalled            bool  `json:"git_installed"`
 	NodeInstalled           bool  `json:"nodejs_installed"`
 	NpmInstalled            bool  `json:"npm_installed"`
 	LastAnnouncementVersion int32 `json:"last_announcement_version"`
 	JustFinishedUpdating    bool  `json:"just_finished_updating"`
+	HaveUpdate              bool  `json:"have_update"`
 }
 
 var Config = config{
@@ -20,6 +24,7 @@ var Config = config{
 	NpmInstalled:            false,
 	LastAnnouncementVersion: 0,
 	JustFinishedUpdating:    false,
+	HaveUpdate:              false,
 }
 
 type global struct {

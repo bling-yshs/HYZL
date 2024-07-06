@@ -21,7 +21,7 @@ type announcement struct {
 
 var Announcements = []announcement{}
 
-const url = "https://hyzl.r2.yshs.fun/announcement/announcement.json"
+const url = global.ANNOUNCEMENT_URL
 
 func ShowAnnouncement() {
 	client := &http.Client{

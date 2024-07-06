@@ -12,11 +12,15 @@ import (
 
 func IndexMenu() {
 	print_utils.PrintWithEmptyLine("当前版本:", global.Global.ProgramVersion)
+	var updateText string = "立即更新启动器"
+	if global.Config.HaveUpdate {
+		updateText = "发现新版本，立即更新启动器"
+	}
 	options := []menu_option.MenuOption{
 		{"安装云崽", DownloadYunzaiMenu},
 		{"云崽管理", ManageYunzaiMenu},
 		{"BUG修复", BugsFixMenu},
-		{"立即更新启动器", updater.MenuUpdateRightNow},
+		{updateText, updater.MenuUpdateRightNow},
 	}
 	for {
 		menu_utils.PrintMenu("主菜单", options, true)

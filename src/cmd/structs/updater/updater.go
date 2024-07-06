@@ -27,33 +27,31 @@ type updater struct {
 	Deprecated bool   `json:"deprecated"`
 }
 
-const url = "https://hyzl.r2.yshs.fun/updater/updater.json"
+const url = global.UPDATE_URL
 
 // 得到最后一个没有废弃的版本的实例
-func getLatestUpdater() updater {
+func GetLatestUpdater() (updater, error) {
 	var updaterList []updater
 	client := &http.Client{
 		Timeout: 5 * time.Second,
 	}
 	response, err := client.Get(url)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：获取更新文件失败"))
-		return updater{}
+		return updater{}, errors.Wrap(err, "原因：获取更新文件失败")
 	}
 	defer response.Body.Close()
 	// 解析json
 	err = json.NewDecoder(response.Body).Decode(&updaterList)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：解析更新文件失败"))
-		return updater{}
+		return updater{}, errors.Wrap(err, "原因：解析更新文件失败")
 	}
 	// 得到最后一个没有废弃的版本，从前往后遍历
 	for _, item := range updaterList {
 		if !item.Deprecated {
-			return item
+			return item, nil
 		}
 	}
-	return updater{}
+	return updater{}, nil
 }
 
 // 判断缓存的更新文件是否是最新的
@@ -261,7 +259,11 @@ func ShowChangelog() {
 
 // 立即更新启动器
 func MenuUpdateRightNow() {
-	latestUpdater := getLatestUpdater()
+	latestUpdater, err := GetLatestUpdater()
+	if err != nil {
+		print_utils.PrintError(err)
+		return
+	}
 	latestVersion, err := version.NewVersion(latestUpdater.Version)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：解析最新版本失败"))
@@ -289,6 +291,7 @@ func MenuUpdateRightNow() {
 		return
 	}
 	global.Config.JustFinishedUpdating = true
+	global.Config.HaveUpdate = false
 	global.WriteConfig()
 	generateUpdateBat()
 	runUpdateBat()
