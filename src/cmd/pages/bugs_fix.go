@@ -29,6 +29,7 @@ func BugsFixMenu() {
 		{"修复 cookie 总是失效过期(Redis启动参数错误导致)", cookieRedisFix},
 		{"修复 喵喵云崽监听报错(也就是sqlite3问题)", sqliteFix},
 		{"修复 ffmpeg 未安装", ffmpegFix},
+		{"暂时修复逍遥插件 #扫码登录 无法使用", fixQRCodeLogin},
 	}
 
 	for {
@@ -41,6 +42,24 @@ func BugsFixMenu() {
 		menu_utils.DealChoice(choice, options, false)
 	}
 
+}
+
+func fixQRCodeLogin() {
+	// https://hyzl.r2.yshs.fun/resources/mysTool.js 下载到 plugins/xiaoyao-cvs-plugin\model\mys\mysTool.js
+	mysToolPath := path.Join(global.Global.YunzaiName, "plugins", "xiaoyao-cvs-plugin", "model", "mys", "mysTool.js")
+	// 检查文件夹是否存在
+	_, err := os.Stat(filepath.Dir(mysToolPath))
+	if os.IsNotExist(err) {
+		// 提示用户先安装逍遥插件
+		print_utils.PrintWithColor(ct.Red, true, "未检测到逍遥插件，请先安装逍遥插件！")
+		return
+	}
+	err = http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/mysTool.js", mysToolPath, true)
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "原因：下载 mysTool.js 失败！"))
+		return
+	}
+	print_utils.PrintWithEmptyLine("修复成功！")
 }
 
 func ffmpegFix() {

@@ -44,6 +44,7 @@ func ManageYunzaiMenu() {
 		{"修改云崽账号密码", changeAccount},
 		{"强制更新云崽", updateYunzaiToLatest},
 		{"设置qsign.icu的签名API", setQsignAPI},
+		{"手动更新所有插件", updateAllPlugins},
 	}
 
 	for {
@@ -54,6 +55,28 @@ func ManageYunzaiMenu() {
 			return
 		}
 		menu_utils.DealChoice(choice, options, false)
+	}
+}
+
+func updateAllPlugins() {
+	// 得到yunzai/plugins文件夹下的所有文件夹，查看每个文件夹内是否存在package.json，如果存在，则在那个文件夹内执行git pull
+	pluginsDir := filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "plugins")
+	// 遍历插件目录
+	dir, err := os.ReadDir(pluginsDir)
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "原因：读取插件目录失败"))
+		return
+	}
+	for _, d := range dir {
+		if d.IsDir() {
+			pluginPath := filepath.Join(pluginsDir, d.Name())
+			// 判断是否存在package.json
+			_, err := os.Stat(filepath.Join(pluginPath, "package.json"))
+			if os.IsNotExist(err) {
+				continue
+			}
+			cmd_utils.ExecuteCmd("git pull", pluginPath, fmt.Sprintf("正在更新 %s", d.Name()), "")
+		}
 	}
 }
 
@@ -200,7 +223,7 @@ func setQsignAPI() {
 		print_utils.PrintWithColor(ct.Red, true, "检测到 icqq 版本过低，是否更新？(是:y 否:n)")
 		choice := input_utils.ReadChoice([]string{"y", "n"})
 		if choice == "y" {
-			cmd_utils.ExecuteCmd("pnpm install icqq@latest -w", global.Global.YunzaiName, "正在更新 icqq...", "更新 icqq 成功！")
+			cmd_utils.ExecuteCmd("pnpm install icqq@0.6.10 -w", global.Global.YunzaiName, "正在更新 icqq...", "更新 icqq 成功！")
 		} else {
 			return
 		}
