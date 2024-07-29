@@ -223,6 +223,8 @@ func setQsignAPI() {
 		print_utils.PrintWithColor(ct.Red, true, "检测到 icqq 版本过低，是否更新？(是:y 否:n)")
 		choice := input_utils.ReadChoice([]string{"y", "n"})
 		if choice == "y" {
+			//先删除，否则有残留
+			cmd_utils.ExecuteCmd("pnpm rm icqq -w", global.Global.YunzaiName, "正在删除 icqq...", "删除 icqq 成功！")
 			cmd_utils.ExecuteCmd("pnpm install icqq@0.6.10 -w", global.Global.YunzaiName, "正在更新 icqq...", "更新 icqq 成功！")
 		} else {
 			return
