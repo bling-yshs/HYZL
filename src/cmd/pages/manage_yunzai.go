@@ -37,7 +37,7 @@ func ManageYunzaiMenu() {
 	}
 	options := []menu_option.MenuOption{
 		{"启动云崽", startYunzai},
-		{"强制关闭云崽(强制关闭node程序)", closeYunzai},
+		{"强制关闭云崽(强制关闭node程序和chrome)", closeYunzai},
 		{"自定义终端命令", customCommand},
 		{"安装插件", installPluginsMenu},
 		{"安装js插件", installJsPlugin},
@@ -107,6 +107,7 @@ func startYunzai() {
 func closeYunzai() {
 	exec.Command("taskkill", "/FI", "WINDOWTITLE eq Yunzai-bot", "/T", "/F").Run()
 	global_utils.ShutDownYunzai()
+	global_utils.ShutDownChrome()
 }
 
 func customCommand() {
