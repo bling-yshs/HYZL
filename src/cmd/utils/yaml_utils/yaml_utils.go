@@ -127,3 +127,37 @@ func UpdateValueYAML(filePath string, key string, value interface{}) error {
 	}
 	return nil
 }
+
+func DeleteKey(filePath string, key string) error {
+	// 读取文件
+	file, err := os.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+	// 解析yaml
+	node := &yaml.Node{}
+	err = yaml.Unmarshal(file, node)
+	if err != nil {
+		return err
+	}
+	// 遍历yaml的内容
+	for index, item := range node.Content[0].Content {
+		// 如果找到了key
+		if item.Value == key {
+			// 删除key和value
+			node.Content[0].Content = append(node.Content[0].Content[:index], node.Content[0].Content[index+2:]...)
+			break
+		}
+	}
+	// 重新序列化yaml
+	file, err = yaml.Marshal(node)
+	if err != nil {
+		return err
+	}
+	// 写入文件
+	err = os.WriteFile(filePath, file, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return nil
+}
