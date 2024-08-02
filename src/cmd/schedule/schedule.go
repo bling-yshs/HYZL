@@ -24,6 +24,9 @@ func InitSchedule() {
 		if latest.GreaterThan(current) {
 			global.Config.HaveUpdate = true
 			global.WriteConfig()
+		} else {
+			global.Config.HaveUpdate = false
+			global.WriteConfig()
 		}
 	}
 	//update := func() {
