@@ -3,8 +3,8 @@ package pages
 import (
 	"bufio"
 	"fmt"
-	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/yunzai"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/global_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/http_utils"
@@ -30,7 +30,7 @@ import (
 
 func ManageYunzaiMenu() {
 	//检查是否存在Global.YunzaiName文件夹
-	_, err := os.Stat(global.Global.YunzaiName)
+	_, err := os.Stat(yunzai.GetYunzai().Name)
 	if os.IsNotExist(err) {
 		print_utils.PrintWithEmptyLine("未检测到云崽文件夹，请先下载云崽！")
 		return
@@ -60,7 +60,7 @@ func ManageYunzaiMenu() {
 
 func updateAllPlugins() {
 	// 得到yunzai/plugins文件夹下的所有文件夹，查看每个文件夹内是否存在package.json，如果存在，则在那个文件夹内执行git pull
-	pluginsDir := filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "plugins")
+	pluginsDir := filepath.Join(yunzai.GetYunzai().Path, "plugins")
 	// 遍历插件目录
 	dir, err := os.ReadDir(pluginsDir)
 	if err != nil {
@@ -99,7 +99,7 @@ func startYunzai() {
 	}
 	print_utils.PrintWithEmptyLine("正在启动云崽...")
 	cmd := exec.Command("cmd", "/C", "start", "cmd", "/k", "node app")
-	cmd.Dir = path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName)
+	cmd.Dir = path.Join(yunzai.GetYunzai().Path)
 	cmd.Start()
 	print_utils.PrintWithEmptyLine("云崽启动成功！")
 }
@@ -122,13 +122,13 @@ func customCommand() {
 			cmd_utils.ClearLog()
 			break
 		}
-		cmd_utils.ExecuteCmd(command, global.Global.YunzaiName, "", "")
+		cmd_utils.ExecuteCmd(command, yunzai.GetYunzai().Path, "", "")
 	}
 }
 
 func installJsPlugin() {
 	// 得到下载目录
-	jsPluginDir := filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "plugins", "example")
+	jsPluginDir := filepath.Join(yunzai.GetYunzai().Path, "plugins", "example")
 	// 输入js插件的地址
 	fmt.Print("请输入需要下载或复制的js插件的地址：")
 	scanner := bufio.NewScanner(os.Stdin)
@@ -173,12 +173,12 @@ func changeAccount() {
 	if pwd == "0" {
 		return
 	}
-	err := yaml_utils.UpdateValueYAML(filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config", "config", "qq.yaml"), "qq", qq)
+	err := yaml_utils.UpdateValueYAML(filepath.Join(yunzai.GetYunzai().Path, "config", "config", "qq.yaml"), "qq", qq)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：更新qq失败"))
 		return
 	}
-	err = yaml_utils.UpdateValueYAML(filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config", "config", "qq.yaml"), "pwd", pwd)
+	err = yaml_utils.UpdateValueYAML(filepath.Join(yunzai.GetYunzai().Path, "config", "config", "qq.yaml"), "pwd", pwd)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：更新密码失败"))
 		return
@@ -187,25 +187,25 @@ func changeAccount() {
 }
 
 func updateYunzaiToLatest() {
-	cmd_utils.ExecuteCmd("git pull", global.Global.YunzaiName, "正在更新云崽...", "")
-	cmd_utils.ExecuteCmd("git reset --hard origin/HEAD", global.Global.YunzaiName, "", "更新云崽成功")
+	cmd_utils.ExecuteCmd("git pull", yunzai.GetYunzai().Path, "正在更新云崽...", "")
+	cmd_utils.ExecuteCmd("git reset --hard origin/HEAD", yunzai.GetYunzai().Path, "", "更新云崽成功")
 }
 
 func setQsignAPI() {
 	// 先检查是否存在config/config/bot.yaml
-	_, err := os.Stat(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"))
+	_, err := os.Stat(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"))
 	if os.IsNotExist(err) {
 		print_utils.PrintWithColor(ct.Red, true, "未检测到 bot.yaml 文件，如果您是第一次下载云崽，请先启动一次再运行此选项！")
 		return
 	}
 	// 再检查是否存在config/config/qq.yaml
-	_, err = os.Stat(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/qq.yaml"))
+	_, err = os.Stat(path.Join(yunzai.GetYunzai().Path, "config/config/qq.yaml"))
 	if os.IsNotExist(err) {
 		print_utils.PrintWithColor(ct.Red, true, "未检测到 qq.yaml 文件，如果您是第一次下载云崽，请先启动一次再运行此选项！")
 		return
 	}
 	// 检查node_modules/icqq/package.json里的version字段的版本是否大于0.6.10
-	currentVersionStr, err := json_utils.GetValueFromJSONFile(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "node_modules/icqq/package.json"), "version")
+	currentVersionStr, err := json_utils.GetValueFromJSONFile(path.Join(yunzai.GetYunzai().Path, "node_modules/icqq/package.json"), "version")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：读取 icqq 版本失败"))
 		return
@@ -225,29 +225,29 @@ func setQsignAPI() {
 		choice := input_utils.ReadChoice([]string{"y", "n"})
 		if choice == "y" {
 			//先删除，否则有残留
-			cmd_utils.ExecuteCmd("pnpm rm icqq -w", global.Global.YunzaiName, "正在删除 icqq...", "删除 icqq 成功！")
-			cmd_utils.ExecuteCmd("pnpm install icqq@0.6.10 -w", global.Global.YunzaiName, "正在更新 icqq...", "更新 icqq 成功！")
+			cmd_utils.ExecuteCmd("pnpm rm icqq -w", yunzai.GetYunzai().Path, "正在删除 icqq...", "删除 icqq 成功！")
+			cmd_utils.ExecuteCmd("pnpm install icqq@0.6.10 -w", yunzai.GetYunzai().Path, "正在更新 icqq...", "更新 icqq 成功！")
 		} else {
 			return
 		}
 	}
 	// 下载 https://qsign.icu/device.js
 	print_utils.PrintWithColor(ct.Yellow, true, "正在下载 device.js ...")
-	err = http_utils.DownloadFile("https://gitee.com/haanxuan/QSign/raw/main/device.js", path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "node_modules/icqq/lib/core/device.js"), true)
+	err = http_utils.DownloadFile("https://gitee.com/haanxuan/QSign/raw/main/device.js", path.Join(yunzai.GetYunzai().Path, "node_modules/icqq/lib/core/device.js"), true)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：下载 device.js 失败"))
 		return
 	}
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://qsign.trpgbot.com/?ver=9.0.90")
+	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
 	}
-	err = yaml_utils.DeleteKey(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "ver")
+	err = yaml_utils.DeleteKey(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "ver")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：删除 ver 失败"))
 	}
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/qq.yaml"), "platform", "2")
+	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/qq.yaml"), "platform", "2")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：设置 platform 失败"))
 		return

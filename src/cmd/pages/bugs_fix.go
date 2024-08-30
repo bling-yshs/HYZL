@@ -2,8 +2,9 @@ package pages
 
 import (
 	"fmt"
-	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/app"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/yunzai"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/http_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
@@ -18,7 +19,7 @@ import (
 )
 
 func BugsFixMenu() {
-	_, err := os.Stat(global.Global.YunzaiName)
+	_, err := os.Stat(yunzai.GetYunzai().Name)
 	if os.IsNotExist(err) {
 		print_utils.PrintWithEmptyLine("未检测到云崽文件夹，请先下载云崽！")
 		return
@@ -29,7 +30,7 @@ func BugsFixMenu() {
 		{"修复 cookie 总是失效过期(Redis启动参数错误导致)", cookieRedisFix},
 		{"修复 喵喵云崽监听报错(也就是sqlite3问题)", sqliteFix},
 		{"修复 ffmpeg 未安装", ffmpegFix},
-		{"暂时修复逍遥插件 #扫码登录 无法使用", fixQRCodeLogin},
+		{"修复 无法正确获取图片链接", fixGetImageLink},
 	}
 
 	for {
@@ -44,27 +45,21 @@ func BugsFixMenu() {
 
 }
 
-func fixQRCodeLogin() {
-	// https://hyzl.r2.yshs.fun/resources/mysTool.js 下载到 plugins/xiaoyao-cvs-plugin\model\mys\mysTool.js
-	mysToolPath := path.Join(global.Global.YunzaiName, "plugins", "xiaoyao-cvs-plugin", "model", "mys", "mysTool.js")
-	// 检查文件夹是否存在
-	_, err := os.Stat(filepath.Dir(mysToolPath))
-	if os.IsNotExist(err) {
-		// 提示用户先安装逍遥插件
-		print_utils.PrintWithColor(ct.Red, true, "未检测到逍遥插件，请先安装逍遥插件！")
-		return
-	}
-	err = http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/mysTool.js", mysToolPath, true)
+func fixGetImageLink() {
+	fmt.Println("正在下载修复文件，请确保能正常访问 gitee")
+	// https://gitee.com/bling_yshs/resources/raw/master/HYZL/parser.js 下载到 Yunzai-Bot/node_modules/icqq/lib/message/parser.js
+	parserPath := path.Join(yunzai.GetYunzai().Path, "node_modules", "icqq", "lib", "message", "parser.js")
+	fmt.Println(parserPath)
+	url := "https://gitee.com/bling_yshs/resources/raw/master/HYZL/parser.js"
+	err := http_utils.DownloadFile(url, parserPath, true)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：下载 mysTool.js 失败！"))
-		return
+		print_utils.PrintError(errors.Wrap(err, "原因：下载 parser.js 失败！"))
 	}
-	print_utils.PrintWithEmptyLine("修复成功！")
 }
 
 func ffmpegFix() {
 	// https://hyzl.r2.yshs.fun/resources/ffmpeg.exe 下载
-	ffmpegPath := path.Join(global.Global.ProgramRunPath, "ffmpeg", "ffmpeg.exe")
+	ffmpegPath := path.Join(app.GetApp().Path, "ffmpeg", "ffmpeg.exe")
 	err := http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/ffmpeg.exe", ffmpegPath, true)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：下载 ffmpeg.exe 失败！"))
@@ -77,7 +72,7 @@ func ffmpegFix() {
 }
 
 func sqliteFix() {
-	_, err := os.Stat(path.Join(global.Global.YunzaiName, "plugins/miao-plugin/index.js"))
+	_, err := os.Stat(path.Join(yunzai.GetYunzai().Path, "plugins/miao-plugin/index.js"))
 	if os.IsNotExist(err) {
 		print_utils.PrintWithEmptyLine("检测到喵喵插件不完整，是否重新安装?(是:y 否:n)")
 		choice := input_utils.ReadChoice([]string{"y", "n"})
@@ -85,7 +80,7 @@ func sqliteFix() {
 			InstallMiaoPlugin()
 		}
 	}
-	cmd_utils.ExecuteCmd("pnpm install sqlite3@5.1.5 -w", global.Global.YunzaiName, "正在安装 sqlite3...", "安装 sqlite3 成功！")
+	cmd_utils.ExecuteCmd("pnpm install sqlite3@5.1.5 -w", yunzai.GetYunzai().Path, "正在安装 sqlite3...", "安装 sqlite3 成功！")
 }
 func cookieRedisFix() {
 	_, err := os.Stat("redis-windows-7.0.4")
@@ -102,12 +97,12 @@ func cookieRedisFix() {
 }
 
 func pm2Fix() {
-	cmd_utils.ExecuteCmd("pnpm uninstall pm2", global.Global.YunzaiName, "正在卸载 pm2...", "卸载 pm2 成功！")
-	cmd_utils.ExecuteCmd("pnpm install pm2@latest -w", global.Global.YunzaiName, "正在安装 pm2...", "安装 pm2 成功！")
+	cmd_utils.ExecuteCmd("pnpm uninstall pm2", yunzai.GetYunzai().Path, "正在卸载 pm2...", "卸载 pm2 成功！")
+	cmd_utils.ExecuteCmd("pnpm install pm2@latest -w", yunzai.GetYunzai().Path, "正在安装 pm2...", "安装 pm2 成功！")
 }
 
 func reInstallDep() {
-	_, err := os.Stat(path.Join(global.Global.YunzaiName, "node_modules"))
+	_, err := os.Stat(path.Join(yunzai.GetYunzai().Path, "node_modules"))
 	if os.IsNotExist(err) {
 		print_utils.PrintWithEmptyLine("未检测到 node_modules 文件夹，是否重新安装依赖?(是:y 否:n)")
 		choice := input_utils.ReadChoice([]string{"y", "n"})
@@ -117,5 +112,5 @@ func reInstallDep() {
 	}
 	cmd_utils.ExecuteCmd("npm config set registry https://registry.npmmirror.com", "", "开始设置 npm 镜像源...", "设置 npm 镜像源成功！")
 	cmd_utils.ExecuteCmd("pnpm config set registry https://registry.npmmirror.com", "", "开始设置 pnpm 镜像源...", "设置 pnpm 镜像源成功！")
-	cmd_utils.ExecuteCmd("pnpm install", global.Global.YunzaiName, "开始安装云崽依赖...", "安装云崽依赖成功！")
+	cmd_utils.ExecuteCmd("pnpm install", yunzai.GetYunzai().Path, "开始安装云崽依赖...", "安装云崽依赖成功！")
 }

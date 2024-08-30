@@ -3,12 +3,12 @@ package annoncement
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/app"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/config"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"github.com/pkg/errors"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -21,7 +21,7 @@ type announcement struct {
 
 var Announcements = []announcement{}
 
-const url = global.ANNOUNCEMENT_URL
+var url = app.GetApp().AnnouncementUrl
 
 func ShowAnnouncement() {
 	client := &http.Client{
@@ -40,12 +40,12 @@ func ShowAnnouncement() {
 		print_utils.PrintError(errors.Wrap(err, "原因：解析公告失败"))
 		return
 	}
-	if global.Config.LastAnnouncementVersion >= Announcements[0].Version {
+	if config.GetConfig().LastAnnouncementVersion >= Announcements[0].Version {
 		return
 	}
 	print_utils.PrintWithColor(ct.Yellow, true, "公告:")
 	// 展示公告
-	if global.Config.LastAnnouncementVersion == 0 {
+	if config.GetConfig().LastAnnouncementVersion == 0 {
 		// 如果是第一次运行，展示最新的公告
 		printAnnouncement(Announcements[0])
 		saveLastAnnouncementVersion()
@@ -54,7 +54,7 @@ func ShowAnnouncement() {
 
 	for _, item := range Announcements {
 		// 展示未启用，并且所有版本号大于上次公告版本号的公告
-		if !item.Deprecated && item.Version > global.Config.LastAnnouncementVersion {
+		if !item.Deprecated && item.Version > config.GetConfig().LastAnnouncementVersion {
 			printAnnouncement(item)
 		}
 	}
@@ -62,9 +62,8 @@ func ShowAnnouncement() {
 }
 
 func saveLastAnnouncementVersion() {
-	global.Config.LastAnnouncementVersion = Announcements[0].Version
-	bytes, _ := json.MarshalIndent(global.Config, "", "    ")
-	_ = os.WriteFile("./config/config.json", bytes, os.ModePerm)
+	config.GetConfig().LastAnnouncementVersion = Announcements[0].Version
+	config.WriteConfig()
 }
 
 func printAnnouncement(item announcement) {

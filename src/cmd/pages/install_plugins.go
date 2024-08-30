@@ -1,8 +1,8 @@
 package pages
 
 import (
-	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/yunzai"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/menu_utils"
@@ -103,7 +103,7 @@ func installFengyePlugin() {
 
 func installPluginsTemplate(pluginChineseName string, dirName string, command ...string) {
 
-	pluginDir := filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "plugins", dirName)
+	pluginDir := filepath.Join(yunzai.GetYunzai().Path, "plugins", dirName)
 	_, err := os.Stat(pluginDir)
 	if err == nil {
 		print_utils.PrintWithEmptyLine("当前已安装 " + pluginChineseName + "，请问是否需要重新安装？(是:y 返回菜单:n)")
@@ -114,6 +114,6 @@ func installPluginsTemplate(pluginChineseName string, dirName string, command ..
 	}
 	_ = os.RemoveAll(pluginDir)
 	for _, cmd := range command {
-		cmd_utils.ExecuteCmd(cmd, filepath.Join(global.Global.ProgramRunPath, global.Global.YunzaiName), "", "")
+		cmd_utils.ExecuteCmd(cmd, filepath.Join(yunzai.GetYunzai().Path), "", "")
 	}
 }

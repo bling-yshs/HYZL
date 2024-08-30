@@ -1,7 +1,8 @@
 package pages
 
 import (
-	"github.com/bling-yshs/HYZL/src/cmd/structs/global"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/app"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/config"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/updater"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
@@ -11,9 +12,9 @@ import (
 )
 
 func IndexMenu() {
-	print_utils.PrintWithEmptyLine("当前版本:", global.Global.ProgramVersion)
+	print_utils.PrintWithEmptyLine("当前版本:", app.GetApp().Version)
 	var updateText string = "立即更新启动器"
-	if global.Config.HaveUpdate {
+	if config.GetConfig().HaveUpdate {
 		updateText = "发现新版本，立即更新启动器"
 	}
 	options := []menu_option.MenuOption{
