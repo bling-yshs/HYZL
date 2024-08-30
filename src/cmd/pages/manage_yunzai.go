@@ -233,12 +233,12 @@ func setQsignAPI() {
 	}
 	// 下载 https://qsign.icu/device.js
 	print_utils.PrintWithColor(ct.Yellow, true, "正在下载 device.js ...")
-	err = http_utils.DownloadFile("https://qsign.icu/device.js", path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "node_modules/icqq/lib/core/device.js"), true)
+	err = http_utils.DownloadFile("https://gitee.com/haanxuan/QSign/raw/main/device.js", path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "node_modules/icqq/lib/core/device.js"), true)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：下载 device.js 失败"))
 		return
 	}
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
+	err = yaml_utils.UpdateOrAppendToYaml(path.Join(global.Global.ProgramRunPath, global.Global.YunzaiName, "config/config/bot.yaml"), "sign_api_addr", "https://qsign.trpgbot.com/?ver=9.0.90")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
