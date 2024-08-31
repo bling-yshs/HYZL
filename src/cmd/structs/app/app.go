@@ -20,7 +20,7 @@ func init() {
 	//获取当前程序的名称
 	appInstance.Name = filepath.Base(os.Args[0])
 	// 设置版本
-	appInstance.Version = "v0.2.72"
+	appInstance.Version = "v0.2.73"
 	// 获取当前程序的运行路径
 	path, err := os.Executable()
 	if err != nil {
