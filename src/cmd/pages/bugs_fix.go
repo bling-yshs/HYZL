@@ -59,7 +59,7 @@ func fixGetImageLink() {
 
 func ffmpegFix() {
 	// https://hyzl.r2.yshs.fun/resources/ffmpeg.exe 下载
-	ffmpegPath := path.Join(app.GetApp().Path, "ffmpeg", "ffmpeg.exe")
+	ffmpegPath := path.Join(app.GetApp().Workdir, "ffmpeg", "ffmpeg.exe")
 	err := http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/ffmpeg.exe", ffmpegPath, true)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：下载 ffmpeg.exe 失败！"))

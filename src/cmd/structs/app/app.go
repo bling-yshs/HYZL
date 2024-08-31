@@ -9,6 +9,7 @@ type app struct {
 	Name            string `json:"name"`
 	Version         string `json:"version"`
 	Path            string `json:"path"`
+	Workdir         string `json:"workdir"`
 	UpdateUrl       string `json:"update_url"`
 	AnnouncementUrl string `json:"announcement_url"`
 }
@@ -26,6 +27,8 @@ func init() {
 		panic(err)
 	}
 	appInstance.Path = path
+	// 获取当前程序的工作路径
+	appInstance.Workdir, err = os.Getwd()
 	appInstance.UpdateUrl = "https://hyzl.r2.yshs.fun/updater/updater.json"
 	appInstance.AnnouncementUrl = "https://hyzl.r2.yshs.fun/announcement/announcement.json"
 }

@@ -17,7 +17,7 @@ func IsRedisRunning() bool {
 func StartRedis() {
 	// 启动redis
 	cmd := exec.Command("cmd", "/c", "start", "redis-server.exe", "redis.conf")
-	cmd.Dir = path.Join(app.GetApp().Path, "redis-windows-7.0.4")
+	cmd.Dir = path.Join(app.GetApp().Workdir, "redis-windows-7.0.4")
 	err := cmd.Start()
 	if err != nil {
 		print_utils.PrintWithColor(ct.Red, true, "启动Redis失败！", err)
