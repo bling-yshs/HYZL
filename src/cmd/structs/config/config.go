@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/timing_task"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
@@ -9,12 +10,13 @@ import (
 )
 
 type config struct {
-	GitInstalled            bool  `json:"git_installed"`
-	NodeInstalled           bool  `json:"nodejs_installed"`
-	NpmInstalled            bool  `json:"npm_installed"`
-	LastAnnouncementVersion int32 `json:"last_announcement_version"`
-	JustFinishedUpdating    bool  `json:"just_finished_updating"`
-	HaveUpdate              bool  `json:"have_update"`
+	GitInstalled            bool                     `json:"git_installed"`
+	NodeInstalled           bool                     `json:"nodejs_installed"`
+	NpmInstalled            bool                     `json:"npm_installed"`
+	LastAnnouncementVersion int32                    `json:"last_announcement_version"`
+	JustFinishedUpdating    bool                     `json:"just_finished_updating"`
+	HaveUpdate              bool                     `json:"have_update"`
+	TimingTasks             []timing_task.TimingTask `json:"timing_tasks"`
 }
 
 var configInstance *config

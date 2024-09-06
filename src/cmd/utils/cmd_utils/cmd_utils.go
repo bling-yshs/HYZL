@@ -2,6 +2,7 @@ package cmd_utils
 
 import (
 	"fmt"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/command"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"os"
@@ -52,4 +53,17 @@ func ExecuteCmd(command string, dir string, beforeMsg string, afterMsg string) {
 	if afterMsg != "" {
 		print_utils.PrintWithEmptyLine(afterMsg)
 	}
+}
+
+// 通用执行命令
+func ExecuteInNewWindow(parameters command.Parameters) {
+	var args []string
+	if parameters.AutoCloseWindow {
+		args = append([]string{"/c", "start", "cmd", "/c", parameters.Name}, parameters.Args...)
+	} else {
+		args = append([]string{"/c", "start", "cmd", "/k", parameters.Name}, parameters.Args...)
+	}
+	cmd := exec.Command("cmd", args...)
+	cmd.Dir = parameters.WorkDir
+	cmd.Run()
 }
