@@ -19,6 +19,24 @@ import (
 func main() {
 	// 前置检查
 	checkBeforeRun()
+	//command := exec.Command("ping", "baidu.com")
+	//command.Start()
+	//fmt.Println("hello")
+	//time.Sleep(5 * time.Second)
+	//command.Wait()
+	//for i := 0; i < 100; i++ {
+	//	fmt.Println("hello")
+	//	time.Sleep(1 * time.Second)
+	//}
+
+	//parameters := command.Parameters{
+	//	Name:            "git",
+	//	WorkDir:         "D:/QQNT",
+	//	Args:            []string{"pull"},
+	//	AutoCloseWindow: false,
+	//}
+	//cmd_utils.ExecuteInNewWindow(parameters)
+	//return
 	// 显示公告
 	annoncement.ShowAnnouncement()
 	// 显示更新日志

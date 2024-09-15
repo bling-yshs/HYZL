@@ -15,5 +15,6 @@ require (
 	github.com/akavel/rsrc v0.10.2 // indirect
 	github.com/josephspurrier/goversioninfo v1.4.0 // indirect
 	github.com/mitchellh/go-ps v1.0.0 // indirect
+	github.com/robfig/cron/v3 v3.0.1 // indirect
 	golang.org/x/sys v0.10.0 // indirect
 )

@@ -1,47 +1,29 @@
 package schedule
 
 import (
-	"github.com/bling-yshs/HYZL/src/cmd/structs/app"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/app_cron"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/config"
-	"github.com/bling-yshs/HYZL/src/cmd/structs/updater"
-	"github.com/hashicorp/go-version"
-	"time"
 )
 
 func InitSchedule() {
-	checkUpdate := func() {
-		latestUpdater, err := updater.GetLatestUpdater()
-		if err != nil {
-			return
-		}
-		latest, err := version.NewVersion(latestUpdater.Version)
-		if err != nil {
-			return
-		}
-		current, err := version.NewVersion(app.GetApp().Version)
-		if err != nil {
-			return
-		}
-		if latest.GreaterThan(current) {
-			config.GetConfig().HaveUpdate = true
-			config.WriteConfig()
-		} else {
-			config.GetConfig().HaveUpdate = false
-			config.WriteConfig()
+	// 遍历 config 的 timing_task，如果有 enabled 的，那么就添加到 cron 里面
+	for _, task := range config.GetConfig().TimingTasks {
+		if task.Enabled {
+			if task.RunOnStart {
+				// 如果 run_on_start 为 true，那么就立即执行
+				execute(task.Id)
+			}
+			entryId, err := app_cron.AppCronInstance.AddFunc(task.Spec, func() {
+				// 这里是执行任务
+				// 如果 run_now 为 true，那么就立即执行
+				execute(task.Id)
+			})
+			if err != nil {
+				panic(err)
+				return
+			}
+			app_cron.TaskIdEntryIdMap[task.Id] = entryId
 		}
 	}
-	// 立刻执行一次
-	go checkUpdate()
-	// 每三小时执行一次
-	startTicker(time.Hour*3, checkUpdate)
-}
-
-// 定时任务函数，传入时间间隔和需要定时执行的函数
-func startTicker(duration time.Duration, task func()) {
-	ticker := time.NewTicker(duration)
-	go func() {
-		for range ticker.C {
-			task()
-		}
-	}()
+	app_cron.AppCronInstance.Start()
 }

@@ -22,6 +22,7 @@ func IndexMenu() {
 		{"云崽管理", ManageYunzaiMenu},
 		{"BUG修复", BugsFixMenu},
 		{updateText, updater.MenuUpdateRightNow},
+		{"定时任务", ScheduleMenu},
 	}
 	for {
 		menu_utils.PrintMenu("主菜单", options, true)
