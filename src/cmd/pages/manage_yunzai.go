@@ -43,7 +43,7 @@ func ManageYunzaiMenu() {
 		{"安装js插件", installJsPlugin},
 		{"修改云崽账号密码", changeAccount},
 		{"强制更新云崽", updateYunzaiToLatest},
-		{"设置qsign.icu的签名API", setQsignAPI},
+		{"设置chahuyun.cn的签名API", setQsignAPI},
 		{"手动更新所有插件", updateAllPlugins},
 	}
 
@@ -238,7 +238,7 @@ func setQsignAPI() {
 		print_utils.PrintError(errors.Wrap(err, "原因：下载 device.js 失败"))
 		return
 	}
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", "https://hlhs-nb.cn/signed/?key=114514")
+	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", "https://qsign.chahuyun.cn/?key=miraibbs&ver=9.0.70")
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
 		return
