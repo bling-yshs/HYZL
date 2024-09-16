@@ -7,7 +7,13 @@ import (
 func execute(taskId int) {
 	// 这里是执行任务
 	// 1. 从内置任务中获取任务信息
-	task := timing_task.BuiltInTasks[taskId]
+	var task timing_task.TimingTask
+	for _, inTask := range timing_task.BuiltInTasks {
+		if inTask.Id == taskId {
+			task = inTask
+			break
+		}
+	}
 	// 2. 执行任务
 	switch task.Name {
 	case "CheckUpdate":

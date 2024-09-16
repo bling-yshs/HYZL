@@ -76,7 +76,6 @@ func updateYunzaiAndAllPlugins() {
 		if task.Id == newTask.Id {
 			found = true
 			(*tasks)[i] = newTask
-			return
 		}
 	}
 	if !found {
