@@ -16,7 +16,7 @@ import (
 func DownloadAnnouncement() {
 	err := http_utils.DownloadFile(app.GetApp().AnnouncementUrl, path.Join(app.GetApp().ConfigDir, "announcement.json"), false)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "下载公告失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：下载公告失败"))
 		return
 	}
 }
@@ -30,7 +30,7 @@ func UpdateYunzaiAndPlugins() {
 	pluginDir := path.Join(yunzai.GetYunzai().Path, "plugins")
 	files, err := os.ReadDir(pluginDir)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "读取插件目录失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：读取插件目录失败"))
 		return
 	}
 	for _, file := range files {

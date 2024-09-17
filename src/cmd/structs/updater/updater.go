@@ -38,13 +38,13 @@ func GetLatestUpdater() (updater, error) {
 	}
 	response, err := client.Get(url)
 	if err != nil {
-		return updater{}, errors.Wrap(err, "原因：获取更新文件失败")
+		return updater{}, errors.Wrap(err, "错误描述：获取更新文件失败")
 	}
 	defer response.Body.Close()
 	// 解析json
 	err = json.NewDecoder(response.Body).Decode(&updaterList)
 	if err != nil {
-		return updater{}, errors.Wrap(err, "原因：解析更新文件失败")
+		return updater{}, errors.Wrap(err, "错误描述：解析更新文件失败")
 	}
 	// 得到最后一个没有废弃的版本，从前往后遍历
 	for _, item := range updaterList {
@@ -65,7 +65,7 @@ func CleanUpdater() {
 func DownloadUpdate(url string, showProgress bool) {
 	err := http_utils.DownloadFile(url, "./config/HYZL-new.exe", showProgress)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：下载更新文件失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：下载更新文件失败"))
 		return
 	}
 }
@@ -122,7 +122,7 @@ func ShowChangelog() {
 	print_utils.PrintWithColor(ct.Magenta, true, "更新日志：")
 	instance, err := readConfig()
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：读取更新文件失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：读取更新文件失败"))
 		return
 	}
 	fmt.Println(instance.Changelog)
@@ -132,17 +132,17 @@ func ShowChangelog() {
 func MenuUpdateRightNow() {
 	latestUpdater, err := GetLatestUpdater()
 	if err != nil {
-		print_utils.PrintError(err)
+		print_utils.PrintError(errors.Wrap(err, "错误描述：无法获取最新版本"))
 		return
 	}
 	latestVersion, err := version.NewVersion(latestUpdater.Version)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：解析最新版本失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：解析最新版本失败"))
 		return
 	}
 	currentVersion, err := version.NewVersion(app.GetApp().Version)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：解析当前版本失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：解析当前版本失败"))
 		return
 	}
 	if !latestVersion.GreaterThan(currentVersion) {
@@ -152,13 +152,13 @@ func MenuUpdateRightNow() {
 	DownloadUpdate(latestUpdater.Url, true)
 	err = writeConfig(latestUpdater)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：写入更新文件失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：写入更新文件失败"))
 		return
 	}
 	// 将config里的启动器复制到当前目录
 	err = io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：移动文件失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：移动文件失败"))
 		return
 	}
 	config.GetConfig().JustFinishedUpdating = true

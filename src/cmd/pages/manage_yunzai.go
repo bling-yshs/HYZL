@@ -64,7 +64,7 @@ func updateAllPlugins() {
 	// 遍历插件目录
 	dir, err := os.ReadDir(pluginsDir)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：读取插件目录失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：读取插件目录失败"))
 		return
 	}
 	for _, d := range dir {
@@ -141,19 +141,19 @@ func installJsPlugin() {
 		fileName := filepath.Base(jsPluginUrl)
 		unescapeFileName, err := url.QueryUnescape(fileName)
 		if err != nil {
-			print_utils.PrintError(errors.Wrap(err, "原因：解析文件名失败！"))
+			print_utils.PrintError(errors.Wrap(err, "错误描述：解析文件名失败！"))
 			return
 		}
 		err = http_utils.DownloadFile(jsPluginUrl, path.Join(jsPluginDir, unescapeFileName), false)
 		if err != nil {
-			print_utils.PrintError(errors.Wrap(err, "原因：下载失败！"))
+			print_utils.PrintError(errors.Wrap(err, "错误描述：下载失败！"))
 			return
 		}
 		print_utils.PrintWithEmptyLine("下载成功！")
 	} else if filepath.IsAbs(jsPluginUrl) && strings.HasSuffix(jsPluginUrl, ".js") {
 		err := io_utils.CopyFile(jsPluginUrl, filepath.Join(jsPluginDir, filepath.Base(jsPluginUrl)))
 		if err != nil {
-			print_utils.PrintError(errors.Wrap(err, "原因：复制失败！"))
+			print_utils.PrintError(errors.Wrap(err, "错误描述：复制失败！"))
 			return
 		}
 		fmt.Println("复制成功！")
@@ -175,12 +175,12 @@ func changeAccount() {
 	}
 	err := yaml_utils.UpdateValueYAML(filepath.Join(yunzai.GetYunzai().Path, "config", "config", "qq.yaml"), "qq", qq)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：更新qq失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：更新qq失败"))
 		return
 	}
 	err = yaml_utils.UpdateValueYAML(filepath.Join(yunzai.GetYunzai().Path, "config", "config", "qq.yaml"), "pwd", pwd)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：更新密码失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：更新密码失败"))
 		return
 	}
 	print_utils.PrintWithEmptyLine("切换账号成功！")
@@ -207,17 +207,17 @@ func setQsignAPI() {
 	// 检查node_modules/icqq/package.json里的version字段的版本是否大于0.6.10
 	currentVersionStr, err := json_utils.GetValueFromJSONFile(path.Join(yunzai.GetYunzai().Path, "node_modules/icqq/package.json"), "version")
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：读取 icqq 版本失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：读取 icqq 版本失败"))
 		return
 	}
 	currentVersion, err := version.NewVersion(currentVersionStr.(string))
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：解析 icqq 版本失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：解析 icqq 版本失败"))
 		return
 	}
 	targetVersion, err := version.NewVersion("0.6.10")
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：解析目标版本失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：解析目标版本失败"))
 		return
 	}
 	if currentVersion.LessThan(targetVersion) {
@@ -235,21 +235,21 @@ func setQsignAPI() {
 	print_utils.PrintWithColor(ct.Yellow, true, "正在下载 device.js ...")
 	err = http_utils.DownloadFile("https://gitee.com/haanxuan/QSign/raw/main/device.js", path.Join(yunzai.GetYunzai().Path, "node_modules/icqq/lib/core/device.js"), true)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：下载 device.js 失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：下载 device.js 失败"))
 		return
 	}
 	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", "https://qsign.chahuyun.cn/?key=miraibbs&ver=9.0.70")
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：设置签名API失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：设置签名API失败"))
 		return
 	}
 	err = yaml_utils.DeleteKey(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "ver")
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：删除 ver 失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：删除 ver 失败"))
 	}
 	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/qq.yaml"), "platform", "2")
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：设置 platform 失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：设置 platform 失败"))
 		return
 	}
 	print_utils.PrintWithEmptyLine("设置签名API成功！")

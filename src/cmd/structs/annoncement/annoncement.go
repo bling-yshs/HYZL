@@ -28,13 +28,13 @@ func ShowAnnouncement() {
 	// 从 config 文件夹读取公告文件
 	file, err := os.ReadFile(path.Join(app.GetApp().ConfigDir, "announcement.json"))
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：读取本地公告文件失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：读取本地公告文件失败"))
 		return
 	}
 	// 解析json
 	err = json.Unmarshal(file, &Announcements)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：解析公告失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：解析公告失败"))
 		return
 	}
 	// 找到Announcements中最新的公告，并且deprecated为false

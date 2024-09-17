@@ -10,13 +10,13 @@ import (
 func GetValueFromYAMLFile(filePath, key string) (interface{}, error) {
 	file, err := os.ReadFile(filePath)
 	if err != nil {
-		return "", errors.Wrap(err, "原因：读取文件失败")
+		return "", errors.Wrap(err, "错误描述：读取文件失败")
 	}
 
 	data := make(map[string]interface{})
 	err = yaml.Unmarshal(file, &data)
 	if err != nil {
-		return "", errors.Wrap(err, "原因：解析YAML失败")
+		return "", errors.Wrap(err, "错误描述：解析YAML失败")
 	}
 
 	value, ok := data[key]

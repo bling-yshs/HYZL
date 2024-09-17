@@ -53,7 +53,7 @@ func fixGetImageLink() {
 	url := "https://gitee.com/bling_yshs/resources/raw/master/HYZL/parser.js"
 	err := http_utils.DownloadFile(url, parserPath, true)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：下载 parser.js 失败！"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：下载 parser.js 失败！"))
 	}
 }
 
@@ -62,7 +62,7 @@ func ffmpegFix() {
 	ffmpegPath := path.Join(app.GetApp().Workdir, "ffmpeg", "ffmpeg.exe")
 	err := http_utils.DownloadFile("https://hyzl.r2.yshs.fun/resources/ffmpeg.exe", ffmpegPath, true)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：下载 ffmpeg.exe 失败！"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：下载 ffmpeg.exe 失败！"))
 		return
 	}
 	cmd := fmt.Sprintf(`setx PATH "%%PATH%%;%s"`, strings.ReplaceAll(filepath.Dir(ffmpegPath), "/", `\`))
@@ -90,7 +90,7 @@ func cookieRedisFix() {
 	}
 	err = http_utils.DownloadFile("https://gitee.com/bling_yshs/redis-windows-7.0.4/raw/master/redis.conf", "redis-windows-7.0.4/redis.conf", true)
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：下载 redis.conf 失败！"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：下载 redis.conf 失败！"))
 		return
 	}
 	print_utils.PrintWithEmptyLine("修复成功！")
