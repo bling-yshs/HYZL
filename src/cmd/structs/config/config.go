@@ -67,7 +67,7 @@ func init() {
 		}
 		configInstance.NpmInstalled = true
 	}
-	WriteConfig()
+	SaveConfig()
 	return
 }
 
@@ -75,7 +75,7 @@ func GetConfig() *config {
 	return configInstance
 }
 
-func WriteConfig() {
+func SaveConfig() {
 	marshal, err := json.MarshalIndent(configInstance, "", "    ")
 	if err != nil {
 		panic(err)
