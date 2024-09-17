@@ -15,4 +15,11 @@ var BuiltInTasks = []TimingTask{
 		RunOnStart: false,
 		Enabled:    false,
 	},
+	{
+		Id:         3,
+		Name:       "download_announcement",
+		Spec:       "@yearly",
+		RunOnStart: true,
+		Enabled:    true,
+	},
 }

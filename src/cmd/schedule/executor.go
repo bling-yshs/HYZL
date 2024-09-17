@@ -4,17 +4,8 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/structs/timing_task"
 )
 
-func execute(taskId int) {
-	// 这里是执行任务
-	// 1. 从内置任务中获取任务信息
-	var task timing_task.TimingTask
-	for _, inTask := range timing_task.BuiltInTasks {
-		if inTask.Id == taskId {
-			task = inTask
-			break
-		}
-	}
-	// 2. 执行任务
+func Execute(task timing_task.TimingTask) {
+	// 执行任务
 	switch task.Name {
 	case "CheckUpdate":
 		// 检查更新
@@ -22,5 +13,8 @@ func execute(taskId int) {
 	case "update_yunzai_and_plugins":
 		// 更新插件
 		UpdateYunzaiAndPlugins()
+	case "download_announcement":
+		// 下载公告
+		DownloadAnnouncement()
 	}
 }

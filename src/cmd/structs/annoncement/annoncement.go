@@ -8,7 +8,8 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"github.com/pkg/errors"
-	"net/http"
+	"os"
+	"path"
 	"time"
 )
 
@@ -24,46 +25,34 @@ var Announcements = []announcement{}
 var url = app.GetApp().AnnouncementUrl
 
 func ShowAnnouncement() {
-	client := &http.Client{
-		Timeout: 5 * time.Second,
-	}
-	// 展示公告
-	response, err := client.Get(url)
+	// 从 config 文件夹读取公告文件
+	file, err := os.ReadFile(path.Join(app.GetApp().ConfigDir, "announcement.json"))
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "原因：获取公告失败"))
+		print_utils.PrintError(errors.Wrap(err, "原因：读取本地公告文件失败"))
 		return
 	}
-	defer response.Body.Close()
 	// 解析json
-	err = json.NewDecoder(response.Body).Decode(&Announcements)
+	err = json.Unmarshal(file, &Announcements)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "原因：解析公告失败"))
 		return
 	}
-	if config.GetConfig().LastAnnouncementVersion >= Announcements[0].Version {
-		return
-	}
-	print_utils.PrintWithColor(ct.Yellow, true, "公告:")
-	// 展示公告
-	if config.GetConfig().LastAnnouncementVersion == 0 {
-		// 如果是第一次运行，展示最新的公告
-		printAnnouncement(Announcements[0])
-		saveLastAnnouncementVersion()
-		return
-	}
-
+	// 找到Announcements中最新的公告，并且deprecated为false
+	var latestAnnouncement announcement
 	for _, item := range Announcements {
-		// 展示未启用，并且所有版本号大于上次公告版本号的公告
-		if !item.Deprecated && item.Version > config.GetConfig().LastAnnouncementVersion {
-			printAnnouncement(item)
+		if !item.Deprecated {
+			latestAnnouncement = item
+			break
 		}
 	}
-	saveLastAnnouncementVersion()
-}
-
-func saveLastAnnouncementVersion() {
-	config.GetConfig().LastAnnouncementVersion = Announcements[0].Version
-	config.WriteConfig()
+	// 判断当前config中的最新公告版本号是否小于等于最新公告的版本号
+	if config.GetConfig().LastAnnouncementVersion >= latestAnnouncement.Version {
+		return
+	}
+	// 展示公告
+	printAnnouncement(latestAnnouncement)
+	config.GetConfig().LastAnnouncementVersion = latestAnnouncement.Version
+	config.SaveConfig()
 }
 
 func printAnnouncement(item announcement) {

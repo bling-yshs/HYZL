@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// 下载文件，需要指定具体的文件路径而不是文件夹路径
 func DownloadFile(url string, filePath string, showProgress bool) error {
 	// 创建HTTP请求
 	resp, err := http.Get(url)

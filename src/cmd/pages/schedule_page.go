@@ -2,6 +2,8 @@ package pages
 
 import (
 	"fmt"
+	"github.com/bling-yshs/HYZL/src/cmd/schedule"
+	"github.com/bling-yshs/HYZL/src/cmd/structs/app_cron"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/config"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/timing_task"
@@ -22,6 +24,7 @@ func ScheduleMenu() {
 	}
 	options := []menu_option.MenuOption{
 		{"定时更新云崽和所有插件", updateYunzaiAndAllPlugins},
+		{"定时获取启动器公告", downloadAnnouncement},
 	}
 
 	for {
@@ -36,12 +39,16 @@ func ScheduleMenu() {
 
 }
 
-func updateYunzaiAndAllPlugins() {
+func downloadAnnouncement() {
+	taskTemplate("download_announcement")
+}
+
+func taskTemplate(taskName string) {
 	// 初始化空的定时任务
 	var newTask timing_task.TimingTask
 	for _, item := range timing_task.BuiltInTasks {
 		// 找到定时任务
-		if item.Name == "update_yunzai_and_plugins" {
+		if item.Name == taskName {
 			newTask = item
 			break
 		}
@@ -63,10 +70,10 @@ func updateYunzaiAndAllPlugins() {
 		newTask.RunOnStart = false
 	}
 	// 设置定时任务的 go cron 表达式
-	fmt.Print("请输入定时任务的 go cron 表达式(参考 https://pkg.go.dev/github.com/robfig/cron#hdr-Usage )(默认0 4 * * *):")
+	fmt.Printf("请输入定时任务的 go cron 表达式(参考 https://pkg.go.dev/github.com/robfig/cron#hdr-Usage )(默认%s):", newTask.Spec)
 	cron := input_utils.ReadString()
 	if cron == "" {
-		cron = "0 4 * * *"
+		cron = newTask.Spec
 	}
 	newTask.Spec = cron
 	// 保存定时任务
@@ -81,5 +88,18 @@ func updateYunzaiAndAllPlugins() {
 	if !found {
 		*tasks = append(*tasks, newTask)
 	}
-	config.WriteConfig()
+	entryId := app_cron.TaskIdEntryIdMap[newTask.Id]
+	app_cron.AppCronInstance.Remove(entryId)
+	entryId, err := app_cron.AppCronInstance.AddFunc(newTask.Spec, func() {
+		schedule.Execute(newTask)
+	})
+	app_cron.TaskIdEntryIdMap[newTask.Id] = entryId
+	if err != nil {
+		return
+	}
+	config.SaveConfig()
+}
+
+func updateYunzaiAndAllPlugins() {
+	taskTemplate("update_yunzai_and_plugins")
 }

@@ -1,7 +1,9 @@
 package schedule
 
 import (
+	"github.com/bling-yshs/HYZL/src/cmd/structs/app"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/yunzai"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/http_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/redis_utils"
 	"github.com/pkg/errors"
@@ -10,6 +12,14 @@ import (
 	"path"
 	"time"
 )
+
+func DownloadAnnouncement() {
+	err := http_utils.DownloadFile(app.GetApp().AnnouncementUrl, path.Join(app.GetApp().ConfigDir, "announcement.json"), false)
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "下载公告失败"))
+		return
+	}
+}
 
 func UpdateYunzaiAndPlugins() {
 	// 先升级云崽本体

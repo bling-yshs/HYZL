@@ -117,7 +117,7 @@ func ShowChangelog() {
 		return
 	}
 	config.GetConfig().JustFinishedUpdating = false
-	config.WriteConfig()
+	config.SaveConfig()
 	// 显示更新日志
 	print_utils.PrintWithColor(ct.Magenta, true, "更新日志：")
 	instance, err := readConfig()
@@ -163,7 +163,7 @@ func MenuUpdateRightNow() {
 	}
 	config.GetConfig().JustFinishedUpdating = true
 	config.GetConfig().HaveUpdate = false
-	config.WriteConfig()
+	config.SaveConfig()
 	generateUpdateBat()
 	runUpdateBat()
 }
