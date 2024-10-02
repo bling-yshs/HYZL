@@ -24,6 +24,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -238,7 +239,18 @@ func setQsignAPI() {
 		print_utils.PrintError(errors.Wrap(err, "错误描述：下载 device.js 失败"))
 		return
 	}
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", "https://qsign.chahuyun.cn/?key=miraibbs&ver=9.0.70")
+	// 让用户选择用哪个地址的签名API
+	apiList := []string{"https://API.QSign.icu/?key=Free", "https://qsign.chahuyun.cn/?key=miraibbs&ver=9.0.70"}
+	fmt.Println("请选择签名API：")
+	// 生成索引列表
+	indexList := make([]string, len(apiList))
+	for i, api := range apiList {
+		fmt.Printf("%d. %s\n", i, api)
+		indexList[i] = strconv.Itoa(i)
+	}
+	choice := input_utils.ReadChoice(indexList)
+	number, _ := strconv.Atoi(choice)
+	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", apiList[number])
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "错误描述：设置签名API失败"))
 		return
