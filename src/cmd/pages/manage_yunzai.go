@@ -44,7 +44,7 @@ func ManageYunzaiMenu() {
 		{"安装js插件", installJsPlugin},
 		{"修改云崽账号密码", changeAccount},
 		{"强制更新云崽", updateYunzaiToLatest},
-		{"设置chahuyun.cn的签名API", setQsignAPI},
+		{"设置签名API", setQsignAPI},
 		{"手动更新所有插件", updateAllPlugins},
 	}
 
