@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/timing_task"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/global_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"os"
@@ -44,7 +45,7 @@ func init() {
 		_, err := cmd_utils.CheckCommand("git -v")
 		if err != nil {
 			print_utils.PrintWithColor(ct.Red, true, "未检测到 git，请先安装 git")
-			os.Exit(1)
+			global_utils.ShutDownProgram()
 			return
 		}
 		configInstance.GitInstalled = true
@@ -53,7 +54,7 @@ func init() {
 		_, err := cmd_utils.CheckCommand("node -v")
 		if err != nil {
 			print_utils.PrintWithColor(ct.Red, true, "未检测到 node，请先安装 node ")
-			os.Exit(1)
+			global_utils.ShutDownProgram()
 			return
 		}
 		configInstance.NodeInstalled = true
@@ -62,7 +63,7 @@ func init() {
 		_, err := cmd_utils.CheckCommand("npm -v")
 		if err != nil {
 			print_utils.PrintWithColor(ct.Red, true, "未检测到 npm，请先安装 npm")
-			os.Exit(1)
+			global_utils.ShutDownProgram()
 			return
 		}
 		configInstance.NpmInstalled = true
