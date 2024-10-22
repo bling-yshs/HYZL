@@ -6,7 +6,6 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/structs/app"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/config"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/http_utils"
-	"github.com/bling-yshs/HYZL/src/cmd/utils/io_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"github.com/hashicorp/go-version"
@@ -72,27 +71,37 @@ func DownloadUpdate(url string, showProgress bool) {
 
 func generateUpdateBat() {
 	// 生成更新脚本
-	batchContent := fmt.Sprintf(`
-@echo off
+	batchContent := fmt.Sprintf(`@echo off
 echo 正在更新启动器
 REM 延迟一下，等待启动器关闭
 ping 127.0.0.1 -n 3 > nul
-REM 检查当前目录下是否存在 HYZL-new.exe
-echo 正在检查是否存在更新文件
-IF EXIST HYZL-new.exe (
-	REM 如果存在，替换掉旧的启动器
-	echo 更新文件存在，正在替换启动器
-	RENAME "%s" HYZL-old.exe
-	RENAME HYZL-new.exe "%s"
-	REM 删除旧的启动器
-	echo 正在删除旧的启动器
-	DEL HYZL-old.exe
-	echo 更新完成，正在重新启动启动器
-	START "" "%s"
-) ELSE (
-	REM 如果不存在，打印错误信息
-	echo 未找到更新文件，请重新下载
+REM 定义新文件和旧文件的路径
+set "newFile=.\config\HYZL-new.exe"
+set "oldFile=.\%s"
+
+REM 检查新文件是否存在
+if not exist "%%newFile%%" (
+    echo 新文件 %%newFile%% 不存在，退出...
+    pause
+    exit /b
 )
+
+REM 如果旧文件存在，删除它
+if exist "%%oldFile%%" (
+    echo 正在删除旧文件 %%oldFile%%...
+    del "%%oldFile%%"
+)
+
+REM 移动新文件到目标路径并重命名为 %s
+echo 正在移动新文件到 %%oldFile%%...
+move "%%newFile%%" "%%oldFile%%"
+
+REM 启动 %s
+echo 正在启动 %%oldFile%%...
+start "" "%%oldFile%%"
+
+REM 结束脚本
+echo 操作完成
 `, app.GetApp().Name, app.GetApp().Name, app.GetApp().Name)
 	batchContent = strings.ReplaceAll(batchContent, "\n", "\r\n")
 	data, _ := simplifiedchinese.GBK.NewEncoder().Bytes([]byte(batchContent))
@@ -153,12 +162,6 @@ func MenuUpdateRightNow() {
 	err = writeConfig(latestUpdater)
 	if err != nil {
 		print_utils.PrintError(errors.Wrap(err, "错误描述：写入更新文件失败"))
-		return
-	}
-	// 将config里的启动器复制到当前目录
-	err = io_utils.MoveFile("./config/HYZL-new.exe", "HYZL-new.exe")
-	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：移动文件失败"))
 		return
 	}
 	config.GetConfig().JustFinishedUpdating = true
