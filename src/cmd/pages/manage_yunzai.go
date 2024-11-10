@@ -240,7 +240,12 @@ func setQsignAPI() {
 		return
 	}
 	// 让用户选择用哪个地址的签名API
-	apiList := []string{"39.106.142.255", "https://API.QSign.icu/?key=Free", "https://qsign.chahuyun.cn/?key=miraibbs&ver=9.0.70"}
+	apiList := []string{
+		"https://qsign.trpgbot.com",
+		"https://zyr15r-astralqsign.hf.space",
+		"http://qsign-v3.trpgbot.com",
+		"https://qsign.chahuyun.cn",
+	}
 	fmt.Println("请选择签名API：")
 	// 生成索引列表
 	indexList := make([]string, len(apiList))
