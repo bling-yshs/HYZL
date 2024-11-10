@@ -24,7 +24,6 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -232,42 +231,25 @@ func setQsignAPI() {
 			return
 		}
 	}
-	// 下载 https://qsign.icu/device.js
-	print_utils.PrintWithColor(ct.Yellow, true, "正在下载 device.js ...")
-	err = http_utils.DownloadFile("https://gitee.com/haanxuan/QSign/raw/main/device.js", path.Join(yunzai.GetYunzai().Path, "node_modules/icqq/lib/core/device.js"), true)
+	print_utils.PrintWithColor(ct.Yellow, true, "请输入git bash地址(直接回车默认为C:/Program Files/Git/git-bash.exe):")
+	reader := bufio.NewReader(os.Stdin)
+	gitBashPath, err := reader.ReadString('\n')
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：下载 device.js 失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：读取输入失败"))
 		return
 	}
-	// 让用户选择用哪个地址的签名API
-	apiList := []string{
-		"https://qsign.trpgbot.com",
-		"https://zyr15r-astralqsign.hf.space",
-		"http://qsign-v3.trpgbot.com",
-		"https://qsign.chahuyun.cn",
+	gitBashPath = strings.TrimSpace(gitBashPath)
+	if gitBashPath == "" {
+		gitBashPath = "C:/Program Files/Git/git-bash.exe"
 	}
-	fmt.Println("请选择签名API：")
-	// 生成索引列表
-	indexList := make([]string, len(apiList))
-	for i, api := range apiList {
-		fmt.Printf("%d. %s\n", i, api)
-		indexList[i] = strconv.Itoa(i)
-	}
-	choice := input_utils.ReadChoice(indexList)
-	number, _ := strconv.Atoi(choice)
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", apiList[number])
+
+	cmd := exec.Command(gitBashPath, "-c", "curl -L Gitee.com/haanxuan/QSign/raw/main/X | bash")
+	cmd.Dir = yunzai.GetYunzai().Path
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
 	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：设置签名API失败"))
+		print_utils.PrintError(errors.Wrap(err, "错误描述：执行命令失败"))
 		return
 	}
-	err = yaml_utils.DeleteKey(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "ver")
-	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：删除 ver 失败"))
-	}
-	err = yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/qq.yaml"), "platform", "2")
-	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：设置 platform 失败"))
-		return
-	}
-	print_utils.PrintWithEmptyLine("设置签名API成功！")
 }
