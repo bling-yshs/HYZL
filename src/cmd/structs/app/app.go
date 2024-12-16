@@ -34,8 +34,8 @@ func init() {
 		panic(err)
 	}
 	appInstance.ConfigDir = filepath.Join(appInstance.Workdir, "config")
-	appInstance.UpdateUrl = "https://hyzl.r2.yshs.fun/updater/updater.json"
-	appInstance.AnnouncementUrl = "https://hyzl.r2.yshs.fun/announcement/announcement.json"
+	appInstance.UpdateUrl = "https://gitee.com/bling_yshs/HYZL-updater/raw/main/updater.json"
+	appInstance.AnnouncementUrl = "https://gitee.com/bling_yshs/HYZL-announcement/raw/main/announcement.json"
 }
 
 func GetApp() app {
