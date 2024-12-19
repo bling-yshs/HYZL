@@ -58,4 +58,4 @@ jobs:
           repository: bling-yshs/HYZL-Actions
           token: ${{ secrets.GH_PERSONAL_TOKEN }}
           event-type: release-update-json
-#          client-payload: '{"version":"${{needs.release.outputs.version}}","changelog":"${{ needs.release.outputs.changelog || '无' }}"}'
+          client-payload: '{"version":"${{needs.release.outputs.version}}","changelog":"${{ needs.release.outputs.changelog || ''无'' }}"}'
