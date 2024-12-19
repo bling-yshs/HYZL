@@ -174,7 +174,7 @@ func MenuUpdateRightNow() {
 // 从json中读取更新文件信息
 func readConfig() (updater, error) {
 	// 读取本地配置
-	bytes, err := os.ReadFile("./config/updater.json")
+	bytes, err := os.ReadFile("./config/update.json")
 	if err != nil {
 		return updater{}, err
 	}
@@ -192,7 +192,7 @@ func writeConfig(instance updater) error {
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("./config/updater.json", bytes, os.ModePerm)
+	err = os.WriteFile("./config/update.json", bytes, os.ModePerm)
 	if err != nil {
 		return err
 	}
