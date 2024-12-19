@@ -7,7 +7,7 @@ on:
 jobs:
   auto-build:
     name: 🛠️ 自动构建
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
           path: HYZL.exe
 
   check-tag:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Create Tag
         id: create-tag

@@ -10,7 +10,7 @@ on:
 jobs:
   release:
     name: 🚀 发布新版本
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       version: ${{ inputs.version }}
       changelog: ${{ steps.changelog.outputs.changelog }}
@@ -48,7 +48,7 @@ jobs:
             ${{ steps.changelog.outputs.changelog }}
           artifacts: HYZL.exe
 
-  update-updater-json:
+  update-update-json:
     runs-on: ubuntu-latest
     needs: release
     steps:
@@ -56,5 +56,6 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           repository: bling-yshs/HYZL-Actions
+          token: ${{ secrets.GH_PERSONAL_TOKEN }}
           event-type: release-update-json
           client-payload: '{"version":"${{needs.release.outputs.version}}","changelog":"${{ needs.release.outputs.changelog || '无' }}"}'

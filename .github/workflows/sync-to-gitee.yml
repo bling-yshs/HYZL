@@ -7,7 +7,7 @@ on:
 jobs:
   sync-to-gitee:
     name: 🔁 同步到 Gitee
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Sync to gitee
         uses: Yikun/hub-mirror-action@master
