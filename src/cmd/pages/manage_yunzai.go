@@ -10,14 +10,12 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/http_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/io_utils"
-	"github.com/bling-yshs/HYZL/src/cmd/utils/json_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/menu_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/redis_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/windows_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/yaml_utils"
 	ct "github.com/daviddengcn/go-colortext"
-	"github.com/hashicorp/go-version"
 	"github.com/pkg/errors"
 	"net/url"
 	"os"
@@ -203,33 +201,6 @@ func setQsignAPI() {
 	if os.IsNotExist(err) {
 		print_utils.PrintWithColor(ct.Red, true, "未检测到 qq.yaml 文件，如果您是第一次下载云崽，请先启动一次再运行此选项！")
 		return
-	}
-	// 检查node_modules/icqq/package.json里的version字段的版本是否大于0.6.10
-	currentVersionStr, err := json_utils.GetValueFromJSONFile(path.Join(yunzai.GetYunzai().Path, "node_modules/icqq/package.json"), "version")
-	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：读取 icqq 版本失败"))
-		return
-	}
-	currentVersion, err := version.NewVersion(currentVersionStr.(string))
-	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：解析 icqq 版本失败"))
-		return
-	}
-	targetVersion, err := version.NewVersion("0.6.10")
-	if err != nil {
-		print_utils.PrintError(errors.Wrap(err, "错误描述：解析目标版本失败"))
-		return
-	}
-	if currentVersion.LessThan(targetVersion) {
-		print_utils.PrintWithColor(ct.Red, true, "检测到 icqq 版本过低，是否更新？(是:y 否:n)")
-		choice := input_utils.ReadChoice([]string{"y", "n"})
-		if choice == "y" {
-			//先删除，否则有残留
-			cmd_utils.ExecuteCmd("pnpm rm icqq -w", yunzai.GetYunzai().Path, "正在删除 icqq...", "删除 icqq 成功！")
-			cmd_utils.ExecuteCmd("pnpm install icqq@0.6.10 -w", yunzai.GetYunzai().Path, "正在更新 icqq...", "更新 icqq 成功！")
-		} else {
-			return
-		}
 	}
 	print_utils.PrintWithColor(ct.Yellow, true, "请输入git bash地址(直接回车默认为C:/Program Files/Git/git-bash.exe):")
 	reader := bufio.NewReader(os.Stdin)
