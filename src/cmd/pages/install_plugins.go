@@ -90,7 +90,7 @@ func installGuobaPlugin() {
 }
 
 func InstallMiaoPlugin() {
-	installPluginsTemplate("喵喵插件 (https://gitee.com/yoimiya-kokomi/miao-plugin)", "miao-plugin", "git clone --depth 1 -b master https://gitee.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/", "pnpm add image-size -w")
+	installPluginsTemplate("喵喵插件 (https://github.moeyy.xyz/https://github.com/yoimiya-kokomi/miao-plugin)", "miao-plugin", "git clone --depth 1 -b master https://github.moeyy.xyz/https://github.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/", "pnpm add image-size -w")
 }
 
 func installXiaoyaoPlugin() {

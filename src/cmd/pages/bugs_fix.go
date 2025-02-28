@@ -34,6 +34,7 @@ func BugsFixMenu() {
 		{"修复 ffmpeg 未安装", ffmpegFix},
 		{"修复 无法正确获取图片链接", fixGetImageLink},
 		{"修复 桌面出现白色窗口(治标不治本)", fixPuppeteerWhiteWindow},
+		{"修复 喵喵插件无法更新(将喵喵插件切换成 Github 地址)", fixMiaoPluginGitSite},
 	}
 
 	for {
@@ -46,6 +47,10 @@ func BugsFixMenu() {
 		menu_utils.DealChoice(choice, options, false)
 	}
 
+}
+
+func fixMiaoPluginGitSite() {
+	cmd_utils.ExecuteCmd("git -C plugins/miao-plugin remote set-url origin https://github.moeyy.xyz/https://github.com/yoimiya-kokomi/miao-plugin", yunzai.GetYunzai().Path, "开始修改喵喵插件地址...", "修改喵喵插件地址成功！")
 }
 
 func fixPuppeteerWhiteWindow() {
