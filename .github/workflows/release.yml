@@ -34,9 +34,6 @@ jobs:
           #          filter-author: (jaywcjlove|小弟调调™|dependabot|renovate\\[bot\\]|dependabot\\[bot\\]|Renovate Bot)
           filter: '^(release|fixup|docs|ci|style|test|build):'
 
-      - name: Get the changelog
-        run: echo "${{ steps.changelog.outputs.changelog }}"
-
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
