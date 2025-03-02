@@ -37,6 +37,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
+          allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
           name: ${{ inputs.version }}
           tag: ${{ inputs.version }}
