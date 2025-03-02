@@ -49,11 +49,22 @@ jobs:
     runs-on: ubuntu-22.04
     needs: release
     steps:
+      - name: 处理 changelog 并转义 JSON 特殊字符
+        id: process-changelog
+        run: |
+          # 获取 changelog 并进行 JSON 转义
+          CHANGELOG="${{ needs.release.outputs.changelog || '无' }}"
+          # 使用 jq 处理 JSON 转义
+          ESCAPED_CHANGELOG=$(echo "$CHANGELOG" | jq -R -s '.')
+          # 移除开头和结尾的引号以便在 JSON 对象中使用
+          ESCAPED_CHANGELOG=${ESCAPED_CHANGELOG:1:-1}
+          # 将结果输出到环境变量
+          echo "escaped_changelog=$ESCAPED_CHANGELOG" >> $GITHUB_OUTPUT
+
       - name: 发送更新事件到 HYZL-Actions
         uses: peter-evans/repository-dispatch@v3
         with:
           repository: bling-yshs/HYZL-Actions
           token: ${{ secrets.GH_PERSONAL_TOKEN }}
           event-type: release-update-json
-          client-payload: '{"version":"${{needs.release.outputs.version}}","changelog":"${{ needs.release.outputs.changelog || ''无'' }}"}'
-
+          client-payload: '{"version":"${{needs.release.outputs.version}}","changelog":"${{ steps.process-changelog.outputs.escaped_changelog }}"}'
