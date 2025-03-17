@@ -11,6 +11,7 @@ import (
 	"github.com/bling-yshs/HYZL/src/cmd/utils/io_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/menu_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/yaml_utils"
 	ct "github.com/daviddengcn/go-colortext"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
@@ -36,6 +37,7 @@ func BugsFixMenu() {
 		{"修复 桌面出现白色窗口(治标不治本)", fixPuppeteerWhiteWindow},
 		{"修复 喵喵插件无法更新(将喵喵插件切换成 Github 地址)", fixMiaoPluginGitSite},
 		{"修复 逍遥插件无法更新(将逍遥插件切换成 Github 地址)", fixXiaoyaoGitSite},
+		{"修复 设置签名API以后提示45版本过低", fixQQSignAPI},
 	}
 
 	for {
@@ -48,6 +50,13 @@ func BugsFixMenu() {
 		menu_utils.DealChoice(choice, options, false)
 	}
 
+}
+
+func fixQQSignAPI() {
+	err := yaml_utils.UpdateOrAppendToYaml(path.Join(yunzai.GetYunzai().Path, "config/config/bot.yaml"), "sign_api_addr", "https://zyr15r-astralqsign.hf.space/?key=ALL&ver=9.1.25")
+	if err != nil {
+		print_utils.PrintError(errors.Wrap(err, "错误描述: 修改bot.yaml失败"))
+	}
 }
 
 func fixMiaoPluginGitSite() {
