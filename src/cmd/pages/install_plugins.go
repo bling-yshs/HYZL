@@ -1,10 +1,12 @@
 package pages
 
 import (
+	"fmt"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/menu_option"
 	"github.com/bling-yshs/HYZL/src/cmd/structs/yunzai"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/cmd_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/input_utils"
+	"github.com/bling-yshs/HYZL/src/cmd/utils/json_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/menu_utils"
 	"github.com/bling-yshs/HYZL/src/cmd/utils/print_utils"
 	"os"
@@ -44,22 +46,19 @@ func installStarRailPlugin() {
 	installPluginsTemplate("星铁插件 (https://gitee.com/hewang1an/StarRail-plugin.git)", "StarRail-plugin", "git clone --depth=1 https://gitee.com/hewang1an/StarRail-plugin.git ./plugins/StarRail-plugin/")
 }
 
-// https://gitee.com/liangshi233/liangshi-calc.git
+// https://github.moeyy.xyz/https://github.com/liangshi233/liangshi-calc.git
 func installLiangShiPlugin() {
-	installPluginsTemplate("梁氏插件 (https://gitee.com/liangshi233/liangshi-calc.git)", "liangshi-calc", "git clone --depth=1 https://gitee.com/liangshi233/liangshi-calc.git ./plugins/liangshi-calc/")
-
+	installPluginsTemplate("梁氏插件 (https://github.moeyy.xyz/https://github.com/liangshi233/liangshi-calc.git)", "liangshi-calc", "git clone --depth=1 https://github.moeyy.xyz/https://github.com/liangshi233/liangshi-calc.git ./plugins/liangshi-calc/")
 }
 
 // https://gitee.com/Nwflower/flower-plugin.git
 func installFlowerPlugin() {
 	installPluginsTemplate("flower插件 (https://gitee.com/Nwflower/flower-plugin.git)", "flower-plugin", "git clone --depth=1 https://gitee.com/Nwflower/flower-plugin.git ./plugins/flower-plugin/")
-
 }
 
 // https://gitee.com/Nwflower/atlas
 func installAtlasPlugin() {
 	installPluginsTemplate("Atlas图鉴插件 (https://gitee.com/Nwflower/atlas)", "Atlas", "git clone --depth=1 https://gitee.com/Nwflower/atlas ./plugins/Atlas/")
-
 }
 
 // https://gitee.com/yhArcadia/ap-plugin
@@ -78,7 +77,6 @@ func openYunzaiPluginLibrary() {
 // https://gitee.com/xianxincoder/xianxin-plugin
 func installXianxinPlugin() {
 	installPluginsTemplate("闲心插件 (https://gitee.com/xianxincoder/xianxin-plugin)", "xianxin-plugin", "git clone --depth=1 https://gitee.com/xianxincoder/xianxin-plugin ./plugins/xianxin-plugin/")
-
 }
 
 func installEarthKPlugin() {
@@ -86,15 +84,15 @@ func installEarthKPlugin() {
 }
 
 func installGuobaPlugin() {
-	installPluginsTemplate("锅巴插件 (https://gitee.com/guoba-yunzai/guoba-plugin)", "Guoba-Plugin", "git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/", "pnpm install --no-lockfile --filter=guoba-plugin -w")
+	installPluginsTemplate("锅巴插件 (https://gitee.com/guoba-yunzai/guoba-plugin)", "Guoba-Plugin", "git clone --depth=1 https://gitee.com/guoba-yunzai/guoba-plugin.git ./plugins/Guoba-Plugin/")
 }
 
 func InstallMiaoPlugin() {
-	installPluginsTemplate("喵喵插件 (https://github.moeyy.xyz/https://github.com/yoimiya-kokomi/miao-plugin)", "miao-plugin", "git clone --depth 1 -b master https://github.moeyy.xyz/https://github.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/", "pnpm add image-size -w")
+	installPluginsTemplate("喵喵插件 (https://github.moeyy.xyz/https://github.com/yoimiya-kokomi/miao-plugin)", "miao-plugin", "git clone --depth 1 -b master https://github.moeyy.xyz/https://github.com/yoimiya-kokomi/miao-plugin.git ./plugins/miao-plugin/")
 }
 
 func installXiaoyaoPlugin() {
-	installPluginsTemplate("逍遥插件 (https://github.moeyy.xyz/https://github.com/ctrlcvs/xiaoyao-cvs-plugin.git)", "xiaoyao-cvs-plugin", "git clone --depth=1 https://gitee.com/Ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/", "pnpm add promise-retry -w", "pnpm add superagent -w")
+	installPluginsTemplate("逍遥插件 (https://github.moeyy.xyz/https://github.com/ctrlcvs/xiaoyao-cvs-plugin.git)", "xiaoyao-cvs-plugin", "git clone --depth=1 https://github.moeyy.xyz/https://github.com/ctrlcvs/xiaoyao-cvs-plugin.git ./plugins/xiaoyao-cvs-plugin/")
 }
 
 func installFengyePlugin() {
@@ -102,7 +100,6 @@ func installFengyePlugin() {
 }
 
 func installPluginsTemplate(pluginChineseName string, dirName string, command ...string) {
-
 	pluginDir := filepath.Join(yunzai.GetYunzai().Path, "plugins", dirName)
 	_, err := os.Stat(pluginDir)
 	if err == nil {
@@ -114,6 +111,19 @@ func installPluginsTemplate(pluginChineseName string, dirName string, command ..
 	}
 	_ = os.RemoveAll(pluginDir)
 	for _, cmd := range command {
-		cmd_utils.ExecuteCmd(cmd, filepath.Join(yunzai.GetYunzai().Path), "", "")
+		cmd_utils.ExecuteCmd(cmd, yunzai.GetYunzai().Path, "", "")
+	}
+
+	// 检查是否存在 package.json
+	packageJsonPath := filepath.Join(pluginDir, "package.json")
+	if _, err := os.Stat(packageJsonPath); err == nil {
+		// 读取 package.json 中的 name 字段
+		name, err := json_utils.GetValueFromJSONFile(packageJsonPath, "name")
+		if err == nil {
+			if nameStr, ok := name.(string); ok {
+				// 安装依赖
+				cmd_utils.ExecuteCmd(fmt.Sprintf("pnpm install --filter=%s -w", nameStr), yunzai.GetYunzai().Path, "", "")
+			}
+		}
 	}
 }
