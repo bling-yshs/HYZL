@@ -38,6 +38,7 @@ func BugsFixMenu() {
 		{"修复 喵喵插件无法更新(将喵喵插件切换成 Github 地址)", fixMiaoPluginGitSite},
 		{"修复 逍遥插件无法更新(将逍遥插件切换成 Github 地址)", fixXiaoyaoGitSite},
 		{"修复 设置签名API以后提示45版本过低", fixQQSignAPI},
+		{"打开 使用 napcat 连接云崽的教程", openNapcatGuide},
 	}
 
 	for {
@@ -50,6 +51,10 @@ func BugsFixMenu() {
 		menu_utils.DealChoice(choice, options, false)
 	}
 
+}
+
+func openNapcatGuide() {
+	cmd_utils.ExecuteCmd("start https://github.com/bling-yshs/trss-yunzai-napcat-guide", "", "正在打开教程...", "打开教程成功！")
 }
 
 func fixQQSignAPI() {
