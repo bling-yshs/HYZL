@@ -186,7 +186,12 @@ func changeAccount() {
 
 func updateYunzaiToLatest() {
 	cmd_utils.ExecuteCmd("git pull", yunzai.GetYunzai().Path, "正在更新云崽...", "")
-	cmd_utils.ExecuteCmd("git reset --hard origin/HEAD", yunzai.GetYunzai().Path, "", "更新云崽成功")
+	remoteBranch, err := cmd_utils.ExecuteCmdAndGetOutput("git rev-parse --abbrev-ref --symbolic-full-name @{u}", yunzai.GetYunzai().Path)
+	if err != nil {
+		print_utils.PrintWithEmptyLine("无法获取当前分支")
+	}
+
+	cmd_utils.ExecuteCmd(fmt.Sprintf("git reset --hard %s", remoteBranch), yunzai.GetYunzai().Path, "", "更新云崽成功")
 }
 
 func setQsignAPI() {

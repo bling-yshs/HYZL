@@ -67,3 +67,18 @@ func ExecuteInNewWindow(parameters command.Parameters) {
 	cmd.Dir = parameters.WorkDir
 	cmd.Run()
 }
+
+func ExecuteCmdAndGetOutput(command string, dir string) (string, error) {
+	cmd := exec.Command("cmd.exe")
+	cmd.SysProcAttr = &syscall.SysProcAttr{CmdLine: fmt.Sprintf(`/c %s`, command), HideWindow: true}
+
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	print_utils.PrintWithColor(ct.Green, true, "正在执行命令："+command)
+
+	// 获取标准输出和标准错误
+	output, err := cmd.CombinedOutput()
+
+	return string(output), err
+}
